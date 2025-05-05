@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState} from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { 
   FaPlay, FaArrowLeft, FaArrowRight, FaDownload
@@ -20,7 +20,6 @@ const MediaGrid = ({ items, type }: { items: (string | Video)[], type: 'image' |
     <div className="media-grid">
       {items.map((item, index) => {
         const src = typeof item === 'string' ? item : item.thumbnail;
-        const url = typeof item === 'string' ? item : item.url;
 
         return (
           <div 
