@@ -1,0 +1,309 @@
+:root {
+  --primary-color: #1a1a1a;
+    --accent-color: #d4a373;
+    --text-dark: #2d2d2d;
+    --spacing-xl: 4rem;
+    --spacing-lg: 2rem;
+    --spacing-md: 1rem;
+    --transition: 0.3s ease;
+    --text-light: #252525;
+    --text-light2: #ffffff;
+  }
+  
+  .renovation-container {
+    background: var(--primary-color);
+    color: var(--text-dark);
+    font-family: 'Inter', sans-serif;
+  }
+  
+  /* Hero Section */
+  .hero-section{
+    margin: -20px auto 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 100vh;
+    padding: var(--spacing-xl);
+    gap: var(--spacing-xl);
+    background: linear-gradient(
+      45deg,
+      var(--primary-color) 0%,
+      rgba(230, 239, 245, 0.9) 100%
+    );
+   
+  }
+  
+.hc,h1{
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--text-light);
+    margin-bottom: var(--spacing-md);
+    line-height: 1.1;
+    
+  }
+
+  .comparison-preview {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    height: 70vh;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  }
+  
+  /* Services Section */
+  .services-section {
+    padding: var(--spacing-xl);
+    background: #f8f9fa;
+  }
+  
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-lg);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .service-card {
+    background: white;
+    padding: var(--spacing-lg);
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+  
+  .service-icon {
+    font-size: 2.5rem;
+    color: var(--accent-color);
+    margin-bottom: var(--spacing-md);
+  }
+  
+  /* Process Section */
+  .process-section {
+    padding: var(--spacing-xl);
+    background: var(--text-dark);
+    color: white;
+  }
+  
+  .process-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-xl);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .process-step {
+    text-align: center;
+    padding: var(--spacing-md);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .step-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent-color);
+  }
+  
+  /* Portfolio Section */
+  .portfolio-section {
+    padding: var(--spacing-xl);
+  }
+  
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-md);
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  
+  .project-card {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Modal */
+ /* Project Modal */
+.project-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 25, 47, 0.98);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    z-index: 1000;
+    backdrop-filter: blur(8px);
+  }
+  
+  .modal-content {
+    background: #ffffff;
+    max-width: 1200px;
+    width: 90%;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+    position: relative;
+    transform-origin: center;
+    animation: modalEnter 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  
+  @keyframes modalEnter {
+    from {
+      transform: scale(0.95);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  
+  .modal-close {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .modal-close:hover {
+    background: #ff6b35;
+    transform: rotate(90deg) scale(1.1);
+  }
+  
+  .modal-close svg {
+    color: #2d3436;
+    transition: color 0.3s ease;
+  }
+  
+  .modal-close:hover svg {
+    color: white;
+  }
+  
+  .project-details {
+    padding: 2.5rem;
+    background: #f8f9fa;
+  }
+  
+  .project-details h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    color: #2d3436;
+  }
+  
+  .detail-item {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(45, 52, 54, 0.1);
+  }
+  
+  .detail-item:last-child {
+    border-bottom: none;
+  }
+  
+  .detail-item span {
+    font-weight: 600;
+    color: #2d3436;
+    opacity: 0.8;
+  }
+  
+  .detail-item p {
+    color: #636e72;
+    margin: 0;
+    font-size: 1.1rem;
+  }
+  
+  /* Comparison Slider in Modal */
+  .modal-content .react-compare-slider {
+    height: 600px !important;
+  }
+  
+  .modal-content .react-compare-slider__handle {
+    width: 48px;
+    height: 48px;
+    border: 3px solid #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .modal-content {
+      width: 95%;
+      margin: 1rem;
+    }
+    
+    .project-details {
+      padding: 1.5rem;
+    }
+    
+    .project-details h2 {
+      font-size: 1.8rem;
+    }
+    
+    .modal-content .react-compare-slider {
+      height: 400px !important;
+    }
+    
+    .detail-item {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+    
+    .modal-close {
+      top: 1rem;
+      right: 1rem;
+      width: 36px;
+      height: 36px;
+    }
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .hero-section {
+      grid-template-columns: 1fr;
+      padding: var(--spacing-md);
+    }
+    
+    .process-steps {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: transparent;
+    border: none;
+    color: var(--text-dark);
+    cursor: pointer;
+    z-index: 1000;
+    padding: 0.5rem;
+    transition: all 0.3s ease;
+  }
+  
+  .modal-close:hover {
+    color: var(--accent-color);
+    transform: rotate(90deg);
+  }
+  
+  .modal-content {
+    position: relative;
+  }

@@ -1,0 +1,298 @@
+:root{
+  --bg-color: #ededed;
+  --second-bg-color:#112e42;
+  --text-color:#081b29;
+  --text-color2:#ededed;
+  --main-color:#00abf0;
+  --main-color2:rgb(4, 128, 211);
+}
+
+:root {
+  /* Cyber Core Palette */
+  --cyber-sun: hsl(45, 100%, 55%);      /* Vivid electric yellow */
+  --neon-amber: hsl(35, 100%, 60%);     /* Glowing orange core */
+  --quantum-gold: hsl(40, 100%, 45%);   /* Deep metallic yellow */
+  --hologram-orange: hsl(25, 100%, 55%);/* Holographic light orange */
+  --void-black: hsl(240, 100%, 5%);     /* Deep space black */
+  --neural-white: hsl(60, 100%, 99%);   /* Ultra-bright white */
+
+  /* Futuristic Gradients */
+  --hud-gradient: linear-gradient(
+    135deg,
+    var(--cyber-sun) 0%,
+    var(--neon-amber) 50%,
+    var(--quantum-gold) 100%
+  );
+
+  --neon-edge-gradient: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--hologram-orange) 50%,
+    transparent 100%
+  );
+
+  --depth-glow: radial-gradient(
+    circle at 50% 50%,
+    var(--neon-amber) 10%,
+    transparent 60%
+  );
+
+  /* Dynamic Lighting */
+  --cyber-glow: 0 0 15px var(--cyber-sun),
+               0 0 30px var(--hologram-orange),
+               0 0 45px var(--quantum-gold);
+
+  --neon-stroke: 2px 2px 4px var(--void-black),
+                -2px -2px 4px var(--neural-white);
+}
+
+
+.cyber-footer {
+    background: var(--second-bg-color);
+    border-top: 2px solid #061a2b;
+    padding: 4rem 2rem;
+    position: relative;
+    overflow: hidden;
+    }
+
+
+    .dark-theme .cyber-footer{
+      background: var(--text-color) ;
+    }
+    
+    
+    .footer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 3rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    }
+    
+    .footer-section {
+    position: relative;
+    padding: 1.5rem;
+    border-radius: 8px;
+    background: linear-gradient(145deg, rgba(218, 218, 238, 0.8), rgba(65, 65, 75, 0.9));
+    }
+    
+    .holographic-logo {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.8rem;
+    color: #2243d8;
+    text-shadow: 0 0 15px rgba(59, 179, 216, 0.4);
+    margin-bottom: 1.5rem;
+    }
+    
+    .cyber-glitch {
+    position: relative;
+    animation: glitch 2s infinite;
+    }
+    
+    @keyframes glitch {
+    0% { text-shadow: 2px 0 #00f; }
+    2% { text-shadow: -2px 0 #0f0; }
+    4% { text-shadow: 2px 0 #f00; }
+    6% { text-shadow: none; }
+    100% { text-shadow: none; }
+    }
+    
+    .footer-heading {
+    color: hsl(210, 4%, 10%);
+    font-family: 'Orbitron', sans-serif;
+    margin-bottom: 1.5rem;
+    position: relative;
+    }
+    
+    .cyber-links {
+    list-style: none;
+    padding: 0;
+    }
+    
+    .link-hover {
+    color: hsl(210, 3%, 15%);
+    text-decoration: none;
+    position: relative;
+    padding: 0.5rem 0;
+    display: block;
+    transition: all 0.3s ease;
+    }
+    
+    .link-hover:hover {
+    color: hsl(199, 80%, 46%);
+    transform: translateX(10px);
+    }
+    
+    .contact-grid {
+    display: grid;
+    gap: 1rem;
+    }
+    
+    .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: #18181a;
+    }
+    
+    .social-matrix {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+    }
+    
+    .social-linke {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid hsl(199, 80%, 46%);
+    border-radius: 50%;
+    color: hsl(199, 80%, 46%);
+    transition: all 0.3s ease;
+    }
+    
+    .link-pulse {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(42, 108, 231, 0.4); }
+    70% { box-shadow: 0 0 0 15px rgba(255,107,53,0); }
+    100% { box-shadow: 0 0 0 0 rgba(255,107,53,0); }
+    }
+    
+
+    .newsletter-form {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        max-width: 300px;
+        margin: 0 auto;
+      }
+      
+      .cyber-input {
+        padding: 0.6rem 1rem;
+        border: 1px solid #e0e0e0;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        color: #333;
+        width: 100%;
+      }
+      
+      .cyber-input:focus {
+        outline: none;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+      }
+      
+      .quantum-button {
+        padding: 0.6rem 1rem;
+        background-color: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        width: 100%;
+        transition: background-color 0.2s ease;
+      }
+      
+      .quantum-button:hover {
+        background-color: #1d4ed8;
+      }
+      
+      @media (max-width: 480px) {
+        .newsletter-form {
+          max-width: 100%;
+        }
+      }
+
+
+
+
+    
+    .cyber-copyright {
+    text-align: center;
+    padding: 2rem;
+    margin-top: 3rem;
+    border-top: 1px solid rgba(255,107,53,0.1);
+    color: #8a8a9e;
+    }
+    
+    
+    
+    .cyber-scroll-top {
+        display: none;
+        opacity: 0;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transform: translateY(20px);
+    }
+    
+    .cyber-scroll-top.visible {
+        display: flex;
+        opacity: 1;
+        transform: translateY(0);
+    }
+    
+    .cyber-scroll-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: hsl(199, 80%, 46%);
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    }
+    
+    
+    @media (max-width: 768px) {
+    .footer-grid {
+    grid-template-columns: 1fr;
+    }
+    
+    .footer-section {
+    text-align: center;
+    }
+    
+    .link-hover:hover {
+    transform: translateX(0);
+    }
+    
+    .contact-item {
+    justify-content: center;
+    }
+    
+    .social-matrix {
+    justify-content: center;
+    }
+    
+    .cyber-scroll-top {
+    bottom: 1rem;
+    right: 1rem;
+    display: n;
+    }
+    }
+    
+    @media (max-width: 480px) {
+    .cyber-footer {
+    padding: 2rem 1rem;
+    }
+    
+    .holographic-logo {
+    font-size: 1.5rem;
+    }
+    }
