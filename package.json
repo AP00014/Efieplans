@@ -1,6 +1,6 @@
 {
   "name": "efie_plans_website",
-  "homepage": "https://efieplans.com",
+  "homepage": "https://github.com/AP00014/Efieplans",
   "description": "A website for efie plans, a company that provides various services including Archiectural designs, Building and construction, Renovations and more.",
   "private": true,
   "version": "0.0.0",
@@ -9,7 +9,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@date-io/date-fns": "^3.2.1",
@@ -26,6 +28,7 @@
     "date-fns-tz": "^3.2.0",
     "firebase": "^11.6.0",
     "framer-motion": "^12.9.1",
+    "gh-pages": "^6.3.0",
     "react": "^19.0.0",
     "react-compare-slider": "^3.1.0",
     "react-datepicker": "^8.3.0",
