@@ -1,5 +1,5 @@
 import { useState} from 'react';
-import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
+import { HashRouter as Router, Route, Routes} from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './components/pages/Home';
@@ -12,18 +12,13 @@ import ArchitecturalPortfolio from './components/Architectural';
 import ConstructionPage from './components/Construction';
 import InteriorDesignPage from './components/Interor';
 import RenovationPage from './components/Renovation';
-import {QueryClient,QueryClientProvider} from '@tanstack/react-query'
 import './App.css';
 
 
 function App() {
   const [darkTheme, setDarkTheme] = useState(false);
 
-  const queryClient = new QueryClient(); 
-
   return (
-
-    <QueryClientProvider client={queryClient}>
     <Router>
       <div className={`app-container ${darkTheme ? 'dark-theme' : 'light-theme'}`}>
         <Navbar darkTheme={darkTheme} setDarkTheme={setDarkTheme} />
@@ -48,7 +43,6 @@ function App() {
         <Footer  />
       </div>
     </Router>
-    </QueryClientProvider>
   );
 }
 

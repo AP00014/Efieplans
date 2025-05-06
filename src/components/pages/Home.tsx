@@ -3,35 +3,41 @@ import { useState, useEffect } from 'react';
 import { FiChevronLeft, FiChevronRight, FiArrowRight } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import './styles/Home.css';
+import image1 from '../../../public/Images/81945302_2141154495987458_8142382399708200960_n.jpg'
+import image2 from '../../../public/Images/img3.jpg'
+import image3 from '../../../public/Images/81836978_2141186975984210_991424691258261504_n.jpg'
+import image4 from '../../../public/Images/interor.jpg'
+import image5 from '../../../public/Images/82604517_2141155279320713_5725934327536025600_n.jpg'
+
 
 const slides = [
   
     {
-        image: 'src/components/pages/Images/81945302_2141154495987458_8142382399708200960_n.jpg',
+        image: [image1],
         title: 'Complete Project Management',
         description: 'Seamless execution from concept to completion',
         button: 'Get Started'
       },
     {
-    image: 'src/components/pages/Images/img3.jpg',
+    image: [image2],
     title: 'Innovative Building Solutions',
     description: 'Transforming visions into architectural masterpieces with cutting-edge technology',
     button: 'Explore Projects'
   },
   {
-    image: 'src/components/pages/Images/81836978_2141186975984210_991424691258261504_n.jpg',
+    image: [image3],
     title: 'Premium Construction Services',
     description: 'From foundation to finish - excellence in every brick laid',
     button: 'View Services'
   },
   {
-    image: 'src/components/pages/Images/interor.jpg',
+    image: [image4],
     title: 'Modern Interior Designs',
     description: 'Creating spaces that inspire and elevate lifestyles',
     button: 'See Designs'
   },
   {
-    image: 'src/components/pages/Images/82604517_2141155279320713_5725934327536025600_n.jpg',
+    image: [image5],
     title: 'Sustainable Renovations',
     description: 'Breathing new life into existing structures responsibly',
     button: 'Learn More'
@@ -42,6 +48,7 @@ const slides = [
 const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlay, setIsAutoPlay] = useState(true);
+  
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -106,68 +113,47 @@ const Home = () => {
       </div>
     </section>
 
-
     <section className="innovation-showcase">
-        <div className="section-header">
-          <h2>Redefining Construction Excellence</h2>
-          <p className='cp'>Where Vision Meets Precision Engineering</p>
-        </div>
+  <div className="section-header">
+    <h2>Transformative Building Solutions for Discerning Clients</h2>
+    <p className='cp'>Where Vision Meets Precision Engineering</p>
+  </div>
 
-        <div className="feature-grid">
-          <div className="feature-card">
-            <div className="card-content">
-              <div className="card-number">01</div>
-              <h3>Smart Construction Tech</h3>
-              <p>AI-powered project management and real-time site monitoring</p>
-              <div className="card-hover-content">
-                <video autoPlay muted loop className="hover-video">
-                  <source src="/construction-tech.mp4" type="video/mp4" />
-                </video>
-                <button className="explore-btn">
-                  Explore Tech <FiArrowRight />
-                </button>
-              </div>
-            </div>
-          </div>
+  <div className="features-container">
+    {/* Primary Showcase Row */}
+    <div className="feature-row">
+      <div className="feature-image">
+        <img src={image1} alt="Next-Gen Construction" />
+      </div>
+      <div className="feature-content">
 
-          <div className="feature-card">
-            <div className="card-content">
-              <div className="card-number">02</div>
-              <h3>Sustainable Solutions</h3>
-              <p>Net-zero energy buildings with eco-friendly materials</p>
-             
-            </div>
-          </div>
+        <h3>Your Vision, Perfected Through Innovation</h3>
+        <p className="super-text">
+          We deliver <strong>25% faster project completion</strong> through professional project management while 
+          achieving <strong>40% energy savings</strong> via sustainable practices - all wrapped in 
+          <strong>award-winning designs</strong> that increase property value by an average of 
+          <strong>35%</strong>. Our integrated approach combines:
+        </p>
+        
+        <ul className="value-proposition-list">
+          <li>
+            🚀 <strong>Smart Construction:</strong> Real-time IoT monitoring & predictive analytics 
+            ensuring 98.7% project accuracy
+          </li>
+          <li>
+            🏆 <strong>Luxury Assurance:</strong> Bespoke interiors featuring smart home integration 
+            and premium material curation
+          </li>
+        </ul>
 
-          <div className="feature-card">
-            <div className="card-content">
-              <div className="card-number">03</div>
-              <h3>Luxury Interiors</h3>
-              <p>Bespoke designs blending comfort with cutting-edge aesthetics</p>
-              <div className="card-hover-content">
-              </div>
-            </div>
-          </div>
-        </div>
+      </div>
+    </div>
 
-        <div className="stats-container">
-          <div className="stat-item">
-            <div className="stat-number">250+</div>
-            <div className="stat-label">Projects Completed</div>
-            <div className="stat-bar"></div>
-          </div>
-          <div className="stat-item">
-            <div className="stat-number">98%</div>
-            <div className="stat-label">Client Satisfaction</div>
-            <div className="stat-bar"></div>
-          </div>
-          <div className="stat-item">
-            <div className="stat-number">15+</div>
-            <div className="stat-label">Industry Awards</div>
-            <div className="stat-bar"></div>
-          </div>
-        </div>
-      </section>
+  </div>
+
+</section>
+
+
 
       <section className="video-parallax">
         <div className="parallax-overlay"></div>

@@ -3,6 +3,8 @@ import { useState, useEffect, FC } from 'react';
 import { Link } from 'react-router-dom';
 import { FiSun, FiMoon, FiMenu, FiX, FiChevronDown } from 'react-icons/fi';
 import './Navbar.css'; // Create this CSS file
+import imageLogo from '../../public/Images/logo.avif';
+
 
 interface NavbarProps {
   darkTheme: boolean;
@@ -13,6 +15,9 @@ interface ServiceLink {
   name: string;
   link: string;
 }
+
+
+
 
 const Navbar: FC<NavbarProps> = ({ darkTheme, setDarkTheme }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -36,7 +41,7 @@ const Navbar: FC<NavbarProps> = ({ darkTheme, setDarkTheme }) => {
     <nav className={`navbar ${darkTheme ? 'dark' : ''} ${scrolled ? 'scrolled' : ''}`}>
       <div className="navbar-container"> 
         <Link to="/" className="navbar-logo">
-          <img src="src/Images/logo.avif" alt="Efie Plans" />
+          <img src={imageLogo} alt="Efie Plans" />
          
         </Link>
 
@@ -88,9 +93,9 @@ const Navbar: FC<NavbarProps> = ({ darkTheme, setDarkTheme }) => {
       </div>
 
       <div className={`mobile-menu ${isMobileMenuOpen ? 'open' : ''}`}>
-        <Link to="/" className="mobile-nav-item">Home</Link>
-        <Link to="/about" className="mobile-nav-item">About</Link>
-        <Link to="/projects" className="mobile-nav-item">Projects</Link>
+        <Link to="/" className="mobile-nav-item" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
+        <Link to="/about" className="mobile-nav-item" onClick={() => setIsMobileMenuOpen(false)}>About</Link>
+        <Link to="/projects" className="mobile-nav-item" onClick={() => setIsMobileMenuOpen(false)}>Projects</Link>
         
         <div 
           className="mobile-dropdown-container"
@@ -107,8 +112,8 @@ const Navbar: FC<NavbarProps> = ({ darkTheme, setDarkTheme }) => {
             ))}
           </div>
         </div>
-        <Link to="/contact" className="mobile-nav-item">Contact Us</Link>
-        <Link to="/blog" className="mobile-nav-item">Blog</Link>
+        <Link to="/contact" className="mobile-nav-item"onClick={() => setIsMobileMenuOpen(false)}>Contact Us</Link>
+        <Link to="/blog" className="mobile-nav-item"onClick={() => setIsMobileMenuOpen(false)}>Blog</Link>
       </div>
     </nav>
   );
