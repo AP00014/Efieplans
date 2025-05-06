@@ -8,6 +8,7 @@ import image2 from '../../../public/Images/img3.jpg'
 import image3 from '../../../public/Images/81836978_2141186975984210_991424691258261504_n.jpg'
 import image4 from '../../../public/Images/interor.jpg'
 import image5 from '../../../public/Images/82604517_2141155279320713_5725934327536025600_n.jpg'
+import imageCaption1 from '../../../public/Images/istockphoto-2117759132-612x612.jpg'
 
 
 const slides = [
@@ -123,16 +124,14 @@ const Home = () => {
     {/* Primary Showcase Row */}
     <div className="feature-row">
       <div className="feature-image">
-        <img src={image1} alt="Next-Gen Construction" />
+        <img src={imageCaption1} alt="Next-Gen Construction" />
       </div>
       <div className="feature-content">
 
         <h3>Your Vision, Perfected Through Innovation</h3>
         <p className="super-text">
-          We deliver <strong>25% faster project completion</strong> through professional project management while 
-          achieving <strong>40% energy savings</strong> via sustainable practices - all wrapped in 
-          <strong>award-winning designs</strong> that increase property value by an average of 
-          <strong>35%</strong>. Our integrated approach combines:
+        Trusted construction experts delivering quality, precision, and on-time results for every project. From dream 
+        homes to commercial spaces – we turn blueprints into reality.
         </p>
         
         <ul className="value-proposition-list">
