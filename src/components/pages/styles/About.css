@@ -9,6 +9,45 @@
 }
  
 
+:root {
+  /* Cyber Core Palette */
+  --cyber-sun: hsl(45, 100%, 55%);      /* Vivid electric yellow */
+  --neon-amber: hsl(35, 100%, 60%);     /* Glowing orange core */
+  --quantum-gold: hsl(40, 100%, 45%);   /* Deep metallic yellow */
+  --hologram-orange: hsl(25, 100%, 55%);/* Holographic light orange */
+  --void-black: hsl(240, 100%, 5%);     /* Deep space black */
+  --neural-white: hsl(60, 100%, 99%);   /* Ultra-bright white */
+
+  /* Futuristic Gradients */
+  --hud-gradient: linear-gradient(
+    135deg,
+    var(--cyber-sun) 0%,
+    var(--neon-amber) 50%,
+    var(--quantum-gold) 100%
+  );
+
+  --neon-edge-gradient: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--hologram-orange) 50%,
+    transparent 100%
+  );
+
+  --depth-glow: radial-gradient(
+    circle at 50% 50%,
+    var(--neon-amber) 10%,
+    transparent 60%
+  );
+
+  /* Dynamic Lighting */
+  --cyber-glow: 0 0 15px var(--cyber-sun),
+               0 0 30px var(--hologram-orange),
+               0 0 45px var(--quantum-gold);
+
+  --neon-stroke: 2px 2px 4px var(--void-black),
+                -2px -2px 4px var(--neural-white);
+}
+
 
 
   @media (max-width: 1024px) {
@@ -913,16 +952,16 @@
 }
 
 .process-number {
-  background: linear-gradient(45deg, #3b82f6, #2563eb);
+  background: var(--quantum-gold);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  opacity: 0.1;
+  opacity: 0.5;
 }
 
 /* CTA Section */
 .cta-section {
-  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+  background: var(--hud-gradient);
   position: relative;
   overflow: hidden;
 }
@@ -957,27 +996,4 @@
 .ctas-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .leadership-card {
-    margin: 1rem;
-    padding: 1.5rem;
-    border-radius: 1.5rem;
-  }
-  
-  .achievements-grid {
-   
-    padding: 2rem 1rem;
-    border-radius: 1.5rem;
-  }
-  
-  .testimonial-card {
-    flex: 0 0 85%;
-  }
-  
-  .timeline-content {
-    padding: 1rem;
-  }
 }

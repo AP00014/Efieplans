@@ -5,10 +5,15 @@ import { useSearchParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import './styles/project.css';
 
+import img1 from '../../../public/Images/81945302_2141154495987458_8142382399708200960_n.jpg'
+import img2 from '../../../public/Images/82604517_2141155279320713_5725934327536025600_n.jpg'
+import img3 from '../../../public/Images/img3.jpg'
+import img4 from '../../../public/Images/81836978_2141186975984210_991424691258261504_n.jpg'
+
 const slides = [
   {
     id: 1,
-    image: 'src/components/pages/Images/81945302_2141154495987458_8142382399708200960_n.jpg',
+    image: [img1],
     title: 'Aperma Towers',
     description: 'Contemporary 6-bedroom smart home with sustainable design',
     location: 'Accra, GH',
@@ -16,7 +21,7 @@ const slides = [
   },
   {
     id: 2,
-    image: 'src/components/pages/Images/82604517_2141155279320713_5725934327536025600_n.jpg',
+    image: [img2],
     title: 'Innovation Tech Hub',
     description: '12-story mixed-use technology campus',
     location: 'Lagos, NG',
@@ -24,7 +29,7 @@ const slides = [
   },
   {
     id: 3,
-    image: 'src/components/pages/Images/img3.jpg',
+    image:[img3],
     title: 'Coastal Luxury Retreat',
     description: 'Private beachfront estate with wellness center',
     location: 'Cape Coast, GH',
@@ -32,7 +37,7 @@ const slides = [
   },
   {
     id: 4,
-    image: 'src/components/pages/Images/81836978_2141186975984210_991424691258261504_n.jpg',
+    image: [img4],
     title: 'Eco Vertical Village',
     description: 'Green-certified high-rise community',
     location: 'Nairobi, KE',
@@ -46,7 +51,7 @@ const allProjects = [
     category: 'architectural', 
     title: 'Modern Skyscraper',
     status: 'completed',
-    image: 'src/components/pages/Images/81945302_2141154495987458_8142382399708200960_n.jpg',
+    image: [img1],
     location: 'New York, US'
   },
   { 
@@ -54,7 +59,7 @@ const allProjects = [
     category: 'constructions', 
     title: 'Bridge Construction',
     status: 'ongoing',
-    image: 'path/to/construction1.jpg',
+    image: [img2],
     location: 'London, UK'
   },
   { 
@@ -62,7 +67,7 @@ const allProjects = [
     category: 'renovations', 
     title: 'Historic Renovation',
     status: 'completed',
-    image: 'path/to/renovation1.jpg',
+    image: [img2],
     location: 'Paris, FR'
   },
   { 
@@ -70,7 +75,7 @@ const allProjects = [
     category: 'interior', 
     title: 'Luxury Apartment Design',
     status: 'ongoing',
-    image: 'path/to/interior1.jpg',
+    image: [img3],
     location: 'Tokyo, JP'
   },
   { 
@@ -78,7 +83,7 @@ const allProjects = [
     category: 'interior', 
     title: 'Luxury Apartment Design',
     status: 'ongoing',
-    image: 'path/to/interior1.jpg',
+    image: [img4],
     location: 'Tokyo, JP'
   },
   { 
@@ -86,7 +91,7 @@ const allProjects = [
     category: 'interior', 
     title: 'Luxury Apartment Design',
     status: 'ongoing',
-    image: 'path/to/interior1.jpg',
+    image: [img2],
     location: 'Tokyo, JP'
   },
   { 
@@ -94,7 +99,7 @@ const allProjects = [
     category: 'interior', 
     title: 'Luxury Apartment Design',
     status: 'completed',
-    image: 'path/to/interior1.jpg',
+    image: [img3],
     location: 'Tokyo, JP'
   }
 ];
@@ -114,7 +119,7 @@ const ProjectGrid = ({ selectedCategory }: { selectedCategory: string }) => {
         <div className="projects-container">
           {completedProjects.map(project => (
             <div key={project.id} className="project-card">
-              <img src={project.image} alt={project.title} className="project-image" />
+              <img src={project.image[0]} alt={project.title} className="project-image" />
               <div className="project-info">
                 <h4>{project.title}</h4>
                 <p className="project-location">📍 {project.location}</p>
@@ -136,7 +141,7 @@ const ProjectGrid = ({ selectedCategory }: { selectedCategory: string }) => {
         <div className="projects-container">
           {ongoingProjects.map(project => (
             <div key={project.id} className="project-card">
-              <img src={project.image} alt={project.title} className="project-image" />
+              <img src={project.image[0]} alt={project.title} className="project-image" />
               <div className="project-info">
                 <h4>{project.title}</h4>
                 <p className="project-location">📍 {project.location}</p>
@@ -205,7 +210,7 @@ const Projects = () => {
   }, [activeSlide, isPaused]);
 
   const handleNavigation = (direction: 'next' | 'prev') => {
-    setSlideDirection(direction);
+    setSlideDirection(direction);0
     setActiveSlide(prev => 
       direction === 'next' 
         ? (prev + 1) % slides.length 
@@ -221,7 +226,7 @@ const Projects = () => {
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
       >
-        <div className="headerSliderTrack" style={{ width: '70%', height: '40vh' }}>
+        <div className="headerSliderTrack" style={{ height: '40vh' }}>
           <div className="headerControls">
             <button 
               className="headerControlBtn"
@@ -249,7 +254,7 @@ const Projects = () => {
             >
               <div className="headerSlideVisual">
                 <img 
-                  src={slides[activeSlide].image} 
+                  src={slides[activeSlide].image[0]} 
                   alt="" 
                   className="headerSlideImg"
                 />
@@ -286,7 +291,7 @@ const Projects = () => {
         </div>
       </section>
 
-      {/* Category Filter and Split Layout Grid */}
+     
       <CategoryFilter />
     </div>
   );

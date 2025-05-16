@@ -123,7 +123,7 @@ const About = () => {
             whileTap={{ scale: 0.95 }}
             className="ctas-button"
           >
-            Schedule Free Consultation
+            Schedule For Consultation
           </motion.button>
         </div>
       </motion.div>

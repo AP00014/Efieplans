@@ -3,7 +3,9 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { FiZoomIn, FiVideo, FiArrowUpRight } from 'react-icons/fi';
 import ReactPlayer from 'react-player';
 import { Link } from 'react-router-dom';
-import './pages/styles/Architectural.css'; // Create this CSS file
+import './pages/styles/Architectural.css'; 
+
+import video1 from '../../public/videos/02673085c141fa1529b528534962bf26.mp4'
 
 interface MediaItem {
   id: number;
@@ -21,7 +23,7 @@ const ArchitecturePage = () => {
 
   const mediaItems: MediaItem[] = [
     
-    { id: 1, type: 'video', url: 'https://youtube.com/watch?v=...', title: 'Modern Villa', location: 'Los Angeles' },
+    { id: 1, type: 'video', url: video1, title: 'Modern Villa', location: 'Los Angeles' },
     { id: 2, type: 'video', url: 'https://youtube.com/watch?v=...', title: 'Eco Complex', location: 'Singapore' },
     { id: 3, type: 'image', url: './Images/81836978_2141186975984210_991424691258261504_n.jpg', title: 'Urban Oasis', location: 'Dubai' },
     { id: 4, type: 'image', url: '/projects/project1.jpg', title: 'Skyline Tower', location: 'New York' }
@@ -45,12 +47,12 @@ const ArchitecturePage = () => {
         >
           <div className="text-container1">
             <h1 className="eh1">
-              <span className="highlight">Architectural</span> Innovation
+              <span className="highlight1">Architectural</span> Innovation
               <br />
               That Shapes Tomorrow
             </h1>
-            <p className="subheadline">
-              Creating spaces that <span className="accent-text">inspire human connection</span>,
+            <p className="subheadline1">
+              Creating spaces that <span className="accent-text1">inspire human connection</span>,
               <br />
               blending cutting-edge technology with sustainable design principles.
             </p>
@@ -67,7 +69,7 @@ const ArchitecturePage = () => {
       </section>
 
       {/* Media Gallery Section */}
-      <section className="media-gallery" ref={mediaRef}>
+      <section className="media-gallery1" ref={mediaRef}>
         <motion.div 
           className="gallery-header"
           initial={{ opacity: 0 }}
