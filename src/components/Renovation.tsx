@@ -76,8 +76,8 @@ const RenovationPage = () => {
         
         <div className="comparison-preview">
           <ReactCompareSlider
-            itemOne={<img src="src/Images/img1.jpg" alt="Before" />}
-            itemTwo={<img src="./Images/img2.jpg" alt="After" />}
+            itemOne={<img src={image1} alt="Before" />}
+            itemTwo={<img src={image2} alt="After" />}
           />
         </div>
       </section>
