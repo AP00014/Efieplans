@@ -106,7 +106,8 @@ const Navbar: FC<NavbarProps> = ({ darkTheme, setDarkTheme }) => {
           </div>
           <div className={`mobile-dropdown-menu ${isServicesOpen ? 'open' : ''}`}>
             {servicesLinks.map((service) => (
-              <Link key={service.link} to={service.link} className="mobile-dropdown-item">
+              <Link key={service.link} to={service.link} className="mobile-dropdown-item"  onClick={() => setIsMobileMenuOpen(false)}>
+
                 {service.name}
               </Link>
             ))}

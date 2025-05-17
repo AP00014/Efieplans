@@ -4,6 +4,11 @@ import { FiTool, FiHome, FiRefreshCw, FiCheckCircle, FiX } from 'react-icons/fi'
 import { ReactCompareSlider } from 'react-compare-slider';
 import './pages/styles/Renovation.css';
 
+import image1 from '../../public/Images/img1.jpg';
+import image2 from '../../public/Images/img2.jpg';
+
+
+
 interface Project {
   id: number;
   title: string;
@@ -24,8 +29,8 @@ const RenovationPage = () => {
       id: 1, 
       title: 'Vintage Home Restoration', 
       type: 'Full Home', 
-      before: '/projects/old-house.jpg',
-      after: '/projects/renovated-house.jpg',
+      before: image1,
+      after: image2,
       duration: '6 Months' 
     },
     // Add more projects

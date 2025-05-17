@@ -24,11 +24,7 @@
     min-height: 100vh;
     padding: var(--spacing-xl);
     gap: var(--spacing-xl);
-    background: linear-gradient(
-      45deg,
-      var(--primary-color) 0%,
-      rgba(230, 239, 245, 0.9) 100%
-    );
+    background:#f7efc1 ;
    
   }
   

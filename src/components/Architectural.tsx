@@ -6,6 +6,10 @@ import { Link } from 'react-router-dom';
 import './pages/styles/Architectural.css'; 
 
 import video1 from '../../public/videos/02673085c141fa1529b528534962bf26.mp4'
+import thumb1 from '../../public/images/1705497058699.jpg'
+
+
+
 
 interface MediaItem {
   id: number;
@@ -13,6 +17,7 @@ interface MediaItem {
   url: string;
   title: string;
   location: string;
+  thumbnail?: string; 
 }
 
 const ArchitecturePage = () => {    
@@ -23,7 +28,7 @@ const ArchitecturePage = () => {
 
   const mediaItems: MediaItem[] = [
     
-    { id: 1, type: 'video', url: video1, title: 'Modern Villa', location: 'Los Angeles' },
+    { id: 1, type: 'video', url: video1, title: 'Modern Villa', location: 'Los Angeles', thumbnail: thumb1 },
     { id: 2, type: 'video', url: 'https://youtube.com/watch?v=...', title: 'Eco Complex', location: 'Singapore' },
     { id: 3, type: 'image', url: './Images/81836978_2141186975984210_991424691258261504_n.jpg', title: 'Urban Oasis', location: 'Dubai' },
     { id: 4, type: 'image', url: '/projects/project1.jpg', title: 'Skyline Tower', location: 'New York' }
@@ -106,8 +111,12 @@ const ArchitecturePage = () => {
                   url={item.url}
                   width="100%"
                   height="100%"
-                  light
-                  playIcon={<FiVideo size={40} />}
+                  light={item.thumbnail || true}
+                  playIcon={
+                  <div className="play-icon-container">
+                  <FiVideo size={40} />
+                </div>}
+                 style={{ backgroundImage: `url(${item.thumbnail})` }}
                 />
               )}
               <div className="media-overlay">
