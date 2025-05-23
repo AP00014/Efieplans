@@ -3,11 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { FiChevronLeft, FiChevronRight, FiArrowRight, FiExternalLink } from 'react-icons/fi';
 import Slider from 'react-slick';
 import { FaQuoteLeft, FaHardHat, FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
 import './styles/Home.css';
-
 
 import image1 from '../../../public/Images/81945302_2141154495987458_8142382399708200960_n.jpg'
 import image2 from '../../../public/Images/img3.jpg'
@@ -23,41 +23,6 @@ import showcaseimg4 from '../../../public/Images/1723475669104.jpg'
 
 
 
-const slides = [
-  
-    {
-        image: [image1],
-        title: 'Complete Project Management',
-        description: 'Seamless execution from concept to completion',
-        button: 'Get Started'
-      },
-    {
-    image: [image2],
-    title: 'Innovative Building Solutions',
-    description: 'Transforming visions into architectural masterpieces with cutting-edge technology',
-    button: 'Explore Projects'
-  },
-  {
-    image: [image3],
-    title: 'Premium Construction Services',
-    description: 'From foundation to finish - excellence in every brick laid',
-    button: 'View Services'
-  },
-  {
-    image: [image4],
-    title: 'Modern Interior Designs',
-    description: 'Creating spaces that inspire and elevate lifestyles',
-    button: 'See Designs'
-  },
-  {
-    image: [image5],
-    title: 'Sustainable Renovations',
-    description: 'Breathing new life into existing structures responsibly',
-    button: 'Learn More'
-  },
- 
-];
-
 
 const TestimonialsSection = () => {
   const sliderRef = React.useRef<Slider>(null); // Corrected useRef import
@@ -68,9 +33,8 @@ const TestimonialsSection = () => {
     infinite: true,
     speed: 800,
     slidesToShow: 3,
-    slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 5000,
+    autoplaySpeed: 3000,
     arrows: false,
     swipe: true,
     swipeToSlide: true,
@@ -169,72 +133,137 @@ const testimonials = [
 
 const Home = () => {
 const [currentSlide, setCurrentSlide] = useState(0);
-const [isAutoPlay, setIsAutoPlay] = useState(true);
+  const [isAutoPlay, setIsAutoPlay] = useState(true);
+  const totalSlides = 5; // Now fixed since we're not using array
 
-useEffect(() => {
-  let interval: NodeJS.Timeout;
-  if (isAutoPlay) {
-    interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 7000);
-  }
-  return () => clearInterval(interval);
-}, [isAutoPlay]);
-  // Removed unused states: activeCardId and isTouchDevice
-
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isAutoPlay) {
+      interval = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % totalSlides);
+      }, 7000);
+    }
+    return () => clearInterval(interval);
+  }, [isAutoPlay, totalSlides]);
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
+    setCurrentSlide((prev) => (prev + 1) % totalSlides);
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+    setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
   };
+
 
   return (
     <>
-
-    <section className="hero-slider" 
-      onMouseEnter={() => setIsAutoPlay(false)}
-      onMouseLeave={() => setIsAutoPlay(true)}
-    >
-      {slides.map((slide, index) => (
+ <section className="hero-slider" 
+        onMouseEnter={() => setIsAutoPlay(false)}
+        onMouseLeave={() => setIsAutoPlay(true)}
+      >
         <div 
-          key={index}
-          className={`slide ${index === currentSlide ? 'active' : ''}`}
-          style={{ backgroundImage: `url(${slide.image})` }}
+          className={`slide ${0 === currentSlide ? 'active' : 'hidden'}`}
+          style={{ backgroundImage: `url(${image1})` }}
         >
           <div className="slide-content">
-            <div className={`text-container ${index === currentSlide ? 'animate' : ''}`}>
-              <h1 className="slide-title">{slide.title}</h1>
-              <p className="slide-description">{slide.description}</p>
-              <button className="slide-button">
-                {slide.button}
+            <div className={`text-container ${0 === currentSlide ? 'animate' : ''}`}>
+              <h1 className="slide-title">Complete Project Management</h1>
+              <p className="slide-description">Seamless execution from concept to completion</p>
+              <Link to="/projects" className="slide-button">
+                Explore Projects
                 <FiArrowRight className="button-icon" />
-              </button>
+              </Link>
             </div>
           </div>
         </div>
-      ))}
 
-<div className="nav-buttons-container">
-  <button className="nav-button prev" onClick={prevSlide}>
-    <FiChevronLeft size={20} />
-  </button>
-  <button className="nav-button next" onClick={nextSlide}>
-    <FiChevronRight size={20} />
-  </button>
-</div>
-      <div className="pagination">
-        {slides.map((_, index) => (
-          <button
-            key={index}
-            className={`pagination-dot ${index === currentSlide ? 'active' : ''}`}
-            onClick={() => setCurrentSlide(index)}
-          />
-        ))}
-      </div>
-    </section>
+        {/* Slide 2 - Innovations */}
+        <div 
+          className={`slide ${1 === currentSlide ? 'active' : 'hidden'}`}
+          style={{ backgroundImage: `url(${image2})` }}
+        >
+          <div className="slide-content">
+            <div className={`text-container ${1 === currentSlide ? 'animate' : ''}`}>
+              <h1 className="slide-title">Innovative Building Solutions</h1>
+              <p className="slide-description">Transforming visions into architectural masterpieces</p>
+              <Link to="../architectural" className="slide-button">
+                Explore Innovations
+                <FiArrowRight className="button-icon" />
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Slide 3 - Services */}
+        <div 
+          className={`slide ${2 === currentSlide ? 'active' : 'hidden'}`}
+          style={{ backgroundImage: `url(${image3})` }}
+        >
+          <div className="slide-content">
+            <div className={`text-container ${2 === currentSlide ? 'animate' : ''}`}>
+              <h1 className="slide-title">Premium Construction Services</h1>
+              <p className="slide-description">Excellence in every brick laid</p>
+              <Link to="../contruction" className="slide-button">
+                View Services
+                <FiArrowRight className="button-icon" />
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Slide 4 - Designs */}
+        <div 
+          className={`slide ${3 === currentSlide ? 'active' : 'hidden'}`}
+          style={{ backgroundImage: `url(${image4})` }}
+        >
+          <div className="slide-content">
+            <div className={`text-container ${3 === currentSlide ? 'animate' : ''}`}>
+              <h1 className="slide-title">Modern Interior Designs</h1>
+              <p className="slide-description">Creating inspiring spaces</p>
+              <Link to="../interior" className="slide-button">
+                See Designs
+                <FiArrowRight className="button-icon" />
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Slide 5 - Renovations */}
+        <div 
+          className={`slide ${4 === currentSlide ? 'active' : 'hidden'}`}
+          style={{ backgroundImage: `url(${image5})` }}
+        >
+          <div className="slide-content">
+            <div className={`text-container ${4 === currentSlide ? 'animate' : ''}`}>
+              <h1 className="slide-title">Sustainable Renovations</h1>
+              <p className="slide-description">Responsible structural transformations</p>
+              <Link to="../renovation" className="slide-button">
+                Explore Renovations
+                <FiArrowRight className="button-icon" />
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        <div className="nav-buttons-container">
+          <button className="nav-button prev" onClick={prevSlide}>
+            <FiChevronLeft size={20} />
+          </button>
+          <button className="nav-button next" onClick={nextSlide}>
+            <FiChevronRight size={20} />
+          </button>
+        </div>
+        
+        <div className="pagination">
+          {[0, 1, 2, 3, 4].map((index) => (
+            <button
+              key={index}
+              className={`pagination-dot ${index === currentSlide ? 'active' : ''}`}
+              onClick={() => setCurrentSlide(index)}
+            />
+          ))}
+        </div>
+      </section>
 
     <section className="innovation-showcase">
   <div className="section-header">
@@ -284,12 +313,11 @@ useEffect(() => {
         <div className="parallax-content">
           <h2>Architectural Mastery That Redefines Boundaries – From Concept to Skyline </h2>
           <p>Transform Spaces into Masterpieces: Tailored Designs for Homeowners, Developers, and Businesses.</p>
-          <button className="c-button">
-            View Architectural designs <FiArrowRight />
-          </button>
+         <Link to="../Architectural" className="c-button">
+  View Architectural designs <FiArrowRight />
+</Link>
         </div>
       </section>
-
 <section className="showcase">
   <div className="section-header">
     <h2>Our Showcase</h2>
@@ -303,9 +331,9 @@ useEffect(() => {
         <div className="image-overlay">
           <h3>Industrial Solutions</h3>
           <p>Advanced manufacturing processes for modern industry</p>
-          <a href="/projects/1" className="view-link">
+          <Link to="/projects/1" className="view-link">
             View Details <FiExternalLink />
-          </a>
+          </Link>
         </div>
       </div>
       <div className="showcas_img_2">
@@ -313,9 +341,9 @@ useEffect(() => {
         <div className="image-overlay">
           <h3>Sustainable Design</h3>
           <p>Eco-friendly engineering solutions</p>
-          <a href="/projects/2" className="view-link">
+          <Link to="/projects/2" className="view-link">
             View Details <FiExternalLink />
-          </a>
+          </Link>
         </div>
       </div>
     </div>
@@ -327,9 +355,9 @@ useEffect(() => {
           <div className="image-overlay">
             <h3>Precision Engineering</h3>
             <p>Micro-scale components with macro impact</p>
-            <a href="/projects/3" className="view-link">
+            <Link to="/projects/3" className="view-link">
               View Details <FiExternalLink />
-            </a>
+            </Link>
           </div>
         </div>
         <div className="showcas_img_4">
@@ -337,9 +365,9 @@ useEffect(() => {
           <div className="image-overlay">
             <h3>Advanced Prototyping</h3>
             <p>Rapid development solutions</p>
-            <a href="/projects/4" className="view-link">
+            <Link to="/projects/4" className="view-link">
               View Details <FiExternalLink />
-            </a>
+            </Link>
           </div>
         </div>
       </div>
@@ -350,9 +378,9 @@ useEffect(() => {
           <div className="image-overlay">
             <h3>Custom Solutions</h3>
             <p>Tailored engineering approaches</p>
-            <a href="/projects/5" className="view-link">
+            <Link to="/projects/5" className="view-link">
               View Details <FiExternalLink />
-            </a>
+            </Link>
           </div>
         </div>
         <div className="showcas_img_6">
@@ -360,9 +388,9 @@ useEffect(() => {
           <div className="image-overlay">
             <h3>Quality Assurance</h3>
             <p>Rigorous testing protocols</p>
-            <a href="/projects/6" className="view-link">
+            <Link to="/projects/6" className="view-link">
               View Details <FiExternalLink />
-            </a>
+            </Link>
           </div>
         </div>
       </div>
@@ -370,12 +398,11 @@ useEffect(() => {
   </div>
 
   <div className="showcase-button-container">
-    <button className="showcase-button">
+    <Link to="/projects" className="showcase-button">
       View All Projects <FiArrowRight />
-    </button>
+    </Link>
   </div>
 </section>
-
 
 
   <TestimonialsSection />

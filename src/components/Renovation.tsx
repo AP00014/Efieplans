@@ -65,13 +65,7 @@ const RenovationPage = () => {
             Specializing in residential and commercial property transformations since 2005
           </p>
           
-          <div className="cta-container">
-            <button className="Cta-button5">
-             view Projects
-              <FiCheckCircle />
-            </button>
-            
-          </div>
+        
         </motion.div>
         
         <div className="comparison-preview">
@@ -165,11 +159,19 @@ const RenovationPage = () => {
               <p>{selectedProject.duration}</p>
             </div>
           </div>
-        </div>
+        </div>/
       </div>
 
       )}
-    </motion.div>
+
+        <div className="cta-container">
+            <button className="Cta-button5">
+             view Projects
+              <FiCheckCircle />
+            </button>
+            
+          </div>
+    </motion.div>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
   );
 };
 

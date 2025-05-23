@@ -10,6 +10,21 @@
     --text-light2: #ffffff;
   }
   
+
+ :root{
+    --bg-color: #ededed;
+    --second-bg-color:#112e42;
+    --text-color:#081b29;
+    --text-color2:#ededed;
+    --main-color:#00abf0;
+    --main-color2:rgb(4, 128, 211);
+  }
+   
+
+
+
+
+
   .renovation-container {
     background: var(--primary-color);
     color: var(--text-dark);
@@ -27,6 +42,10 @@
     background:#f7efc1 ;
    
   }
+
+  .dark-theme .hero-section{
+    background: var(--text-color);
+  }
   
 .hc,h1{
     font-size: 3rem;
@@ -36,6 +55,16 @@
     line-height: 1.1;
     
   }
+
+  .dark-theme .hc h1{
+    color: var(--bg-color);
+  }
+
+
+  .dark-theme .hc p{
+    color: var(--bg-color);
+  }
+
 
   .comparison-preview {
     border-radius: 8px;

@@ -3,7 +3,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { FiZoomIn, FiVideo, FiArrowUpRight } from 'react-icons/fi';
 import ReactPlayer from 'react-player';
 import { Link } from 'react-router-dom';
-import './pages/styles/Architectural.css'; // Create this CSS file
+import './pages/styles/construction.css'; // Create this CSS file
 
 interface MediaItem {
   id: number;
@@ -36,21 +36,21 @@ const ArchitecturePage = () => {
       exit={{ opacity: 0 }}
     >
       {/* Hero Section */}
-      <section className="hero-section1">
+      <section className="hero-section4">
         <motion.div 
-          className="hero-content1"
+          className="hero-content4"
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8 }}
         >
-          <div className="text-container1">
-            <h1 className="eh1">
+          <div className="text-container4">
+            <h1 className="eh4">
              
             Building Tomorrow's
-              <span className="highlight">Landmarks</span>
+              <span className="highlight4">Landmarks</span>
               <br />
             </h1>
-            <p className="subheadline">
+            <p className="subhead4">
             Full-service construction firm specializing in commercial, residential, and industrial projects
             </p>
           </div>
