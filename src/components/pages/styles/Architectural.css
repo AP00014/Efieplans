@@ -89,6 +89,9 @@
     align-items: center;
     background:linear-gradient(rgba(0, 0, 0, 0.616),rgba(0, 0, 0, 0.527)), url('../../../../public/Images/81945302_2141154495987458_8142382399708200960_n.jpg');
      background-size: cover;
+ background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
     padding: 0 var(--spacing-xl);
     position: relative;
     overflow: hidden;
@@ -326,14 +329,20 @@
   
   @media (max-width: 768px) {
     .hero-section1 {
-      padding: 20px;
+    background-attachment: local;
+    padding: 20px;
+    height: 50vh;
     }
     
    .text-container1 .eh1{
-      font-size: 2.5rem;  
+      font-size: 1.8rem;  
      
     }
     
+.hero-content1{
+   margin: 80px auto 0;
+}
+
     .subheadline1 {
       font-size: 1rem;
     }

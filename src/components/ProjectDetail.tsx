@@ -1,7 +1,7 @@
 import { useState} from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { 
-  FaPlay, FaArrowLeft, FaArrowRight, FaDownload
+  FaPlay, FaArrowLeft, 
 } from 'react-icons/fa';
 import { allProjects } from '../data';
 import ImageGallery from 'react-image-gallery';
@@ -144,32 +144,6 @@ const ProjectDetail = () => {
   </section>
 )}
 
-        {(project.details.blueprints ?? []).length > 0 && (
-          <section className="documents-section">
-            <h2>Technical Documents</h2>
-            <div className="documents-grid">
-              {(project.details.blueprints ?? []).map((doc, index) => (
-                <a key={index} href={doc} download className="doc-card">
-                  <FaDownload />
-                  <span>Document {index + 1}</span>
-                </a>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {project.details.virtualTour && (
-          <section className="virtual-tour-section">
-            <a
-              href={project.details.virtualTour}
-              className="tour-button"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Start 3D Experience <FaArrowRight />
-            </a>
-          </section>
-        )}
       </main>
     </div>
   );

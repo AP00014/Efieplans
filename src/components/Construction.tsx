@@ -66,7 +66,7 @@ const ArchitecturePage = () => {
       </section>
 
       {/* Media Gallery Section */}
-      <section className="media-gallery" ref={mediaRef}>
+      <section className="media-gallery4" ref={mediaRef}>
         <motion.div 
           className="gallery-header"
           initial={{ opacity: 0 }}
