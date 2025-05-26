@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { slides } from '../data';
 import ImageGallery from 'react-image-gallery';
 import 'react-image-gallery/styles/css/image-gallery.css';
-import { FaPlay, FaArrowLeft, FaArrowRight, FaDownload } from 'react-icons/fa';
+import { FaPlay, FaArrowLeft } from 'react-icons/fa';
 import '../components/pages/styles/featuredDetail.css';
 import { MediaItem } from './types';
 
@@ -141,32 +141,7 @@ const FeaturedDetail = () => {
           </section>
         )}
 
-        {(slide.details?.blueprints?.length ?? 0) > 0 && (
-          <section className="documents-section">
-            <h2>Technical Documents</h2>
-            <div className="documents-grid">
-              {slide.details.blueprints?.map((doc, index) => (
-                <a key={index} href={doc} download className="doc-card">
-                  <FaDownload />
-                  <span>Document {index + 1}</span>
-                </a>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {slide.details?.virtualTour && (
-          <section className="virtual-tour">
-            <a
-              href={slide.details.virtualTour}
-              className="tour-button"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Explore in 3D <FaArrowRight />
-            </a>
-          </section>
-        )}
+       
       </main>
     </div>
   );

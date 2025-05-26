@@ -3,11 +3,18 @@ import { Slide } from './components/types';
 
 
 
+import sdl from '../public/Images/81945302_2141154495987458_8142382399708200960_n.jpg'
+
+import sdl2 from '../public/Images/462932421_7677982035637982_8133384283652711148_n.jpg'
+
+import dl3 from '../public/Images/1706916591344.jpg'
+
+
  
  export const slides: Slide[] = [
     {
         id: 1, 
-      image: '../public/Images/img3.jpg',
+      image: pdl,
       title: 'Apermah Tower',
       description: 'Contemporary 6-bedroom smart home with sustainable design',
       location: 'Accra, GH',
@@ -140,7 +147,11 @@ import { Slide } from './components/types';
 
 
 
+import pdl from '../public/Images/81945302_2141154495987458_8142382399708200960_n.jpg'
 
+import pdl2 from '../public/Images/462932421_7677982035637982_8133384283652711148_n.jpg'
+
+import pdl3 from '../public/Images/1706916591344.jpg'
 
 
   export const allProjects: Project[] = [
@@ -150,7 +161,7 @@ import { Slide } from './components/types';
       title: 'Modern Skyscraper',
       description:'Private beachfront estate with wellness center', 
       status: 'completed',
-      image: '../public/Images/81945302_2141154495987458_8142382399708200960_n.jpg',
+      image: pdl,
       location: 'New York, US',
       details: {
         specifications: {
@@ -163,9 +174,9 @@ import { Slide } from './components/types';
         timeline: '2018-2022',
         materials: ['Reinforced Concrete', 'Glass Facade', 'Steel Framework'],
         imageGallery: [
-          '../public/Images/462932421_7677982035637982_8133384283652711148_n.jpg',
-          '../public/Images/img3.jpg',
-          '../public/Images/interor.jpg'
+          pdl,
+          pdl2,
+         pdl3
         ],
         videos: [
           { url: '../public/videos/02673085c141fa1529b528534962bf26.mp4', type: 'local' ,
