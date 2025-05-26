@@ -1,5 +1,5 @@
-import { useState} from 'react';
-import { HashRouter as Router, Route, Routes} from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { HashRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './components/pages/Home';
@@ -15,6 +15,18 @@ import RenovationPage from './components/Renovation';
 import './App.css';
 
 
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
+
+
 function App() {
   const [darkTheme, setDarkTheme] = useState(false);
 
@@ -22,7 +34,7 @@ function App() {
     <Router>
       <div className={`app-container ${darkTheme ? 'dark-theme' : 'light-theme'}`}>
         <Navbar darkTheme={darkTheme} setDarkTheme={setDarkTheme} />
-        
+          <ScrollToTop />
         <main className="main-content">
           
           <Routes>

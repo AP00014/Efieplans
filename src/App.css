@@ -9,6 +9,16 @@
 }
 
 
+html {
+  scroll-behavior: smooth;
+}
+
+/* Initial load position */
+body:not(.user-has-scrolled) {
+  scroll-snap-stop: always;
+  overflow-anchor: none;
+}
+
 
 .app-container {
     min-height: 100vh;
