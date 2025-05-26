@@ -5,16 +5,12 @@ import { Slide } from './components/types';
 
 import sdl from '../public/Images/81945302_2141154495987458_8142382399708200960_n.jpg'
 
-import sdl2 from '../public/Images/462932421_7677982035637982_8133384283652711148_n.jpg'
-
-import dl3 from '../public/Images/1706916591344.jpg'
-
 
  
  export const slides: Slide[] = [
     {
         id: 1, 
-      image: pdl,
+      image: sdl,
       title: 'Apermah Tower',
       description: 'Contemporary 6-bedroom smart home with sustainable design',
       location: 'Accra, GH',
