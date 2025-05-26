@@ -61,3 +61,17 @@
     animation-name: fadeInUp;
   }
   
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+h1, h2, h3 {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+}
+
+/* For code/monospace elements */
+code {
+  font-family: 'JetBrains Mono', monospace;
+}
+
