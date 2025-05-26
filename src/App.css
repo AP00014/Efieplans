@@ -19,6 +19,10 @@ body:not(.user-has-scrolled) {
   overflow-anchor: none;
 }
 
+.app-container {
+  scroll-behavior: smooth;
+  overflow-anchor: none;
+}
 
 .app-container {
     min-height: 100vh;
