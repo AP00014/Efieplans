@@ -1,226 +1,160 @@
-import { Project } from './components/types';
-import { Slide } from './components/types';
+import img1 from '../public/Images/81945302_2141154495987458_8142382399708200960_n.jpg';
+import img2 from '../public/Images/82604517_2141155279320713_5725934327536025600_n.jpg';
+import img3 from '../public/Images/img3.jpg';
+import img4 from '../public/Images/81836978_2141186975984210_991424691258261504_n.jpg';
+import img5 from '../public/Images/462932421_7677982035637982_8133384283652711148_n.jpg';
+import img6 from '../public/Images/1706916591344.jpg';
+import { ProjectItem } from './components/types';
 
 
 
-import sdl from '../public/Images/81945302_2141154495987458_8142382399708200960_n.jpg'
-
-
- 
- export const slides: Slide[] = [
-    {
-        id: 1, 
-      image: sdl,
-      title: 'Apermah Tower',
-      description: 'Contemporary 6-bedroom smart home with sustainable design',
-      location: 'Accra, GH',
-      status: 'completed',
-      details:{
-        description: "A groundbreaking residential project combining sustainable design with smart home technology...",
-        features: [
-          "Solar panel integration",
-          "Greywater recycling system",
-          "Home automation package"
-        ],
-        specifications: {
-          area: "6500 sq ft",
-          floors: '3',
-          bedrooms: '6',
-          completion: "2023"
-        },
-        imageGallery: [
-          '../public/Images/img3.jpg',
-          'path/to/gallery2.jpg',
-          'path/to/gallery3.jpg',
-          'path/to/gallery3.jpg'
-        ],
-        videos: [
-          { url: '../public/videos/02673085c141fa1529b528534962bf26.mp4', type: 'local',
-            thumbnail: '../public/Images/462932421_7677982035637982_8133384283652711148_n.jpg'
-           },
-
-          { url: '../public/videos/df3f9fcb4aac3224f69f8dab22f657bb.mp4', type: 'local',
-            thumbnail: '../public/Images/462932421_7677982035637982_8133384283652711148_n.jpg'
-           }
-        ],
-        virtualTour: 'https://3d-tour-link.com/project1'
-      }
-    },
-
+export const allProjects: ProjectItem[] = [
+  {
+    id: 1,
+    category: 'architectural',
+    title: 'Modern Skyscraper',
+    description: 'Contemporary 6-bedroom smart home with sustainable design',
+    status: 'completed',
+    image: img1,
+    location: 'New York, US',
+    details: {
+      specifications: {
+        height: '300m',
+        floors: '80',
+        area: '150,000 sq ft',
+        completion: '2022'
+      },
     
-
-
-    {
-        id: 2, 
-      image: 'src/components/pages/Images/82604517_2141155279320713_5725934327536025600_n.jpg',
-      title: 'Innovation Tech Hub',
-      description: '12-story mixed-use technology campus',
-      location: 'Lagos, NG',
-      status: 'ongoing',
-      details: {
-        specifications: {
-          area: '6500 sq ft',
-          floors: '3',
-          bedrooms: '6',
-          completion: '2023'
-        },
-        imageGallery: [
-          '/images/gallery/urban-1.jpg',
-          '/images/gallery/urban-2.jpg'
-        ],
-        videos: [
-          { url: '/videos/urban-overview.mp4', type: 'local',
-            thumbnail: '../public/Images/462932421_7677982035637982_8133384283652711148_n.jpg'
-           },
-          { url: 'https://youtu.be/abc123', type: 'local' ,
-            thumbnail: '../public/Images/462932421_7677982035637982_8133384283652711148_n.jpg'
-          }
-        ],
-        virtualTour: 'https://3d-tours.com/urban-oasis'
-      }
-    },
-
-    {
-        id: 3, 
-      image: 'src/components/pages/Images/img3.jpg',
-      title: 'Coastal Luxury Retreat',
-      description: 'Private beachfront estate with wellness center',
-      location: 'Cape Coast, GH',
-      status: 'ongoing',
-      details: {
-        specifications: {
-          area: '6500 sq ft',
-          floors: '3',
-          bedrooms: '6',
-          completion: '2023'
-        },
-        imageGallery: [
-          '../public/Images/img4.jpg',
-          '/images/gallery/urban-2.jpg'
-        ],
-        videos: [
-          { url: './public/videos/23881-337972830.mp4', type: 'local',
-            thumbnail: '../public/Images/462932421_7677982035637982_8133384283652711148_n.jpg'
-           },
-          { url: 'https://youtu.be/abc123', type: 'local',
-            thumbnail: '../public/Images/462932421_7677982035637982_8133384283652711148_n.jpg'
-           }
-        ],
-        virtualTour: 'https://3d-tours.com/urban-oasis'
-      }
-    },
-    {
-      id: 4,
-      image: 'src/components/pages/Images/81836978_2141186975984210_991424691258261504_n.jpg',
-      title: 'Eco Vertical Village',
-      description: 'Green-certified high-rise community',
-      location: 'Nairobi, KE',
-      status: 'completed',
-      details: {
-        specifications: {
-          area: '6500 sq ft',
-          floors: '3',
-          bedrooms: '6',
-          completion: '2023'
-        },
-        imageGallery: [
-          'src/components/pages/Images/81945302_2141154495987458_8142382399708200960_n.jpg',
-          'src/components/pages/Images/82604517_2141155279320713_5725934327536025600_n.jpg'
-        ],
-        videos: [
-          { url: './components/pages/videos/23881-337972830.mp4', type: 'local',
-            thumbnail: '../public/Images/462932421_7677982035637982_8133384283652711148_n.jpg'
-           },
-          { url: 'https://youtu.be/abc123', type: 'local',
-            thumbnail: '../public/Images/462932421_7677982035637982_8133384283652711148_n.jpg'
-           }
-        ],
-        virtualTour: 'https://3d-tours.com/urban-oasis'
+      timeline: '2018-2022',
+      materials: ['Reinforced Concrete', 'Glass Facade', 'Steel Framework'],
+      imageGallery: [img1, img2, img3],
+      videos: [
+        { 
+          url: '/videos/02673085c141fa1529b528534962bf26.mp4', 
+          type: 'local',
+          thumbnail: img5
+        }
+      ],
+      blueprints: ['/downloads/skyscraper-structural.pdf'],
+      virtualTour: 'https://3dtour.com/skyscraper'
+    }
+  },
+  {
+    id: 2,
+    category: 'architectural',
+    title: 'Innovation Tech Hub',
+    description: '12-story mixed-use technology campus',
+    status: 'ongoing',
+    image: img2,
+    location: 'Lagos, NG',
+    details: {
+      specifications: {
+        height: '150m',
+        floors: '35',
+        area: '85,000 sq ft',
+        completion: '2024'
+      },
+     
+      timeline: '2021-2024',
+      materials: ['Smart Glass', 'Carbon Composite'],
+      imageGallery: [img2, img3],
+      videos: [
+        { 
+          url: '/videos/techhub-overview.mp4', 
+          type: 'local',
+          thumbnail: img3
+        }
+      ],
+      virtualTour: 'https://3dtour.com/techhub'
+    }
+  },
+  {
+    id: 3,
+    title: 'Coastal Luxury Retreat',
+    description: 'Private beachfront estate with wellness center',
+    status: 'ongoing',
+    image: img3,
+    location: 'Cape Coast, GH',
+    details: {
+      specifications: {
+        area: '12,000 sq ft',
+        bedrooms: '8',
+        completion: '2024'
+      },
+      features: [
+        'Private beach access',
+        'Infinity pool',
+        'Spa & wellness center'
+      ],
+      imageGallery: [img3, img4],
+      videos: [
+        { 
+          url: '/videos/coastal-retreat.mp4', 
+          type: 'local',
+          thumbnail: img4
+        }
+      ],
+      virtualTour: 'https://3dtour.com/coastal-retreat'
+    }
+  },
+  {
+    id: 4,
+    title: 'Eco Vertical Village',
+    description: 'Green-certified high-rise community',
+    status: 'completed',
+    image: img4,
+    location: 'Nairobi, KE',
+    details: {
+      specifications: {
+        units: '120',
+        area: '450,000 sq ft',
+        completion: '2022'
+      },
+      features: [
+        'Vertical gardens',
+        'Rainwater harvesting',
+        'Solar power generation'
+      ],
+      imageGallery: [img4, img1],
+      videos: [
+        { 
+          url: 'https://youtube.com/embed/ecovillage', 
+          type: 'external',
+          thumbnail: img1
+        }
+      ],
+      virtualTour: 'https://3dtour.com/ecovillage'
+    }
+  },
+  {
+    id: 5,
+    category: 'constructions',
+    title: 'Bridge Construction',
+    status: 'ongoing',
+    image: img5,
+    location: 'London, UK',
+    description: 'Major river crossing with innovative engineering',
+    details: {
+      specifications: {
+        length: '850m',
+        lanes: '6',
+        completion: '2025'
       }
     }
-  ];
-
-
-
-
-import pdl from '../public/Images/81945302_2141154495987458_8142382399708200960_n.jpg'
-
-import pdl2 from '../public/Images/462932421_7677982035637982_8133384283652711148_n.jpg'
-
-import pdl3 from '../public/Images/1706916591344.jpg'
-
-
-  export const allProjects: Project[] = [
-    {
-      id: 1,
-      category: 'architectural',
-      title: 'Modern Skyscraper',
-      description:'Private beachfront estate with wellness center', 
-      status: 'completed',
-      image: pdl,
-      location: 'New York, US',
-      details: {
-        specifications: {
-          height: '300m',
-          floors: '80',
-          area: '150,000 sq ft',
-          completion: '2022'
-        },
-        architects: ['John Architect', 'Jane Designer'],
-        timeline: '2018-2022',
-        materials: ['Reinforced Concrete', 'Glass Facade', 'Steel Framework'],
-        imageGallery: [
-          pdl,
-          pdl2,
-         pdl3
-        ],
-        videos: [
-          { url: '../public/videos/02673085c141fa1529b528534962bf26.mp4', type: 'local' ,
-            thumbnail: '../public/Images/81945302_2141154495987458_8142382399708200960_n.jpg'
-          },
-          { url: '../public/videos/df3f9fcb4aac3224f69f8dab22f657bb.mp4', type: 'local',
-            thumbnail: '../public/Images/462932421_7677982035637982_8133384283652711148_n.jpg'
-           }
-        ],
-        blueprints: ['/downloads/skyscraper-structural.pdf'],
-        virtualTour: 'https://3dtour.com/skyscraper'
-      }
-    },
-
-
-    {
-      id: 2,
-      category: 'architectural',
-      title: 'Eco-Friendly Housing',
-      description:'Private beachfront estate with wellness center', 
-      status: 'ongoing',
-      image: '../public/Images/81945302_2141154495987458_8142382399708200960_n.jpg',
-      location: 'New York, US',
-      details: {
-        specifications: {
-          height: '300m',
-          floors: '80',
-          area: '150,000 sq ft',
-          completion: '2022'
-        },
-        architects: ['John Architect', 'Jane Designer'],
-        timeline: '2018-2022',
-        materials: ['Reinforced Concrete', 'Glass Facade', 'Steel Framework'],
-        imageGallery: [
-          '../public/Images/462932421_7677982035637982_8133384283652711148_n.jpg',
-          '../public/Images/img3.jpg',
-          '../public/Images/interor.jpg'
-        ],
-        videos: [
-          { url: '../public/videos/02673085c141fa1529b528534962bf26.mp4', type: 'local' ,
-            thumbnail: '../public/Images/81945302_2141154495987458_8142382399708200960_n.jpg'
-          },
-          { url: '../public/videos/df3f9fcb4aac3224f69f8dab22f657bb.mp4', type: 'local',
-            thumbnail: '../public/Images/462932421_7677982035637982_8133384283652711148_n.jpg'
-           }
-        ],
-        blueprints: ['/downloads/skyscraper-structural.pdf'],
-        virtualTour: 'https://3dtour.com/skyscraper'
+  },
+  {
+    id: 6,
+    category: 'renovations',
+    title: 'Historic Renovation',
+    status: 'completed',
+    image: img6,
+    location: 'Paris, FR',
+    description: 'Restoration of 19th century landmark building',
+    details: {
+      specifications: {
+        era: '19th Century',
+        restoration: '95% original materials preserved'
       }
     }
-  ];
+  }
+];

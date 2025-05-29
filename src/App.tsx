@@ -7,7 +7,7 @@ import About from './components/pages/About';
 import Projects from './components/pages/Projects';
 import Contact from './components/pages/contact';
 import ProjectDetail from './components/ProjectDetail';
-import FeaturedDetail from './components/FeaturedDetail';
+
 import ArchitecturalPortfolio from './components/Architectural';
 import ConstructionPage from './components/Construction';
 import InteriorDesignPage from './components/Interor';
@@ -42,7 +42,7 @@ function App() {
             <Route path="About" element={<About />} />
             <Route path="Projects" element={<Projects />} />
             <Route path="/projects/:id" element={<ProjectDetail />} />
-            <Route path="/projects/featured/:id" element={<FeaturedDetail />} />
+            <Route path="/slides/:id" element={<ProjectDetail />} />
             <Route path="Architectural" element={<ArchitecturalPortfolio/>} />
             <Route path='Contruction' element={< ConstructionPage/>}/>
             <Route path='Interior' element={<InteriorDesignPage/>}/>

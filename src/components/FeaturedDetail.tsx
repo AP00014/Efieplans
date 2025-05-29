@@ -1,19 +1,15 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { FaPlay, FaArrowLeft } from 'react-icons/fa';
 import { slides } from '../data';
 import ImageGallery from 'react-image-gallery';
 import 'react-image-gallery/styles/css/image-gallery.css';
-import { FaPlay, FaArrowLeft } from 'react-icons/fa';
-import '../components/pages/styles/featuredDetail.css';
 import { MediaItem } from './types';
+import '../components/pages/styles/featuredDetail.css';
 
 const MediaGrid = ({ items, type }: { items: MediaItem[], type: 'image' | 'video' }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [showModal, setShowModal] = useState(false);
-
-
-
-
 
   return (
     <div className="media-grid">
@@ -63,6 +59,7 @@ const MediaGrid = ({ items, type }: { items: MediaItem[], type: 'image' | 'video
               autoPlay
               className="video-player"
               src={items[selectedIndex].url}
+              key={items[selectedIndex].url}
             />
           )}
         </div>
@@ -85,6 +82,15 @@ const FeaturedDetail = () => {
       </div>
     );
   }
+
+  // Normalize media data
+  const imageGallery = (slide.details.imageGallery || []).map(item => 
+    typeof item === 'string' ? { url: item, thumbnail: item } : item
+  );
+
+  const videos = (slide.details.videos || []).map(item =>
+    typeof item === 'string' ? { url: item, thumbnail: '' } : item
+  );
 
   return (
     <div className="featured-container">
@@ -110,7 +116,6 @@ const FeaturedDetail = () => {
               <span className="label">Location</span>
               <span className="value">📍 {slide.location}</span>
             </div>
-            
             {Object.entries(slide.details?.specifications ?? {}).map(([key, value]) => (
               <div className="spec-item" key={key}>
                 <span className="label">{key.replace(/([A-Z])/g, ' $1')}</span>
@@ -120,28 +125,19 @@ const FeaturedDetail = () => {
           </div>
         </section>
 
-        {(slide.details.imageGallery ?? []).length > 0 && (
+        {imageGallery.length > 0 && (
           <section className="media-section">
             <h2>Project Gallery</h2>
-            <MediaGrid 
-              items={(slide.details.imageGallery ?? []).map(url => 
-                typeof url === 'string' ? { url, thumbnail: url } : url
-              )} 
-              type="image" 
-            />
-          </section>
-        )}
-        {(slide.details?.videos?.length ?? 0) > 0 && (
-          <section className="media-section">
-            <h2>Video Content</h2>
-            <MediaGrid
-              items={slide.details.videos ?? []}
-              type="video"
-            />
+            <MediaGrid items={imageGallery} type="image" />
           </section>
         )}
 
-       
+        {videos.length > 0 && (
+          <section className="media-section">
+            <h2>Video Content</h2>
+            <MediaGrid items={videos} type="video" />
+          </section>
+        )}
       </main>
     </div>
   );
