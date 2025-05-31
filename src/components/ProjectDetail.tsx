@@ -135,7 +135,6 @@ const ProjectDetail = () => {
               <span className="label">Location</span>
               <span className="value">📍 {item.location}</span>
             </div>
-
             {item.details.features && (
               <div className="spec-item">
                 <span className="label">Features</span>

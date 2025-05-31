@@ -21,7 +21,7 @@ interface MediaItem {
 }
 
 const ArchitecturePage = () => {    
-  const [selectedMedia, setSelectedMedia] = useState<MediaItem | null>(null);
+  // Removed unused selectedMedia state
   const mediaRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: mediaRef });
   const scale = useTransform(scrollYProgress, [0, 1], [0.9, 1.1]);
@@ -98,7 +98,6 @@ const ArchitecturePage = () => {
               viewport={{ once: true, margin: "-100px" }}
               transition={{ delay: index * 0.1 }}
               whileHover={{ scale: 1.02 }}
-              onClick={() => setSelectedMedia(item)}
             >
               {item.type === 'image' ? (
                 <img 
@@ -136,62 +135,32 @@ const ArchitecturePage = () => {
    
       </section>
 
-      <motion.div 
-  className="cta5-container"
-  whileHover={{ scale: 1.05 }}
-  transition={{ type: "spring", stiffness: 300 }}
->
-  <div className="button-group">
-  <Link to="/projects" className="Cta-button5">
-  View Projects
-  <FiArrowUpRight className="cta-icon" />
-   </Link>
-    <span className="button-caption">Explore 50+ innovative designs</span>
-  </div>
-
-  <div className="button-group">
-   
-<Link to="/contact" className="Cta-button5">
-  Start Your Project
-  <FiArrowUpRight className="cta-icon" />
-</Link>
-    <span className="button-caption">Schedule a consultation today</span>
-  </div>
-
-  <span className="awards-text">
-    Recognized by Architectural Digest & AIA
-  </span>
-</motion.div>
-
-      {/* Modal */}
-      {selectedMedia && (
-        <motion.div 
-          className="media-modal"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          onClick={() => setSelectedMedia(null)}
-        >
-          <div className="modal-content">
-            {selectedMedia.type === 'image' ? (
-              <img src={selectedMedia.url} alt={selectedMedia.title} />
-            ) : (
-              <ReactPlayer
-                url={selectedMedia.url}
-                width="100%"
-                height="100%"
-                controls
-              />
-            )}
-            <div className="modal-footer">
-              <h2>{selectedMedia.title}</h2>
-              <p>{selectedMedia.location}</p>
-              <a href="#" className="project-link">
-                View Project <FiArrowUpRight />
-              </a>
-            </div>
-          </div>
-        </motion.div>
-      )}
+   <motion.section 
+        className="project-cta"
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.7 }}
+      >
+        <div className="cta-content">
+          <h2>Ready to Bring Your Vision to Life?</h2>
+          <p>Let's collaborate to create architectural marvels that stand the test of time</p>
+          
+          <motion.div 
+            className="cta-button-container"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Link to="/contact" className="cta-button">
+              Start Your Project
+              <FiArrowUpRight className="arrow-icon" />
+            </Link>
+          </motion.div>
+          
+          <div className="neon-line"></div>
+        </div>
+      </motion.section>
+    
     </motion.div>
 
 

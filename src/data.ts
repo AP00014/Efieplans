@@ -4,6 +4,7 @@ import img3 from '../public/Images/img3.jpg';
 import img4 from '../public/Images/81836978_2141186975984210_991424691258261504_n.jpg';
 import img5 from '../public/Images/462932421_7677982035637982_8133384283652711148_n.jpg';
 import img6 from '../public/Images/1706916591344.jpg';
+import video1 from '../public/videos/02673085c141fa1529b528534962bf26.mp4';
 import { ProjectItem } from './components/types';
 
 
@@ -30,7 +31,7 @@ export const allProjects: ProjectItem[] = [
       imageGallery: [img1, img2, img3],
       videos: [
         { 
-          url: '/videos/02673085c141fa1529b528534962bf26.mp4', 
+          url: video1, 
           type: 'local',
           thumbnail: img5
         }

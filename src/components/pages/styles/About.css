@@ -732,6 +732,14 @@
   background: var(--text-color);
 }
 
+.process-heading {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #1f2937;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
 
 .process-steps {
   display: grid;
@@ -807,6 +815,13 @@
   .testimonial-card {
     flex: 0 0 80%;
   }
+
+  .process-heading{
+    font-size: 1.75rem;
+
+  }
+
+
 }
 /* Base Styles */
 .about-container {
@@ -991,6 +1006,7 @@
   position: relative;
   overflow: hidden;
   transition: all 0.3s ease;
+  text-decoration: none;
 }
 
 .ctas-button:hover {

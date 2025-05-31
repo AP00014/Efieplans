@@ -1,7 +1,13 @@
 
 import { FaBuilding, FaPaintRoller, FaBullseye, FaEye } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import './styles/About.css';
+
+
+
+const MotionLink = motion(Link);
+
 
 const About = () => {
  
@@ -118,13 +124,14 @@ const About = () => {
         <div className="cta-content">
           <h3>Ready to Create Your Dream Space?</h3>
           <p>Start your architectural journey with Africa's most innovative design team</p>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="ctas-button"
-          >
-            Schedule For Consultation
-          </motion.button>
+         <MotionLink
+  to="/contact"  // Your target route
+  whileHover={{ scale: 1.05 }}
+  whileTap={{ scale: 0.95 }}
+  className="ctas-button"
+>
+  Schedule For Consultation
+</MotionLink>
         </div>
       </motion.div>
     </div>
