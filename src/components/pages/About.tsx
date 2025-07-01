@@ -12,12 +12,12 @@ const MotionLink = motion(Link);
 const About = () => {
  
 
-  const processSteps = [
+   {/* Company Profile Section  const processSteps = [
     { title: 'Concept Development', description: 'Translating your vision into initial sketches' },
     { title: 'Design Refinement', description: 'Perfecting every detail of the blueprint' },
     { title: 'Material Selection', description: 'Curating premium quality materials' },
     { title: 'Final Execution', description: 'Bringing the design to life' }
-  ];
+  ];*/}
 
   return (
     <div className="about-container1">

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import {  useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { FiZoomIn, FiVideo, FiArrowUpRight } from 'react-icons/fi';
 import ReactPlayer from 'react-player';
