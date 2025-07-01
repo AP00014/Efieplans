@@ -97,7 +97,7 @@ const About = () => {
      
 
      
-      {/* Process Section */}
+      {/* Process Section 
       <div className="process-section1">
         <h3 className="process-heading">Our Creative Process</h3>
         <div className="process-steps">
@@ -113,7 +113,7 @@ const About = () => {
             </motion.div>
           ))}
         </div>
-      </div>
+      </div>*/}
 
       {/* CTA Section */}
       <motion.div 

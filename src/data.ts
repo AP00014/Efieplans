@@ -1,9 +1,4 @@
-import img1 from '../public/Images/81945302_2141154495987458_8142382399708200960_n.jpg';
-import img2 from '../public/Images/82604517_2141155279320713_5725934327536025600_n.jpg';
-import img3 from '../public/Images/img3.jpg';
-import img4 from '../public/Images/81836978_2141186975984210_991424691258261504_n.jpg';
-import img5 from '../public/Images/462932421_7677982035637982_8133384283652711148_n.jpg';
-import img6 from '../public/Images/1706916591344.jpg';
+
 import video1 from '../public/videos/02673085c141fa1529b528534962bf26.mp4';
 import { ProjectItem } from './components/types';
 
@@ -12,12 +7,12 @@ import { ProjectItem } from './components/types';
 export const allProjects: ProjectItem[] = [
   {
     id: 1,
-    category: 'architectural',
-    title: 'Modern Skyscraper',
+    category: 'constructions',
+    title: 'The Metropol',
     description: 'Contemporary 6-bedroom smart home with sustainable design',
-    status: 'completed',
-    image: img1,
-    location: 'New York, US',
+    status: 'ongoing',
+    image: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750667824/81945302_2141154495987458_8142382399708200960_n_cpcfed.jpg',
+    location: 'Accra,Ghana',
     details: {
       specifications: {
         height: '300m',
@@ -26,14 +21,16 @@ export const allProjects: ProjectItem[] = [
         completion: '2022'
       },
     
-      timeline: '2018-2022',
+      timeline: '2018-2025',
       materials: ['Reinforced Concrete', 'Glass Facade', 'Steel Framework'],
-      imageGallery: [img1, img2, img3],
+      imageGallery: ['https://res.cloudinary.com/dpzndrhse/image/upload/v1750667945/img3_xmxexn.jpg',
+         'https://res.cloudinary.com/dpzndrhse/image/upload/v1750667956/img4_trud1s.jpg', 
+        'https://res.cloudinary.com/dpzndrhse/image/upload/v1750667958/interor_rk9rms.jpg'],
       videos: [
         { 
           url: video1, 
           type: 'local',
-          thumbnail: img5
+          thumbnail: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750667824/81945302_2141154495987458_8142382399708200960_n_cpcfed.jpg',
         }
       ],
       blueprints: ['/downloads/skyscraper-structural.pdf'],
@@ -42,12 +39,12 @@ export const allProjects: ProjectItem[] = [
   },
   {
     id: 2,
-    category: 'architectural',
-    title: 'Innovation Tech Hub',
+    category: 'constructions',
+    title: 'Elizabeth ',
     description: '12-story mixed-use technology campus',
     status: 'ongoing',
-    image: img2,
-    location: 'Lagos, NG',
+    image: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750667823/795d537546404a15a5edb74793570ebe_lvhdqb.jpg',
+    location: 'Kumasi, GH',
     details: {
       specifications: {
         height: '150m',
@@ -58,12 +55,13 @@ export const allProjects: ProjectItem[] = [
      
       timeline: '2021-2024',
       materials: ['Smart Glass', 'Carbon Composite'],
-      imageGallery: [img2, img3],
+      imageGallery: ['https://res.cloudinary.com/dpzndrhse/image/upload/v1750667823/795d537546404a15a5edb74793570ebe_lvhdqb.jpg',
+         'https://res.cloudinary.com/dpzndrhse/image/upload/v1750667823/795d537546404a15a5edb74793570ebe_lvhdqb.jpg'],
       videos: [
         { 
           url: '/videos/techhub-overview.mp4', 
           type: 'local',
-          thumbnail: img3
+          thumbnail: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750667823/795d537546404a15a5edb74793570ebe_lvhdqb.jpg'
         }
       ],
       virtualTour: 'https://3dtour.com/techhub'
@@ -71,11 +69,11 @@ export const allProjects: ProjectItem[] = [
   },
   {
     id: 3,
-    title: 'Coastal Luxury Retreat',
+    title: 'Jonas Estate ',
     description: 'Private beachfront estate with wellness center',
     status: 'ongoing',
-    image: img3,
-    location: 'Cape Coast, GH',
+    image: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750631800/GV-6_iacnvz.jpg',
+    location: 'Kumasi, GH',
     details: {
       specifications: {
         area: '12,000 sq ft',
@@ -87,12 +85,13 @@ export const allProjects: ProjectItem[] = [
         'Infinity pool',
         'Spa & wellness center'
       ],
-      imageGallery: [img3, img4],
+      imageGallery: ['https://res.cloudinary.com/dpzndrhse/image/upload/v1750631800/GV-6_iacnvz.jpg', 
+        'https://res.cloudinary.com/dpzndrhse/image/upload/v1750631800/GV-6_iacnvz.jpg'],
       videos: [
         { 
           url: '/videos/coastal-retreat.mp4', 
           type: 'local',
-          thumbnail: img4
+          thumbnail: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750631800/GV-6_iacnvz.jpg'
         }
       ],
       virtualTour: 'https://3dtour.com/coastal-retreat'
@@ -100,11 +99,11 @@ export const allProjects: ProjectItem[] = [
   },
   {
     id: 4,
-    title: 'Eco Vertical Village',
+    title: 'The Gleam',
     description: 'Green-certified high-rise community',
     status: 'completed',
-    image: img4,
-    location: 'Nairobi, KE',
+    image: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750631402/Francess.final-1_n8dmoa.jpg',
+    location: 'Accra, GH',
     details: {
       specifications: {
         units: '120',
@@ -116,23 +115,49 @@ export const allProjects: ProjectItem[] = [
         'Rainwater harvesting',
         'Solar power generation'
       ],
-      imageGallery: [img4, img1],
+      imageGallery: ['https://res.cloudinary.com/dpzndrhse/image/upload/v1750631402/Francess.final-1_n8dmoa.jpg',
+         'https://res.cloudinary.com/dpzndrhse/image/upload/v1750631402/Francess.final-1_n8dmoa.jpg'],
       videos: [
         { 
           url: 'https://youtube.com/embed/ecovillage', 
           type: 'external',
-          thumbnail: img1
+          thumbnail: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750631402/Francess.final-1_n8dmoa.jpg'
         }
       ],
       virtualTour: 'https://3dtour.com/ecovillage'
     }
   },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   {
     id: 5,
-    category: 'constructions',
-    title: 'Bridge Construction',
-    status: 'ongoing',
-    image: img5,
+    category: 'architectural',
+    title: 'Abode',
+    status: 'completed',
+    image: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750628589/Afari_s_final_lrcjvr.jpg',
     location: 'London, UK',
     description: 'Major river crossing with innovative engineering',
     details: {
@@ -145,11 +170,11 @@ export const allProjects: ProjectItem[] = [
   },
   {
     id: 6,
-    category: 'renovations',
-    title: 'Historic Renovation',
+    category: 'architectural',
+    title: 'Appease',
     status: 'completed',
-    image: img6,
-    location: 'Paris, FR',
+    image: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750628718/Michael_s_final_d78rgo.jpg',
+    location: 'Accra, GH',
     description: 'Restoration of 19th century landmark building',
     details: {
       specifications: {

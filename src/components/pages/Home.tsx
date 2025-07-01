@@ -9,19 +9,6 @@ import 'slick-carousel/slick/slick-theme.css';
 
 import './styles/Home.css';
 
-import image1 from '../../../public/Images/81945302_2141154495987458_8142382399708200960_n.jpg'
-import image2 from '../../../public/Images/img3.jpg'
-import image3 from '../../../public/Images/81836978_2141186975984210_991424691258261504_n.jpg'
-import image4 from '../../../public/Images/interor.jpg'
-import image5 from '../../../public/Images/82604517_2141155279320713_5725934327536025600_n.jpg'
-import imageCaption1 from '../../../public/Images/istockphoto-2117759132-612x612.jpg'
-import Video from '../../../public/videos/02673085c141fa1529b528534962bf26.mp4'
-import showcaseimg1 from '../../../public/Images/the-worlds-25-tallest-buildings-currently-under-construction_25.jpg'
-import showcaseimg2 from '../../../public/Images/1739391434290.jpg'
-import showcaseimg3 from '../../../public/Images/img2.jpg'
-import showcaseimg4 from '../../../public/Images/1723475669104.jpg'
-
-
 
 
 const TestimonialsSection = () => {
@@ -134,7 +121,7 @@ const testimonials = [
 const Home = () => {
 const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlay, setIsAutoPlay] = useState(true);
-  const totalSlides = 5; // Now fixed since we're not using array
+  const totalSlides = 4; // Now fixed since we're not using array
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -163,7 +150,7 @@ const [currentSlide, setCurrentSlide] = useState(0);
       >
         <div 
           className={`slide ${0 === currentSlide ? 'active' : 'hidden'}`}
-          style={{ backgroundImage: `url(${image1})` }}
+          style={{ backgroundImage: `url(https://res.cloudinary.com/dpzndrhse/image/upload/v1750667824/81945302_2141154495987458_8142382399708200960_n_cpcfed.jpg)` }}
         >
           <div className="slide-content">
             <div className={`text-container ${0 === currentSlide ? 'animate' : ''}`}>
@@ -180,7 +167,7 @@ const [currentSlide, setCurrentSlide] = useState(0);
         {/* Slide 2 - Innovations */}
         <div 
           className={`slide ${1 === currentSlide ? 'active' : 'hidden'}`}
-          style={{ backgroundImage: `url(${image2})` }}
+          style={{ backgroundImage: `url(https://res.cloudinary.com/dpzndrhse/image/upload/v1750631753/61_ucwch3.jpg)` }}
         >
           <div className="slide-content">
             <div className={`text-container ${1 === currentSlide ? 'animate' : ''}`}>
@@ -197,7 +184,7 @@ const [currentSlide, setCurrentSlide] = useState(0);
         {/* Slide 3 - Services */}
         <div 
           className={`slide ${2 === currentSlide ? 'active' : 'hidden'}`}
-          style={{ backgroundImage: `url(${image3})` }}
+          style={{ backgroundImage: `url(https://res.cloudinary.com/dpzndrhse/image/upload/v1750668010/Capture_y8lgyr.png)` }}
         >
           <div className="slide-content">
             <div className={`text-container ${2 === currentSlide ? 'animate' : ''}`}>
@@ -214,7 +201,7 @@ const [currentSlide, setCurrentSlide] = useState(0);
         {/* Slide 4 - Designs */}
         <div 
           className={`slide ${3 === currentSlide ? 'active' : 'hidden'}`}
-          style={{ backgroundImage: `url(${image4})` }}
+          style={{ backgroundImage: `url(https://res.cloudinary.com/dpzndrhse/image/upload/v1750667958/interor_rk9rms.jpg)` }}
         >
           <div className="slide-content">
             <div className={`text-container ${3 === currentSlide ? 'animate' : ''}`}>
@@ -228,22 +215,7 @@ const [currentSlide, setCurrentSlide] = useState(0);
           </div>
         </div>
 
-        {/* Slide 5 - Renovations */}
-        <div 
-          className={`slide ${4 === currentSlide ? 'active' : 'hidden'}`}
-          style={{ backgroundImage: `url(${image5})` }}
-        >
-          <div className="slide-content">
-            <div className={`text-container ${4 === currentSlide ? 'animate' : ''}`}>
-              <h1 className="slide-title">Sustainable Renovations</h1>
-              <p className="slide-description">Responsible structural transformations</p>
-              <Link to="../renovation" className="slide-button">
-                Explore Renovations
-                <FiArrowRight className="button-icon" />
-              </Link>
-            </div>
-          </div>
-        </div>
+      
 
         <div className="nav-buttons-container">
           <button className="nav-button prev" onClick={prevSlide}>
@@ -255,7 +227,7 @@ const [currentSlide, setCurrentSlide] = useState(0);
         </div>
         
         <div className="pagination">
-          {[0, 1, 2, 3, 4].map((index) => (
+          {[0, 1, 2, 3,].map((index) => (
             <button
               key={index}
               className={`pagination-dot ${index === currentSlide ? 'active' : ''}`}
@@ -275,7 +247,7 @@ const [currentSlide, setCurrentSlide] = useState(0);
     {/* Primary Showcase Row */}
     <div className="feature-row">
       <div className="feature-image">
-        <img src={imageCaption1} alt="Next-Gen Construction" />
+        <img src='https://res.cloudinary.com/dpzndrhse/image/upload/v1750667826/20220331_161714_uy4iee.jpg' alt="Next-Gen Construction" />
       </div>
       <div className="feature-content">
 
@@ -305,19 +277,23 @@ const [currentSlide, setCurrentSlide] = useState(0);
 
 
 
-      <section className="video-parallax">
-        <div className="parallax-overlay"></div>
-        <video autoPlay muted loop className="parallax-video">
-          <source src={Video} type="video/mp4" />
-        </video>
-        <div className="parallax-content">
-          <h2>Architectural Mastery That Redefines Boundaries – From Concept to Skyline </h2>
-          <p>Transform Spaces into Masterpieces: Tailored Designs for Homeowners, Developers, and Businesses.</p>
-         <Link to="../Architectural" className="c-button">
-  View Architectural designs <FiArrowRight />
-</Link>
-        </div>
-      </section>
+      {/* 
+        <section className="video-parallax">
+          <div className="parallax-overlay"></div>
+          <video autoPlay muted loop className="parallax-video">
+        <source src={Video} type="video/mp4" />
+          </video>
+          <div className="parallax-content">
+        <h2>Architectural Mastery That Redefines Boundaries – From Concept to Skyline </h2>
+        <p>Transform Spaces into Masterpieces: Tailored Designs for Homeowners, Developers, and Businesses.</p>
+        <Link to="../Architectural" className="c-button">
+          View Architectural designs <FiArrowRight />
+        </Link>
+          </div>
+        </section>
+      */}
+
+
 <section className="showcase">
   <div className="section-header">
     <h2>Our Showcase</h2>
@@ -327,21 +303,21 @@ const [currentSlide, setCurrentSlide] = useState(0);
   <div className="showcase_grid">
     <div className="imagesleft">
       <div className="showcas_img_1">
-        <img src={image1} alt="" className='img_1' />
+        <img src='https://res.cloudinary.com/dpzndrhse/image/upload/v1750667823/795d537546404a15a5edb74793570ebe_lvhdqb.jpg' alt="" className='img_1' />
         <div className="image-overlay">
-          <h3>Industrial Solutions</h3>
-          <p>Advanced manufacturing processes for modern industry</p>
-          <Link to="/projects/1" className="view-link">
+          <h3>Elizabeth</h3>
+          <p>Advanced modern Apartments</p>
+          <Link to="/projects/2" className="view-link">
             View Details <FiExternalLink />
           </Link>
         </div>
       </div>
       <div className="showcas_img_2">
-        <img src={image2} alt="" className='img_2' />
+        <img src='https://res.cloudinary.com/dpzndrhse/image/upload/v1750631768/birdview_mdavmx.jpg' alt="" className='img_2' />
         <div className="image-overlay">
-          <h3>Sustainable Design</h3>
+          <h3>Golden Lodge</h3>
           <p>Eco-friendly engineering solutions</p>
-          <Link to="/projects/2" className="view-link">
+          <Link to="/projects/7" className="view-link">
             View Details <FiExternalLink />
           </Link>
         </div>
@@ -351,9 +327,9 @@ const [currentSlide, setCurrentSlide] = useState(0);
     <div className="imagesright">
       <div className="img_layout1">
         <div className="showcas_img_3">
-          <img src={showcaseimg1} alt="" className='img_1' />
+          <img src='https://res.cloudinary.com/dpzndrhse/image/upload/v1750636901/C1-1_ut1ljv.jpg' alt="" className='img_1' />
           <div className="image-overlay">
-            <h3>Precision Engineering</h3>
+            <h3>Iconic</h3>
             <p>Micro-scale components with macro impact</p>
             <Link to="/projects/3" className="view-link">
               View Details <FiExternalLink />
@@ -361,11 +337,11 @@ const [currentSlide, setCurrentSlide] = useState(0);
           </div>
         </div>
         <div className="showcas_img_4">
-          <img src={showcaseimg2} alt="" className='img_1' />
+          <img src='https://res.cloudinary.com/dpzndrhse/image/upload/v1750628589/Afari_s_final_lrcjvr.jpg' alt="" className='img_1' />
           <div className="image-overlay">
-            <h3>Advanced Prototyping</h3>
+            <h3>Abode</h3>
             <p>Rapid development solutions</p>
-            <Link to="/projects/4" className="view-link">
+            <Link to="/projects/5" className="view-link">
               View Details <FiExternalLink />
             </Link>
           </div>
@@ -374,19 +350,19 @@ const [currentSlide, setCurrentSlide] = useState(0);
 
       <div className="img_layout2">
         <div className="showcas_img_5">
-          <img src={showcaseimg3} alt="" className='img_1' />
+          <img src='https://res.cloudinary.com/dpzndrhse/image/upload/v1750628736/old-7_gyprl8.jpg' alt="" className='img_1' />
           <div className="image-overlay">
-            <h3>Custom Solutions</h3>
+            <h3>Appease</h3>
             <p>Tailored engineering approaches</p>
-            <Link to="/projects/5" className="view-link">
+            <Link to="/projects/6" className="view-link">
               View Details <FiExternalLink />
             </Link>
           </div>
         </div>
         <div className="showcas_img_6">
-          <img src={showcaseimg4} alt="" className='img_1' />
+          <img src='https://res.cloudinary.com/dpzndrhse/image/upload/v1750631100/a1_j7a7cl.jpg' alt="" className='img_1' />
           <div className="image-overlay">
-            <h3>Quality Assurance</h3>
+            <h3>Gecko Lodge</h3>
             <p>Rigorous testing protocols</p>
             <Link to="/projects/6" className="view-link">
               View Details <FiExternalLink />
