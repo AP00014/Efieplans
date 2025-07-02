@@ -101,7 +101,7 @@ export const allProjects: ProjectItem[] = [
     id: 4,
     title: 'The Gleam',
     description: 'Green-certified high-rise community',
-    status: 'completed',
+    status: 'ongoing',
     image: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750631402/Francess.final-1_n8dmoa.jpg',
     location: 'Accra, GH',
     details: {
@@ -134,24 +134,6 @@ export const allProjects: ProjectItem[] = [
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   {
     id: 5,
     category: 'architectural',
@@ -168,19 +150,125 @@ export const allProjects: ProjectItem[] = [
       }
     }
   },
-  {
+
+
+{
     id: 6,
     category: 'architectural',
     title: 'Appease',
+    description: 'Contemporary 6-bedroom smart home with sustainable design',
     status: 'completed',
     image: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750628718/Michael_s_final_d78rgo.jpg',
-    location: 'Accra, GH',
-    description: 'Restoration of 19th century landmark building',
+    location: 'Accra,Ghana',
     details: {
       specifications: {
-        era: '19th Century',
-        restoration: '95% original materials preserved'
-      }
+        height: '300m',
+        floors: '80',
+        area: '150,000 sq ft',
+        completion: '2022'
+      },
+    
+      timeline: '2018-2025',
+      materials: ['Reinforced Concrete', 'Glass Facade', 'Steel Framework'],
+      imageGallery: ['https://res.cloudinary.com/dpzndrhse/image/upload/v1750628736/old-7_gyprl8.jpg',
+         'https://res.cloudinary.com/dpzndrhse/image/upload/v1750628697/old-2_mcw8ur.jpg', 
+        'https://res.cloudinary.com/dpzndrhse/image/upload/v1750628718/old-5_febxux.jpg',
+      'https://res.cloudinary.com/dpzndrhse/image/upload/v1750628670/f_py5w3w.jpg',
+      'https://res.cloudinary.com/dpzndrhse/image/upload/v1750628663/d_si5di1.jpg',
+      'https://res.cloudinary.com/dpzndrhse/image/upload/v1750628686/old-1_ymwzj5.jpg',
+      'https://res.cloudinary.com/dpzndrhse/image/upload/v1750628663/e_zblvve.jpg'
+      
+      ],
+      videos: [
+        { 
+          url: video1, 
+          type: 'local',
+          thumbnail: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750628718/Michael_s_final_d78rgo.jpg',
+        }
+      ],
+      blueprints: ['/downloads/skyscraper-structural.pdf'],
+      virtualTour: 'https://3dtour.com/skyscraper'
     }
-  }
-];
+  },
+  
+{
+    id: 7,
+    category: 'architectural',
+    title: 'Golden Village',
+    description: 'Contemporary 6-bedroom smart home with sustainable design',
+    status: 'completed',
+    image: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750631768/birdview_mdavmx.jpg',
+    location: 'Accra,Ghana',
+    details: {
+      specifications: {
+        height: '300m',
+        floors: '80',
+        area: '150,000 sq ft',
+        completion: '2022'
+      },
+    
+      timeline: '2018-2025',
+      materials: ['Reinforced Concrete', 'Glass Facade', 'Steel Framework'],
+      imageGallery: ['https://res.cloudinary.com/dpzndrhse/image/upload/v1750632129/3_h8fead.jpg',
+         'https://res.cloudinary.com/dpzndrhse/image/upload/v1750631757/81_zqaopq.jpg', 
+        'https://res.cloudinary.com/dpzndrhse/image/upload/v1750631753/61_ucwch3.jpg',
+      'https://res.cloudinary.com/dpzndrhse/image/upload/v1750631745/11_y17bzd.jpg',
+      'https://res.cloudinary.com/dpzndrhse/image/upload/v1750631695/2_awkkzl.jpg',
+      'https://res.cloudinary.com/dpzndrhse/image/upload/v1750631624/20_zc6a1n.jpg',
+      'https://res.cloudinary.com/dpzndrhse/image/upload/v1750631570/14_yfdqtk.jpg'
+      
+      ],
+      videos: [
+        { 
+          url: video1, 
+          type: 'local',
+          thumbnail: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750631555/13-1_hdvpmx.jpg',
+        }
+      ],
+      blueprints: ['/downloads/skyscraper-structural.pdf'],
+      virtualTour: 'https://3dtour.com/skyscraper'
+    }
+  } ,
+   
+{
+    id: 8,
+    category: 'architectural',
+    title: 'Belles Fleur',
+    description: 'Contemporary 6-bedroom smart home with sustainable design',
+    status: 'completed',
+    image: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750629085/c2_z8gijk.jpg',
+    location: 'Accra,Ghana',
+    details: {
+      specifications: {
+        height: '300m',
+        floors: '80',
+        area: '150,000 sq ft',
+        completion: '2022'
+      },
+    
+      timeline: '2018-2025',
+      materials: ['Reinforced Concrete', 'Glass Facade', 'Steel Framework'],
+      imageGallery: ['https://res.cloudinary.com/dpzndrhse/image/upload/v1750629303/c1_lmfemt.jpg',
+        'https://res.cloudinary.com/dpzndrhse/image/upload/v1750629085/c3_tpoxa7.jpg',
+        'https://res.cloudinary.com/dpzndrhse/image/upload/v1750629091/C4_cygb7d.jpg',
+        'https://res.cloudinary.com/dpzndrhse/image/upload/v1750629093/c5_mkzxgs.jpg',
+
+         'https://res.cloudinary.com/dpzndrhse/image/upload/v1750629105/family_nntzit.jpg',
+         'https://res.cloudinary.com/dpzndrhse/image/upload/v1750629107/master_bed_qsgqid.jpg'
+         
+      ],
+      videos: [
+        { 
+          url: video1, 
+          type: 'local',
+          thumbnail: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750629093/c5_mkzxgs.jpg',
+        }
+      ],
+      blueprints: ['/downloads/skyscraper-structural.pdf'],
+      virtualTour: 'https://3dtour.com/skyscraper'
+    }
+  },
+
+
+
+  ];

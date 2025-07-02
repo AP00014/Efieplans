@@ -315,7 +315,7 @@ const [currentSlide, setCurrentSlide] = useState(0);
       <div className="showcas_img_2">
         <img src='https://res.cloudinary.com/dpzndrhse/image/upload/v1750631768/birdview_mdavmx.jpg' alt="" className='img_2' />
         <div className="image-overlay">
-          <h3>Golden Lodge</h3>
+          <h3>Golden Village</h3>
           <p>Eco-friendly engineering solutions</p>
           <Link to="/projects/7" className="view-link">
             View Details <FiExternalLink />
@@ -331,7 +331,7 @@ const [currentSlide, setCurrentSlide] = useState(0);
           <div className="image-overlay">
             <h3>Iconic</h3>
             <p>Micro-scale components with macro impact</p>
-            <Link to="/projects/3" className="view-link">
+            <Link to="/projects/10" className="view-link">
               View Details <FiExternalLink />
             </Link>
           </div>
