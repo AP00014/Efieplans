@@ -24,7 +24,7 @@ const Footer = () => {
             <div className="footer-logo">
               <Link to="/" className="footer-logo-link">
                 <img
-                  src="/images/Images/efieplans_logo_edited.avif"
+                  src="https://res.cloudinary.com/dpzndrhse/image/upload/v1750667944/efieplans_logo_edited_kq1tmo.avif"
                   alt="Efie Plans Logo"
                   className="footer-logo-image"
                   loading="lazy"

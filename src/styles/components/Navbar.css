@@ -11,7 +11,7 @@
   --color-orange: #ff8c00;
   --color-white: #ffffff;
   --color-black: #121212;
-  --color-gray-50: #f9fafb;
+  --color-gray-50: #f8f9fc;
   --color-gray-100: #f3f4f6;
   --color-gray-200: #e5e7eb;
   --color-gray-300: #d1d5db;
@@ -457,10 +457,10 @@
 
 .mobile-menu-toggle {
   padding: var(--spacing-3);
-
   color: white;
-  background: none;
+  background: var(--primary-color);
   border: none;
+  outline: none;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -470,6 +470,7 @@
   height: 44px;
   position: relative;
   z-index: 100;
+  border-radius: 8px;
 }
 
 .dark-mode .mobile-menu-toggle {
@@ -766,18 +767,27 @@
   }
 }
 
-.mobile-menu-toggle:active {
+.mobile-menu-toggle:hover {
+  background: var(--primary-color-dark);
+  transform: scale(1.05);
+}
+
+.mobile-menu-toggle:active,
+.mobile-menu-toggle:focus {
   transform: scale(0.95);
+  border: none;
+  outline: none;
 }
 
 .dark-mode .mobile-menu-toggle {
-  background: var(--color-gray-800);
-  color: var(--text-color-dark);
+  background: var(--primary-color);
+  color: white;
 }
 
 .dark-mode .mobile-menu-toggle:hover {
-  background: var(--color-gray-700);
-  border-color: var(--primary-color);
+  background: var(--primary-color-dark);
+  border: none;
+  outline: none;
 }
 
 /* Hamburger Icon Bars */
@@ -994,12 +1004,12 @@
 }
 
 .mobile-menu-link:hover {
-  color: var(--color-yellow);
-  background: rgba(250, 204, 21, 0.1);
+  color: #ea580c; /* Same orange as desktop navbar links */
+  background: rgba(255, 107, 0, 0.1);
   transform: translateX(8px) scale(1.02);
   padding-left: var(--spacing-7);
   box-shadow: var(--shadow-md);
-  border-color: rgba(250, 204, 21, 0.2);
+  border-color: rgba(255, 107, 0, 0.2);
 }
 
 .mobile-menu-link:hover::before {
@@ -1018,8 +1028,9 @@
 }
 
 .dark-mode .mobile-menu-link:hover {
+  color: #fbbf24; /* Same yellow as desktop navbar links in dark mode */
   background: rgba(40, 40, 40, 0.8);
-  border-color: rgba(255, 107, 0, 0.15);
+  border-color: rgba(250, 204, 21, 0.15);
 }
 
 /* Active state for mobile menu links */
@@ -1175,11 +1186,11 @@
 }
 
 .mobile-menu-dropdown-item:hover {
-  background: rgba(250, 204, 21, 0.1);
-  color: var(--color-yellow);
+  background: rgba(255, 107, 0, 0.1);
+  color: #ea580c; /* Same orange as desktop navbar links */
   transform: translateX(8px);
   box-shadow: var(--shadow-md);
-  border-color: rgba(250, 204, 21, 0.2);
+  border-color: rgba(255, 107, 0, 0.2);
 }
 
 .dark-mode .mobile-menu-dropdown-item {
@@ -1189,8 +1200,9 @@
 }
 
 .dark-mode .mobile-menu-dropdown-item:hover {
+  color: #fbbf24; /* Same yellow as desktop navbar links in dark mode */
   background: rgba(40, 40, 40, 0.8);
-  border-color: rgba(255, 107, 0, 0.15);
+  border-color: rgba(250, 204, 21, 0.15);
 }
 
 /* Animations */

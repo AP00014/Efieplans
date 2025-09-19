@@ -55,8 +55,8 @@ const Navbar = () => {
         {/* Logo - Far Left */}
         <Link to="/" className="navbar-logo">
           <img
-            src="../../../public/images/Images/logo.avif"
-            alt="Stone-Edge Construction Logo"
+            src="https://res.cloudinary.com/dpzndrhse/image/upload/v1750667944/efieplans_logo_edited_kq1tmo.avif"
+            alt="Efie plans Construction Logo"
             className="navbar-logo-image"
           />
         </Link>
