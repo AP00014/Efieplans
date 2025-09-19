@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Link } from 'react-router-dom';
 import { FaArrowRight, FaCheckCircle, FaClock, FaUsers, FaAward, FaLightbulb, FaCogs, FaRocket } from 'react-icons/fa';
 

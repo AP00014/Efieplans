@@ -37,6 +37,8 @@ import Construction from './pages/Construction';
 
 
 function App() {
+  console.log('App.tsx: App component rendering');
+
   return (
     <ThemeProvider>
       <Router>
