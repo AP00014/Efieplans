@@ -1,5 +1,4 @@
 
-import video1 from '../public/videos/02673085c141fa1529b528534962bf26.mp4';
 import type { ProjectItem } from './types';
 
 
@@ -27,8 +26,8 @@ export const allProjects: ProjectItem[] = [
          'https://res.cloudinary.com/dpzndrhse/image/upload/v1750667956/img4_trud1s.jpg', 
         'https://res.cloudinary.com/dpzndrhse/image/upload/v1750667958/interor_rk9rms.jpg'],
       videos: [
-        { 
-          url: video1, 
+        {
+          url: '/videos/02673085c141fa1529b528534962bf26.mp4',
           type: 'local',
           thumbnail: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750667824/81945302_2141154495987458_8142382399708200960_n_cpcfed.jpg',
         }
@@ -180,8 +179,8 @@ export const allProjects: ProjectItem[] = [
       
       ],
       videos: [
-        { 
-          url: video1, 
+        {
+          url: '/videos/02673085c141fa1529b528534962bf26.mp4',
           type: 'local',
           thumbnail: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750628718/Michael_s_final_d78rgo.jpg',
         }
@@ -219,8 +218,8 @@ export const allProjects: ProjectItem[] = [
       
       ],
       videos: [
-        { 
-          url: video1, 
+        {
+          url: '/videos/02673085c141fa1529b528534962bf26.mp4',
           type: 'local',
           thumbnail: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750631555/13-1_hdvpmx.jpg',
         }
@@ -258,8 +257,8 @@ export const allProjects: ProjectItem[] = [
          
       ],
       videos: [
-        { 
-          url: video1, 
+        {
+          url: '/videos/02673085c141fa1529b528534962bf26.mp4',
           type: 'local',
           thumbnail: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750629093/c5_mkzxgs.jpg',
         }
