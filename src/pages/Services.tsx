@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { FaHome, FaBuilding, FaIndustry, FaTools, FaPaintRoller, FaRulerCombined, FaHardHat, FaTree } from 'react-icons/fa';
+import { FaHome, FaBuilding, FaIndustry, FaPaintRoller, FaRulerCombined, FaHardHat, FaTree } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 const Services = () => {
@@ -38,18 +38,6 @@ const Services = () => {
         "Warehouses and distribution centers",
         "Industrial processing facilities",
         "Specialized industrial installations"
-      ]
-    },
-    {
-      id: 4,
-      icon: <FaTools className="text-4xl text-primary" />,
-      title: "Renovation & Remodeling",
-      description: "Transform existing spaces with our expert renovation and remodeling services, breathing new life into older structures.",
-      features: [
-        "Complete home renovations",
-        "Kitchen and bathroom remodeling",
-        "Commercial space renovations",
-        "Historic building restoration"
       ]
     },
     {

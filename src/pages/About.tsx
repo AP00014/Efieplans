@@ -17,120 +17,208 @@ const About = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="about-text-center about-mb-12"
+          className="about-text-center about-mb-12 about-fade-in-up"
         >
-          <h1 className="about-title">
-            About <span className="about-text-primary">Efie Plans</span>
+          <h1 className="about-title about-animate-float">
+            About <span className="about-text-primary about-text-gradient">Efie Plans</span>
           </h1>
-          <p className="about-subtitle">
+          <p className="about-subtitle about-smooth-text">
             Designing luxury homes and commercial buildings for Ghanaians and Africans worldwide.
           </p>
         </motion.div>
 
-        <div className="about-grid">
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <div className="about-image-container">
-              <img
-                src="/images/about-company.jpg"
-                alt="Stone-Edge Construction Team"
-                className="about-image"
-              />
+        <div className="about-story-section">
+          <div className="about-story-container">
+            {/* Timeline Background */}
+            <div className="about-timeline-bg">
+              <div className="about-timeline-line"></div>
+              <div className="about-timeline-dots">
+                <div className="about-timeline-dot" style={{ top: '25%' }}></div>
+                <div className="about-timeline-dot" style={{ top: '50%' }}></div>
+                <div className="about-timeline-dot" style={{ top: '75%' }}></div>
+              </div>
             </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="about-content"
-          >
-            <h2 className="about-section-title">Our Story</h2>
-            <p className="about-text">
-              Efie Plans designs luxury homes and commercial buildings for Ghanaians and Africans all over the world.
-              At Efie Plans, we pride ourselves on doing more than just designing houses. We help create a home that you have always wanted and reflected your personality.
-            </p>
-            <p className="about-text">
-              We work with you the client, throughout the design process to ensure you are completely satisfied with the schematic design before we move onto the next stage.
-              This is done to come up with a design that you, the client is happy with every detail of it.
-            </p>
-            <p className="about-text">
-              The projects we design are custom to suit individual preferences so no two projects are the same and we start from scratch.
-              Our attention to detail distinguishes us from the rest as we take into consideration, the surrounding environment to come up with a design that fits into the existing context.
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Mission & Vision */}
-      <section className="about-mission-vision">
-        <div className="container-custom">
-          <div className="about-mission-vision-grid">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="about-card"
-            >
-              <div className="about-card-content">
-                <h3 className="about-card-title">Our Mission</h3>
-                <p className="about-card-description about-mb-4">
-                  To create homes that perfectly reflect our clients' personalities and dreams,
-                  ensuring complete satisfaction through collaborative design processes and meticulous attention to detail.
-                </p>
-                <ul className="about-list">
-                  <li className="about-list-item">
-                    <span className="about-text-primary about-mr-2">✓</span>
-                    <span>Client satisfaction at every design stage</span>
-                  </li>
-                  <li className="about-list-item">
-                    <span className="about-text-primary about-mr-2">✓</span>
-                    <span>Custom designs tailored to individual preferences</span>
-                  </li>
-                  <li className="about-list-item">
-                    <span className="about-text-primary about-mr-2">✓</span>
-                    <span>Comprehensive construction documentation</span>
-                  </li>
-                </ul>
-              </div>
-            </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="about-card"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1 }}
+              className="about-story-content about-loading-overlay"
             >
-              <div className="about-card-content">
-                <h3 className="about-card-title">Our Vision</h3>
-                <p className="about-card-description about-mb-4">
-                  To be the premier architectural design firm serving Ghanaians and Africans worldwide,
-                  creating dream homes that perfectly blend personality, environment, and luxury.
-                </p>
-                <ul className="about-list">
-                  <li className="about-list-item">
-                    <span className="about-text-primary about-mr-2">✓</span>
-                    <span>Global recognition for luxury home design</span>
-                  </li>
-                  <li className="about-list-item">
-                    <span className="about-text-primary about-mr-2">✓</span>
-                    <span>Contextual designs that harmonize with surroundings</span>
-                  </li>
-                  <li className="about-list-item">
-                    <span className="about-text-primary about-mr-2">✓</span>
-                    <span>Excellence in interior and landscaping design</span>
-                  </li>
-                </ul>
+              {/* Timeline Header */}
+              <div className="about-timeline-header">
+                <motion.div
+                  initial={{ opacity: 0, y: -30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.2 }}
+                  className="about-timeline-title-section"
+                >
+                  <h2 className="about-timeline-title">
+                    <span className="about-timeline-title-main">Our Journey</span>
+                    <span className="about-timeline-title-accent">Building Excellence</span>
+                  </h2>
+                  <div className="about-timeline-title-bar"></div>
+                </motion.div>
+
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.4 }}
+                  className="about-timeline-subtitle"
+                >
+                  From vision to reality: The story of Efie Plans' commitment to architectural excellence
+                </motion.p>
               </div>
+
+              {/* Timeline Items */}
+              <div className="about-timeline">
+                {[
+                  {
+                    year: "2018",
+                    title: "Foundation & Mission",
+                    description: "Efie Plans was established with a clear mission: To create homes that perfectly reflect our clients' personalities and dreams, ensuring complete satisfaction through collaborative design processes and meticulous attention to detail.",
+                    icon: <FaBuilding />,
+                    position: "left",
+                    gradient: "linear-gradient(135deg, #1e293b 0%, #334155 100%)",
+                    delay: 0.6,
+                    type: "mission",
+                    highlights: [
+                      "Client satisfaction at every stage",
+                      "Custom designs for individual preferences",
+                      "Comprehensive construction documentation"
+                    ]
+                  },
+                  {
+                    year: "2020",
+                    title: "Innovation & Vision",
+                    description: "We pioneered client-centric design approaches while envisioning ourselves as the premier architectural design firm serving Ghanaians and Africans worldwide, creating dream homes that blend personality, environment, and luxury.",
+                    icon: <FaUsers />,
+                    position: "right",
+                    gradient: "linear-gradient(135deg, #374151 0%, #4b5563 100%)",
+                    delay: 0.8,
+                    type: "vision",
+                    highlights: [
+                      "Global recognition for luxury design",
+                      "Contextual designs harmonizing with surroundings",
+                      "Excellence in interior and landscaping"
+                    ]
+                  },
+                  {
+                    year: "2022",
+                    title: "Excellence Achieved",
+                    description: "Achieved recognition for custom architectural solutions that harmonize with environmental contexts. Every project undergoes rigorous quality checks to ensure clients fall in love with the final result.",
+                    icon: <FaAward />,
+                    position: "left",
+                    gradient: "linear-gradient(135deg, #475569 0%, #64748b 100%)",
+                    delay: 1.0,
+                    type: "achievement",
+                    highlights: [
+                      "100+ custom designs completed",
+                      "50+ satisfied clients worldwide",
+                      "15+ skilled design experts"
+                    ]
+                  },
+                  {
+                    year: "2024",
+                    title: "Global Expansion",
+                    description: "Expanded our services internationally while maintaining our commitment to personalized, sustainable design. From initial design to material selection, we provide complete solutions for stunning results.",
+                    icon: <FaGlobe />,
+                    position: "right",
+                    gradient: "linear-gradient(135deg, #525252 0%, #737373 100%)",
+                    delay: 1.2,
+                    type: "growth",
+                    highlights: [
+                      "Services expanded to 5 countries",
+                      "98% client satisfaction rate",
+                      "Complete design-to-delivery solutions"
+                    ]
+                  }
+                ].map((item, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, x: item.position === 'left' ? -50 : 50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{
+                      duration: 0.8,
+                      delay: item.delay,
+                      type: "spring",
+                      stiffness: 80
+                    }}
+                    className={`about-timeline-item ${item.position} about-fade-in-${item.position === 'left' ? 'left' : 'right'} about-hover-lift`}
+                  >
+                    <div className="about-timeline-card">
+                      <div
+                        className="about-timeline-card-bg"
+                        style={{ background: item.gradient }}
+                      ></div>
+
+                      <div className="about-timeline-content">
+                        <div className="about-timeline-year">{item.year}</div>
+                        <div className="about-timeline-icon">
+                          {item.icon}
+                        </div>
+                        <h3 className="about-timeline-item-title">{item.title}</h3>
+                        <p className="about-timeline-description">{item.description}</p>
+
+                        {/* Mission/Vision Highlights */}
+                        <div className="about-timeline-highlights">
+                          <div className={`about-highlight-${item.type}`}>
+                            <span className="about-highlight-label">
+                              {item.type === 'mission' && 'Mission Focus:'}
+                              {item.type === 'vision' && 'Vision Goals:'}
+                              {item.type === 'achievement' && 'Key Achievements:'}
+                              {item.type === 'growth' && 'Growth Milestones:'}
+                            </span>
+                            <ul className="about-highlight-list">
+                              {item.highlights.map((highlight, idx) => (
+                                <li key={idx} className="about-highlight-item">
+                                  <span className="about-highlight-bullet">•</span>
+                                  <span>{highlight}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="about-timeline-connector">
+                        <div className="about-timeline-connector-line"></div>
+                        <div className="about-timeline-connector-dot"></div>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Timeline CTA */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 1.4 }}
+                className="about-timeline-cta"
+              >
+                <div className="about-timeline-cta-content">
+                  <h3 className="about-timeline-cta-title">Be Part of Our Story</h3>
+                  <p className="about-timeline-cta-text">
+                    Let's create your architectural masterpiece together
+                  </p>
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="about-timeline-cta-button"
+                  >
+                    <span>Start Your Project</span>
+                    <div className="about-timeline-cta-arrow">
+                      <FaGlobe />
+                    </div>
+                  </motion.div>
+                </div>
+              </motion.div>
             </motion.div>
           </div>
         </div>
       </section>
+
 
       {/* Core Values */}
       <section className="container-custom about-py-16">
@@ -139,10 +227,10 @@ const About = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="about-text-center about-mb-12"
+          className="about-text-center about-mb-12 about-fade-in-up"
         >
-          <h2 className="about-section-title-large">Our Core Values</h2>
-          <p className="about-subtitle">
+          <h2 className="about-section-title-large about-text-gradient">Our Core Values</h2>
+          <p className="about-subtitle about-smooth-text">
             These principles guide our design philosophy and commitment to creating exceptional homes.
           </p>
         </motion.div>
@@ -192,7 +280,7 @@ const About = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.1 * index }}
-              className="about-card about-text-center"
+              className="about-card about-text-center about-fade-in-up about-hover-lift"
             >
               <div className="about-card-content">
                 <div className="about-value-icon-container about-mb-4">
@@ -206,25 +294,6 @@ const About = () => {
         </div>
       </section>
 
-      {/* Team Section */}
-      <section className="about-team">
-        <div className="container-custom">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="about-text-center about-mb-12"
-          >
-            <h2 className="about-section-title-large">Our Design Team</h2>
-            <p className="about-subtitle">
-              Meet the creative professionals behind Efie Plans' exceptional designs.
-            </p>
-          </motion.div>
-
-          
-        </div>
-      </section>
 
       {/* Experience & Expertise */}
       <section className="container-custom about-py-16">
@@ -234,7 +303,7 @@ const About = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="about-experience-content"
+            className="about-experience-content about-fade-in-left about-smooth-text"
           >
             <h2 className="about-section-title-large">
               Our Design Expertise
@@ -318,6 +387,7 @@ const About = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
+            className="about-fade-in-right"
           >
             <div className="about-stats">
               <div className="about-stat-card">
@@ -338,12 +408,12 @@ const About = () => {
               </div>
             </div>
 
-            <div className="about-cta-card">
-              <h3 className="about-cta-title">Ready to Design Your Dream Home?</h3>
-              <p className="about-cta-text">
+            <div className="about-cta-card about-fade-in-scale about-hover-glow">
+              <h3 className="about-cta-title about-text-gradient">Ready to Design Your Dream Home?</h3>
+              <p className="about-cta-text about-smooth-text">
                 Contact us today to start your custom design journey with Efie Plans.
               </p>
-              <a href="/contact" className="about-cta-button">
+              <a href="/contact" className="about-cta-button about-animate-pulse">
                 Start Your Design
               </a>
             </div>

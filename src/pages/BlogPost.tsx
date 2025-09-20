@@ -9,19 +9,19 @@ const BlogPost = () => {
   const blogPosts = [
     {
       id: 1,
-      title: "10 Essential Tips for Home Renovation in Ghana",
-      excerpt: "Planning a home renovation in Ghana? These essential tips will help you navigate the process smoothly and achieve the best results.",
+      title: "10 Essential Tips for Home Construction in Ghana",
+      excerpt: "Planning a home construction in Ghana? These essential tips will help you navigate the process smoothly and achieve the best results.",
       content: `
-        <p>Home renovation projects in Ghana require careful planning and consideration of local factors. Here are ten essential tips to ensure your renovation project is successful:</p>
+        <p>Home construction projects in Ghana require careful planning and consideration of local factors. Here are ten essential tips to ensure your construction project is successful:</p>
         
         <h3>1. Set a Realistic Budget</h3>
-        <p>Before starting any renovation project, establish a clear budget that includes a 15-20% contingency for unexpected expenses. Material costs in Ghana can fluctuate, so research current prices thoroughly.</p>
+        <p>Before starting any construction project, establish a clear budget that includes a 15-20% contingency for unexpected expenses. Material costs in Ghana can fluctuate, so research current prices thoroughly.</p>
         
         <h3>2. Hire Reputable Professionals</h3>
         <p>Work with licensed contractors who have experience with similar projects. Ask for references and view their previous work. A good contractor will understand local building codes and regulations.</p>
         
         <h3>3. Obtain Necessary Permits</h3>
-        <p>Ensure all required permits are obtained before beginning work. This prevents potential legal issues and ensures your renovation meets safety standards.</p>
+        <p>Ensure all required permits are obtained before beginning work. This prevents potential legal issues and ensures your construction meets safety standards.</p>
         
         <h3>4. Consider the Climate</h3>
         <p>Ghana's tropical climate requires specific considerations for materials and design. Choose materials that can withstand high humidity and heat, and incorporate proper ventilation into your design.</p>
@@ -30,7 +30,7 @@ const BlogPost = () => {
         <p>Incorporate energy-efficient features such as proper insulation, energy-saving appliances, and solar panels to reduce long-term utility costs.</p>
         
         <h3>6. Plan for Water Management</h3>
-        <p>Given Ghana's seasonal heavy rainfall, ensure proper drainage systems are included in your renovation plans to prevent water damage.</p>
+        <p>Given Ghana's seasonal heavy rainfall, ensure proper drainage systems are included in your construction plans to prevent water damage.</p>
         
         <h3>7. Source Quality Materials</h3>
         <p>Invest in quality materials that will withstand Ghana's climate conditions. While imported materials might be appealing, locally sourced materials are often more suitable and cost-effective.</p>
@@ -39,22 +39,22 @@ const BlogPost = () => {
         <p>Develop a timeline that accounts for potential delays due to weather, material availability, or labor issues. Be flexible and patient throughout the process.</p>
         
         <h3>9. Focus on Functional Improvements</h3>
-        <p>Prioritize renovations that improve functionality and comfort, such as better space utilization, improved ventilation, and updated plumbing and electrical systems.</p>
+        <p>Prioritize construction that improves functionality and comfort, such as better space utilization, improved ventilation, and updated plumbing and electrical systems.</p>
         
         <h3>10. Document Everything</h3>
         <p>Keep detailed records of all agreements, expenses, and changes to the original plan. This documentation is invaluable if disputes arise and helps track your budget.</p>
         
-        <p>By following these tips, you'll be better prepared to navigate the challenges of home renovation in Ghana and achieve the results you desire.</p>
+        <p>By following these tips, you'll be better prepared to navigate the challenges of home construction in Ghana and achieve the results you desire.</p>
       `,
-      category: "Renovation",
+      category: "Construction",
       author: "John Doe",
       authorTitle: "Senior Project Manager",
-      authorBio: "John has over 15 years of experience in construction and renovation projects across West Africa.",
+      authorBio: "John has over 15 years of experience in construction projects across West Africa.",
       authorImage: "/images/team/john-doe.jpg",
       date: "June 15, 2023",
       readTime: "5 min read",
       image: "/images/blog/renovation-tips.jpg",
-      tags: ["Renovation", "Home Improvement", "Construction Tips", "Ghana"],
+      tags: ["Construction", "Home Improvement", "Construction Tips", "Ghana"],
       featured: true
     },
     {
@@ -148,7 +148,7 @@ const BlogPost = () => {
           <li>Project scope and complexity</li>
           <li>Approximate budget</li>
           <li>Timeline constraints</li>
-          <li>Specific expertise needed (residential, commercial, renovation, etc.)</li>
+          <li>Specific expertise needed (residential, commercial, construction, etc.)</li>
         </ul>
         
         <h3>Verify Credentials and Experience</h3>

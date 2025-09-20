@@ -51,7 +51,7 @@ const Construction = () => {
               </div>
               <h3 className="text-2xl font-bold text-gray-800 mb-4">Residential Construction</h3>
               <p className="text-gray-600">
-                Custom home building, renovations, and additions with attention to detail
+                Custom home building and additions with attention to detail
                 and superior craftsmanship for your dream living spaces.
               </p>
             </div>
@@ -73,7 +73,7 @@ const Construction = () => {
               </div>
               <h3 className="text-2xl font-bold text-gray-800 mb-4">Renovations & Remodeling</h3>
               <p className="text-gray-600">
-                Transform existing spaces with expert renovation services that modernize
+                Transform existing spaces with expert construction services that modernize
                 and enhance functionality while preserving character.
               </p>
             </div>

@@ -399,7 +399,6 @@ const ContactSection = () => {
                       >
                         <option value="">Select a service</option>
                         <option value="construction">🏗️ Building Construction</option>
-                        <option value="renovation">🔄 Renovation & Remodeling</option>
                         <option value="management">📋 Construction Management</option>
                         <option value="design">🎨 Architectural Design</option>
                         <option value="consultation">💬 Project Consultation</option>

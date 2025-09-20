@@ -99,11 +99,6 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/services/renovation" className="footer-link">
-                  Renovation & Remodeling
-                </Link>
-              </li>
-              <li>
                 <Link to="/services/design" className="footer-link">
                   Architectural Design
                 </Link>

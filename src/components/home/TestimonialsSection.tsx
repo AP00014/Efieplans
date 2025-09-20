@@ -20,7 +20,7 @@ const testimonials = [
     position: 'CEO',
     company: 'Mensah Hotels',
     image: 'https://randomuser.me/api/portraits/women/44.jpg',
-    quote: 'The renovation of our hotel was a complex project, but Stone-Edge handled it with professionalism and expertise. Their team was responsive to our needs and delivered exceptional results that have impressed our guests.',
+    quote: 'The construction of our hotel was a complex project, but Stone-Edge handled it with professionalism and expertise. Their team was responsive to our needs and delivered exceptional results that have impressed our guests.',
     rating: 5
   },
   {
@@ -38,7 +38,7 @@ const testimonials = [
     position: 'Homeowner',
     company: '',
     image: 'https://randomuser.me/api/portraits/women/58.jpg',
-    quote: 'Stone-Edge transformed our home with their renovation expertise. The team was professional, clean, and respectful of our space. The final result exceeded our expectations and was completed ahead of schedule.',
+    quote: 'Stone-Edge transformed our home with their construction expertise. The team was professional, clean, and respectful of our space. The final result exceeded our expectations and was completed ahead of schedule.',
     rating: 5
   },
 ];

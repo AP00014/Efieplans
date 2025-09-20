@@ -1,7 +1,7 @@
 /* Hero Section Styles */
 .hero-section {
   position: relative;
-  min-height: 100vh;
+  min-height: 110vh;
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -321,7 +321,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--spacing-4);
+  gap: var(--spacing-6);
   margin-bottom: var(--spacing-8);
   margin-top: 2rem;
 }
@@ -329,6 +329,7 @@
 @media (min-width: 640px) {
   .hero-buttons {
     flex-direction: row;
+    gap: var(--spacing-8);
   }
 }
 

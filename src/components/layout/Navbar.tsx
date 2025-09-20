@@ -49,7 +49,7 @@ const Navbar = () => {
     <nav
       className={`navbar ${
         isScrolled ? "navbar-scrolled" : "navbar-transparent"
-      }`}
+      } ${isDarkMode ? "dark" : ""}`}
     >
       <div className="container-custom navbar-container">
         {/* Logo - Far Left */}
@@ -69,6 +69,11 @@ const Navbar = () => {
           <Link to="/about" className="navbar-link">
             About
           </Link>
+
+ <Link to="/projects" className="navbar-link">
+            Projects
+          </Link>
+
           <div className="navbar-dropdown" ref={dropdownRef}>
             <button
               className="navbar-link navbar-dropdown-toggle"
@@ -108,9 +113,7 @@ const Navbar = () => {
               </div>
             )}
           </div>
-          <Link to="/projects" className="navbar-link">
-            Portfolio
-          </Link>
+         
           <Link to="/blog" className="navbar-link">
             Blog
           </Link>
@@ -121,7 +124,14 @@ const Navbar = () => {
 
         {/* Theme Toggle & Mobile Menu - Far Right */}
         <div className="navbar-right">
-          
+          {/* Desktop Theme Toggle */}
+          <button
+            onClick={toggleTheme}
+            className="desktop-theme-toggle"
+            aria-label="Toggle theme"
+          >
+            {isDarkMode ? <FaSun size={20} /> : <FaMoon size={20} />}
+          </button>
 
           {/* Mobile Menu Button */}
           <div className="navbar-mobile-controls">
