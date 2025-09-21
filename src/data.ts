@@ -269,5 +269,53 @@ export const allProjects: ProjectItem[] = [
   },
 
 
+  {
+    id: 9,
+    category: 'architectural',
+    title: 'Gecko Lodge',
+    description: 'Contemporary 6-bedroom smart home with sustainable design',
+    status: 'completed',
+    image: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750631103/b_kp9qn6.jpg',
+    location: 'Accra,Ghana',
+    details: {
+      specifications: {
+        height: '300m',
+        floors: '80',
+        area: '150,000 sq ft',
+        completion: '2022'
+      },
+    
+      timeline: '2018-2025',
+      materials: ['Reinforced Concrete', 'Glass Facade', 'Steel Framework'],
+      imageGallery: ['https://res.cloudinary.com/dpzndrhse/image/upload/v1750631123/d1_rj3tse.jpg',
+        'https://res.cloudinary.com/dpzndrhse/image/upload/v1750631113/b1_bxgtth.jpg',
+        'https://res.cloudinary.com/dpzndrhse/image/upload/v1750631100/a1_j7a7cl.jpg',
+        'https://res.cloudinary.com/dpzndrhse/image/upload/v1750631103/b_kp9qn6.jpg',
+
+         'https://res.cloudinary.com/dpzndrhse/image/upload/v1750631135/rooftop_b6sspo.jpg',
+         'https://res.cloudinary.com/dpzndrhse/image/upload/v1750631135/h_-1_vdyp2b.jpg',
+         ' https://res.cloudinary.com/dpzndrhse/image/upload/v1750631128/e1_skdoqh.jpghttps://res.cloudinary.com/dpzndrhse/image/upload/v1750631130/f_od7pdx.jpghttps://res.cloudinary.com/dpzndrhse/image/upload/v1750631118/c1_wxqz7m.jpg'
+      ],
+      videos: [
+        {
+          url: '/videos/02673085c141fa1529b528534962bf26.mp4',
+          type: 'local',
+          thumbnail: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750629093/c5_mkzxgs.jpg',
+        }
+      ],
+      blueprints: ['/downloads/skyscraper-structural.pdf'],
+      virtualTour: 'https://3dtour.com/skyscraper'
+    }
+  },
+
+
+
+  
+
 
   ];
+
+
+
+
+  

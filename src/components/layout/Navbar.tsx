@@ -9,6 +9,7 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isServicesDropdownOpen, setIsServicesDropdownOpen] = useState(false);
+  const [isMobileServicesDropdownOpen, setIsMobileServicesDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Handle scroll effect
@@ -27,6 +28,10 @@ const Navbar = () => {
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
+    // Close mobile services dropdown when mobile menu is closed
+    if (isMobileMenuOpen) {
+      setIsMobileServicesDropdownOpen(false);
+    }
   };
 
   const toggleServicesDropdown = () => {
@@ -92,28 +97,36 @@ const Navbar = () => {
                 <Link
                   to="/services/architectural-design"
                   className="navbar-dropdown-item"
-                  onClick={() => setIsServicesDropdownOpen(false)}
+                  onClick={() => {
+                    console.log('Desktop: Architectural Design link clicked');
+                    setIsServicesDropdownOpen(false);
+                  }}
                 >
                   Architectural Design
                 </Link>
                 <Link
                   to="/services/interior-design"
                   className="navbar-dropdown-item"
-                  onClick={() => setIsServicesDropdownOpen(false)}
+                  onClick={() => {
+                    console.log('Desktop: Interior Design link clicked');
+                    setIsServicesDropdownOpen(false);
+                  }}
                 >
                   Interior Design
                 </Link>
                 <Link
                   to="/services/construction"
                   className="navbar-dropdown-item"
-                  onClick={() => setIsServicesDropdownOpen(false)}
+                  onClick={() => {
+                    console.log('Desktop: Construction link clicked');
+                    setIsServicesDropdownOpen(false);
+                  }}
                 >
                   Construction
                 </Link>
               </div>
             )}
           </div>
-         
           <Link to="/blog" className="navbar-link">
             Blog
           </Link>
@@ -167,27 +180,36 @@ const Navbar = () => {
           >
             About
           </Link>
+            <Link
+            to="/projects"
+            className="mobile-menu-link"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            Projects
+          </Link>
+
           <div className="mobile-menu-dropdown">
             <button
               className="mobile-menu-link mobile-menu-dropdown-toggle"
-              onClick={() => setIsServicesDropdownOpen(!isServicesDropdownOpen)}
-              aria-expanded={isServicesDropdownOpen}
+              onClick={() => setIsMobileServicesDropdownOpen(!isMobileServicesDropdownOpen)}
+              aria-expanded={isMobileServicesDropdownOpen}
               aria-haspopup="true"
             >
               Services
               <FaChevronDown
-                className={`dropdown-icon ${isServicesDropdownOpen ? 'rotated' : ''}`}
+                className={`dropdown-icon ${isMobileServicesDropdownOpen ? 'rotated' : ''}`}
                 size={12}
               />
             </button>
-            {isServicesDropdownOpen && (
+            {isMobileServicesDropdownOpen && (
               <div className="mobile-menu-dropdown-menu">
                 <Link
                   to="/services/architectural-design"
                   className="mobile-menu-dropdown-item"
                   onClick={() => {
-                    setIsServicesDropdownOpen(false);
-                    setIsMobileMenuOpen(false);
+                    console.log('Mobile: Architectural Design link clicked');
+                    setIsMobileServicesDropdownOpen(false);
+                    setTimeout(() => setIsMobileMenuOpen(false), 100);
                   }}
                 >
                   Architectural Design
@@ -196,8 +218,9 @@ const Navbar = () => {
                   to="/services/interior-design"
                   className="mobile-menu-dropdown-item"
                   onClick={() => {
-                    setIsServicesDropdownOpen(false);
-                    setIsMobileMenuOpen(false);
+                    console.log('Mobile: Interior Design link clicked');
+                    setIsMobileServicesDropdownOpen(false);
+                    setTimeout(() => setIsMobileMenuOpen(false), 100);
                   }}
                 >
                   Interior Design
@@ -206,8 +229,9 @@ const Navbar = () => {
                   to="/services/construction"
                   className="mobile-menu-dropdown-item"
                   onClick={() => {
-                    setIsServicesDropdownOpen(false);
-                    setIsMobileMenuOpen(false);
+                    console.log('Mobile: Construction link clicked');
+                    setIsMobileServicesDropdownOpen(false);
+                    setTimeout(() => setIsMobileMenuOpen(false), 100);
                   }}
                 >
                   Construction
@@ -215,13 +239,7 @@ const Navbar = () => {
               </div>
             )}
           </div>
-          <Link
-            to="/projects"
-            className="mobile-menu-link"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            Portfolio
-          </Link>
+        
           <Link
             to="/blog"
             className="mobile-menu-link"

@@ -1,256 +1,295 @@
-
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaArrowRight, FaCheckCircle, FaClock, FaUsers, FaAward, FaLightbulb, FaCogs, FaRocket } from 'react-icons/fa';
+import {
+  FaArrowRight,
+  FaPlay,
+ 
+  FaHeart,
+  FaEye,
+  FaCalendarAlt,
+  FaMapMarkerAlt,
+  FaRulerCombined,
+  
+  FaAward,
+  FaLightbulb,
+  FaCogs,
+  FaRocket,
+  FaCheckCircle,
+  
+  FaBuilding,
+ 
+} from 'react-icons/fa';
+import '../styles/pages/ArchitecturalDesign.css';
+import { allProjects } from '../data';
 
 const ArchitecturalDesign = () => {
+  const [likedProjects, setLikedProjects] = useState(new Set<string | number>());
+
+  const toggleLike = (projectId: string | number) => {
+    setLikedProjects(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(projectId)) {
+        newSet.delete(projectId);
+      } else {
+        newSet.add(projectId);
+      }
+      return newSet;
+    });
+  };
+
+  // Architectural projects from data
+  const architecturalProjects = allProjects.filter(p => p.category === 'architectural').map(p => ({
+    id: p.id,
+    title: p.title,
+    description: p.description,
+    image: p.image,
+    video: p.details?.videos?.[0]?.url || '',
+    type: "Architectural",
+    location: p.location,
+    year: p.details?.specifications?.completion || '2023',
+    size: p.details?.specifications?.area || 'N/A',
+    budget: "Contact for details",
+    status: p.status,
+    features: p.details?.materials || [],
+    architect: "Efie Plans Team",
+    likes: 0,
+    views: 0
+  }));
+
+  const services = [
+    {
+      icon: <FaLightbulb />,
+      title: "Conceptual Design",
+      description: "Transform your ideas into detailed architectural concepts that capture the essence of your vision while considering functionality and aesthetics."
+    },
+    {
+      icon: <FaCogs />,
+      title: "Technical Drawings",
+      description: "Precise technical drawings and specifications that meet building codes and ensure seamless construction execution."
+    },
+    {
+      icon: <FaRocket />,
+      title: "Sustainable Design",
+      description: "Eco-friendly architectural solutions that minimize environmental impact while maximizing energy efficiency and comfort."
+    },
+    {
+      icon: <FaBuilding />,
+      title: "3D Visualization",
+      description: "Experience your project before construction begins with detailed 3D renderings and virtual tours."
+    },
+    {
+      icon: <FaCheckCircle />,
+      title: "Code Compliance",
+      description: "All designs meet local building codes and regulations, ensuring smooth approval processes."
+    },
+    {
+      icon: <FaAward />,
+      title: "Quality Assurance",
+      description: "Strategic design decisions that balance aesthetics with construction efficiency and budget constraints."
+    }
+  ];
+
+  const processSteps = [
+    {
+      number: 1,
+      title: "Consultation",
+      description: "Understanding your vision, requirements, and budget through detailed discussions and site analysis."
+    },
+    {
+      number: 2,
+      title: "Design Development",
+      description: "Creating initial concepts and refining them based on your feedback and site analysis."
+    },
+    {
+      number: 3,
+      title: "Technical Documentation",
+      description: "Developing detailed plans, elevations, and specifications for construction."
+    },
+    {
+      number: 4,
+      title: "Project Handover",
+      description: "Delivering complete documentation and supporting you through the construction phase."
+    }
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="architectural-design-page">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-orange-600 to-orange-800 text-white py-24 overflow-hidden">
-        <div className="absolute inset-0 bg-black opacity-20"></div>
-        <div className="relative container mx-auto px-6 text-center">
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-            Architectural Design
-          </h1>
-          <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto opacity-90">
+      <section className="arch-hero">
+        <div className="arch-floating-elements">
+          <div className="arch-floating-element"></div>
+          <div className="arch-floating-element"></div>
+          <div className="arch-floating-element"></div>
+        </div>
+        
+        <div className="arch-hero-content">
+          <h1>Architectural Design Excellence</h1>
+          <p>
             Creating innovative and sustainable building solutions that blend functionality,
-            aesthetics, and environmental consciousness.
+            aesthetics, and environmental consciousness. Discover our portfolio of award-winning
+            architectural designs that transform spaces and inspire communities.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              to="/contact"
-              className="bg-white text-orange-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-lg"
-            >
+          <div className="arch-hero-buttons">
+            <Link to="/contact" className="arch-btn arch-btn-primary">
               Start Your Project
             </Link>
-            <Link
-              to="#services"
-              className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-orange-600 transition-all duration-300"
-            >
-              Learn More
+            <Link to="#portfolio" className="arch-btn arch-btn-secondary">
+              View Our Work
             </Link>
           </div>
         </div>
-        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-gray-50 to-transparent"></div>
       </section>
 
-      {/* Service Overview */}
-      <section id="services" className="py-20 bg-white">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-800 mb-6">Our Architectural Services</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+      {/* Portfolio Showcase */}
+      <section id="portfolio" className="arch-portfolio">
+        <div className="arch-portfolio-header">
+          <h2>Our Architectural Portfolio</h2>
+          <p>
+            Explore our diverse collection of architectural projects, from residential villas to 
+            commercial complexes, each designed with precision, innovation, and sustainability in mind.
+          </p>
+        </div>
+
+        <div className="arch-projects-grid">
+          {architecturalProjects.map((project) => (
+            <div key={project.id} className="arch-project-card">
+              <div className="arch-project-media">
+                <img 
+                  src={project.image} 
+                  alt={project.title}
+                  className="arch-project-image"
+                />
+                <div className="arch-project-overlay">
+                  <div className="arch-play-button">
+                    <FaPlay />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="arch-project-info">
+                <h3 className="arch-project-title">{project.title}</h3>
+                <p className="arch-project-description">{project.description}</p>
+                
+                <div className="arch-project-details">
+                  <span className="arch-project-detail">
+                    <FaMapMarkerAlt style={{ marginRight: '8px' }} />
+                    {project.location}
+                  </span>
+                  <span className="arch-project-detail">
+                    <FaCalendarAlt style={{ marginRight: '8px' }} />
+                    {project.year}
+                  </span>
+                  <span className="arch-project-detail">
+                    <FaRulerCombined style={{ marginRight: '8px' }} />
+                    {project.size}
+                  </span>
+                  <span className="arch-project-detail">
+                    <FaBuilding style={{ marginRight: '8px' }} />
+                    {project.type}
+                  </span>
+                </div>
+
+                <div className="arch-project-features">
+                  {project.features.map((feature, index) => (
+                    <span key={index} className="arch-project-detail">
+                      {feature}
+                    </span>
+                  ))}
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '16px' }}>
+                  <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                    <button 
+                      onClick={() => toggleLike(project.id)}
+                      style={{ 
+                        background: 'none', 
+                        border: 'none', 
+                        color: likedProjects.has(project.id) ? '#ff6b6b' : '#666',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px'
+                      }}
+                    >
+                      <FaHeart />
+                      {project.likes + (likedProjects.has(project.id) ? 1 : 0)}
+                    </button>
+                    <span style={{ color: '#666', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <FaEye />
+                      {project.views}
+                    </span>
+                  </div>
+                  
+                  <Link to={`/projects/${project.id}`} className="arch-project-link">
+                    View Details <FaArrowRight />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Services Section */}
+      <section className="arch-services">
+        <div className="arch-services-content">
+          <div className="arch-services-header">
+            <h2>Our Architectural Services</h2>
+            <p>
               From concept to completion, we provide comprehensive architectural design services
               that bring your vision to life with precision and excellence.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-              <div className="text-orange-600 mb-4">
-                <FaLightbulb size={40} />
+          <div className="arch-services-grid">
+            {services.map((service, index) => (
+              <div key={index} className="arch-service-card">
+                <div className="arch-service-icon">
+                  {service.icon}
+                </div>
+                <h3>{service.title}</h3>
+                <p>{service.description}</p>
               </div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">Conceptual Design</h3>
-              <p className="text-gray-600">
-                Transform your ideas into detailed architectural concepts that capture the essence
-                of your vision while considering functionality and aesthetics.
-              </p>
-            </div>
-
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-              <div className="text-blue-600 mb-4">
-                <FaCogs size={40} />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">Technical Drawings</h3>
-              <p className="text-gray-600">
-                Precise technical drawings and specifications that meet building codes and
-                ensure seamless construction execution.
-              </p>
-            </div>
-
-            <div className="bg-gradient-to-br from-green-50 to-green-100 p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-              <div className="text-green-600 mb-4">
-                <FaRocket size={40} />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">Sustainable Design</h3>
-              <p className="text-gray-600">
-                Eco-friendly architectural solutions that minimize environmental impact while
-                maximizing energy efficiency and comfort.
-              </p>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Key Features */}
-      <section className="py-20 bg-gray-50">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-800 mb-6">Key Features</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              What sets our architectural design services apart
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-12">
-            <div className="space-y-6">
-              <div className="flex items-start space-x-4">
-                <FaCheckCircle className="text-green-500 mt-1 flex-shrink-0" size={24} />
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2">3D Visualization</h3>
-                  <p className="text-gray-600">Experience your project before construction begins with detailed 3D renderings and virtual tours.</p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-4">
-                <FaCheckCircle className="text-green-500 mt-1 flex-shrink-0" size={24} />
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2">Code Compliance</h3>
-                  <p className="text-gray-600">All designs meet local building codes and regulations, ensuring smooth approval processes.</p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-4">
-                <FaCheckCircle className="text-green-500 mt-1 flex-shrink-0" size={24} />
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2">Cost Optimization</h3>
-                  <p className="text-gray-600">Strategic design decisions that balance aesthetics with construction efficiency and budget constraints.</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              <div className="flex items-start space-x-4">
-                <FaCheckCircle className="text-green-500 mt-1 flex-shrink-0" size={24} />
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2">Site Analysis</h3>
-                  <p className="text-gray-600">Comprehensive site assessment to maximize natural light, views, and environmental integration.</p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-4">
-                <FaCheckCircle className="text-green-500 mt-1 flex-shrink-0" size={24} />
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2">Material Selection</h3>
-                  <p className="text-gray-600">Expert guidance on sustainable and durable materials that enhance both form and function.</p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-4">
-                <FaCheckCircle className="text-green-500 mt-1 flex-shrink-0" size={24} />
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2">Client Collaboration</h3>
-                  <p className="text-gray-600">Regular consultations and feedback sessions to ensure your vision is perfectly realized.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Process Overview */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-800 mb-6">Our Design Process</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+      {/* Process Section */}
+      <section className="arch-process">
+        <div className="arch-process-content">
+          <div className="arch-process-header">
+            <h2>Our Design Process</h2>
+            <p>
               A systematic approach to bringing your architectural vision to life
             </p>
           </div>
 
-          <div className="grid md:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="bg-orange-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-bold text-orange-600">1</span>
+          <div className="arch-process-steps">
+            {processSteps.map((step, index) => (
+              <div key={index} className="arch-process-step">
+                <div className="arch-step-number">{step.number}</div>
+                <h3 className="arch-step-title">{step.title}</h3>
+                <p className="arch-step-description">{step.description}</p>
               </div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-3">Consultation</h3>
-              <p className="text-gray-600">Understanding your vision, requirements, and budget through detailed discussions.</p>
-            </div>
-
-            <div className="text-center">
-              <div className="bg-orange-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-bold text-orange-600">2</span>
-              </div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-3">Design Development</h3>
-              <p className="text-gray-600">Creating initial concepts and refining them based on your feedback and site analysis.</p>
-            </div>
-
-            <div className="text-center">
-              <div className="bg-orange-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-bold text-orange-600">3</span>
-              </div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-3">Technical Documentation</h3>
-              <p className="text-gray-600">Developing detailed plans, elevations, and specifications for construction.</p>
-            </div>
-
-            <div className="text-center">
-              <div className="bg-orange-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-bold text-orange-600">4</span>
-              </div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-3">Project Handover</h3>
-              <p className="text-gray-600">Delivering complete documentation and supporting you through the construction phase.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Benefits Section */}
-      <section className="py-20 bg-gradient-to-r from-orange-50 to-orange-100">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-800 mb-6">Why Choose Our Architectural Services?</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Experience the difference that professional architectural design can make
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white p-8 rounded-xl shadow-lg text-center">
-              <FaAward className="text-orange-600 mx-auto mb-4" size={48} />
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">Award-Winning Designs</h3>
-              <p className="text-gray-600">
-                Recognized for innovative and sustainable architectural solutions that push boundaries.
-              </p>
-            </div>
-
-            <div className="bg-white p-8 rounded-xl shadow-lg text-center">
-              <FaUsers className="text-orange-600 mx-auto mb-4" size={48} />
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">Expert Team</h3>
-              <p className="text-gray-600">
-                Licensed architects with decades of experience in residential and commercial projects.
-              </p>
-            </div>
-
-            <div className="bg-white p-8 rounded-xl shadow-lg text-center">
-              <FaClock className="text-orange-600 mx-auto mb-4" size={48} />
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">On-Time Delivery</h3>
-              <p className="text-gray-600">
-                Efficient project management ensuring designs are delivered within agreed timelines.
-              </p>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Call to Action */}
-      <section className="py-20 bg-gradient-to-r from-gray-800 to-gray-900 text-white">
-        <div className="container mx-auto px-6 text-center">
-          <h2 className="text-4xl font-bold mb-6">Ready to Bring Your Vision to Life?</h2>
-          <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
+      <section className="arch-cta">
+        <div className="arch-cta-content">
+          <h2>Ready to Bring Your Vision to Life?</h2>
+          <p>
             Let's discuss your architectural project and create something truly extraordinary together.
+            Our team of experienced architects is ready to transform your ideas into reality.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              to="/contact"
-              className="bg-orange-600 hover:bg-orange-700 text-white px-8 py-4 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center gap-2"
-            >
-              Get Started Today
-              <FaArrowRight />
+          <div className="arch-cta-buttons">
+            <Link to="/contact" className="arch-btn arch-btn-primary">
+              Get Started Today <FaArrowRight />
             </Link>
-            <Link
-              to="/projects"
-              className="border-2 border-white text-white hover:bg-white hover:text-gray-900 px-8 py-4 rounded-lg font-semibold transition-all duration-300"
-            >
+            <Link to="/projects" className="arch-btn arch-btn-secondary">
               View Our Portfolio
             </Link>
           </div>

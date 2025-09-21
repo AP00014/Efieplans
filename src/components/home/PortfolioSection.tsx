@@ -75,7 +75,7 @@ const PortfolioSection = () => {
           <div className="image-overlay">
             <h3>Gecko Lodge</h3>
             <p>Rigorous testing protocols</p>
-            <Link to="/projects/6" className="view-link">
+            <Link to="/projects/9" className="view-link">
               View Details <FiExternalLink />
             </Link>
           </div>
