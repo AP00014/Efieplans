@@ -11,7 +11,7 @@ const testimonials = [
     position: 'Property Developer',
     company: 'Accra Estates',
     image: 'https://randomuser.me/api/portraits/men/32.jpg',
-    quote: 'Stone-Edge Construction delivered our residential complex on time and within budget. Their attention to detail and quality workmanship exceeded our expectations. We will definitely work with them again on future projects.',
+    quote: 'Efie-plans Construction delivered our residential complex on time and within budget. Their attention to detail and quality workmanship exceeded our expectations. We will definitely work with them again on future projects.',
     rating: 5
   },
   {
@@ -20,7 +20,7 @@ const testimonials = [
     position: 'CEO',
     company: 'Mensah Hotels',
     image: 'https://randomuser.me/api/portraits/women/44.jpg',
-    quote: 'The construction of our hotel was a complex project, but Stone-Edge handled it with professionalism and expertise. Their team was responsive to our needs and delivered exceptional results that have impressed our guests.',
+    quote: 'The construction of our hotel was a complex project, but Efie-plans handled it with professionalism and expertise. Their team was responsive to our needs and delivered exceptional results that have impressed our guests.',
     rating: 5
   },
   {
@@ -29,7 +29,7 @@ const testimonials = [
     position: 'Director',
     company: 'Boateng Retail Group',
     image: 'https://randomuser.me/api/portraits/men/62.jpg',
-    quote: 'We hired Stone-Edge for our shopping mall construction and were impressed by their project management skills. They navigated challenges effectively and maintained high standards throughout the project.',
+    quote: 'We hired Efie-plans for our shopping mall construction and were impressed by their project management skills. They navigated challenges effectively and maintained high standards throughout the project.',
     rating: 4
   },
   {
@@ -38,7 +38,7 @@ const testimonials = [
     position: 'Homeowner',
     company: '',
     image: 'https://randomuser.me/api/portraits/women/58.jpg',
-    quote: 'Stone-Edge transformed our home with their construction expertise. The team was professional, clean, and respectful of our space. The final result exceeded our expectations and was completed ahead of schedule.',
+    quote: 'Efie-plans transformed our home with their construction expertise. The team was professional, clean, and respectful of our space. The final result exceeded our expectations and was completed ahead of schedule.',
     rating: 5
   },
 ];
@@ -136,7 +136,7 @@ const TestimonialsSection = () => {
             Client <span className="testimonials-title-highlight">Testimonials</span>
           </h2>
           <p className="testimonials-description">
-            Don't just take our word for it. Here's what our clients have to say about working with Stone-Edge Construction.
+            Don't just take our word for it. Here's what our clients have to say about working with Efie-plans Construction.
           </p>
         </motion.div>
 
