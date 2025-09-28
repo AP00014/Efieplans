@@ -121,7 +121,6 @@ const Navbar = () => {
                   to="/services/architectural-design"
                   className="navbar-dropdown-item"
                   onClick={() => {
-                    console.log('Desktop: Architectural Design link clicked');
                     setIsServicesDropdownOpen(false);
                   }}
                 >
@@ -131,7 +130,6 @@ const Navbar = () => {
                   to="/services/interior-design"
                   className="navbar-dropdown-item"
                   onClick={() => {
-                    console.log('Desktop: Interior Design link clicked');
                     setIsServicesDropdownOpen(false);
                   }}
                 >
@@ -141,7 +139,6 @@ const Navbar = () => {
                   to="/services/construction"
                   className="navbar-dropdown-item"
                   onClick={() => {
-                    console.log('Desktop: Construction link clicked');
                     setIsServicesDropdownOpen(false);
                   }}
                 >
@@ -194,14 +191,7 @@ const Navbar = () => {
               />
             </Link>
 
-            {/* Close Button */}
-            <button
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="mobile-menu-close"
-              aria-label="Close mobile menu"
-            >
-              ✕
-            </button>
+           
           </div>
 
           {/* Navigation Links */}
@@ -247,7 +237,6 @@ const Navbar = () => {
                   to="/services/architectural-design"
                   className="mobile-menu-dropdown-item"
                   onClick={() => {
-                    console.log('Mobile: Architectural Design link clicked');
                     setIsMobileServicesDropdownOpen(false);
                     setTimeout(() => setIsMobileMenuOpen(false), 100);
                   }}
@@ -258,7 +247,6 @@ const Navbar = () => {
                   to="/services/interior-design"
                   className="mobile-menu-dropdown-item"
                   onClick={() => {
-                    console.log('Mobile: Interior Design link clicked');
                     setIsMobileServicesDropdownOpen(false);
                     setTimeout(() => setIsMobileMenuOpen(false), 100);
                   }}
@@ -269,7 +257,6 @@ const Navbar = () => {
                   to="/services/construction"
                   className="mobile-menu-dropdown-item"
                   onClick={() => {
-                    console.log('Mobile: Construction link clicked');
                     setIsMobileServicesDropdownOpen(false);
                     setTimeout(() => setIsMobileMenuOpen(false), 100);
                   }}
