@@ -34,7 +34,7 @@
 }
 
 .dark .testimonials-section {
-  background-color: var(--color-secondary);
+  background: var(--color-secondary);
 }
 
 .testimonials-header {

@@ -1,8 +1,23 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { FaSun, FaMoon, FaBars, FaTimes, FaChevronDown } from "react-icons/fa";
+import { FaSun, FaMoon, FaChevronDown } from "react-icons/fa";
 import { useTheme } from "../../hooks/useTheme";
 import "../../styles/components/Navbar.css";
+
+// Animated Hamburger Menu Component
+const AnimatedHamburger = ({ isOpen, onClick }: { isOpen: boolean; onClick: () => void }) => {
+  return (
+    <button
+      onClick={onClick}
+      className={`mobile-menu-toggle ${isOpen ? 'active' : ''}`}
+      aria-label="Toggle mobile menu"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  );
+};
 
 const Navbar = () => {
   const { isDarkMode, toggleTheme } = useTheme();
@@ -50,6 +65,14 @@ const Navbar = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Close mobile menu when clicking outside
+  const handleMobileMenuClick = (event: React.MouseEvent) => {
+    if (event.target === event.currentTarget) {
+      setIsMobileMenuOpen(false);
+      setIsMobileServicesDropdownOpen(false);
+    }
+  };
+
   return (
     <nav
       className={`navbar ${
@@ -75,7 +98,7 @@ const Navbar = () => {
             About
           </Link>
 
- <Link to="/projects" className="navbar-link">
+          <Link to="/projects" className="navbar-link">
             Projects
           </Link>
 
@@ -148,13 +171,7 @@ const Navbar = () => {
 
           {/* Mobile Menu Button */}
           <div className="navbar-mobile-controls">
-            <button
-              onClick={toggleMobileMenu}
-              className="mobile-menu-toggle"
-              aria-label="Toggle mobile menu"
-            >
-              {isMobileMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
-            </button>
+            <AnimatedHamburger isOpen={isMobileMenuOpen} onClick={toggleMobileMenu} />
           </div>
         </div>
       </div>
@@ -164,15 +181,38 @@ const Navbar = () => {
         className={`mobile-menu ${
           isMobileMenuOpen ? "mobile-menu-open" : "mobile-menu-closed"
         }`}
+        onClick={handleMobileMenuClick}
       >
         <div className="mobile-menu-container">
-          <Link
-            to="/"
-            className="mobile-menu-link"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            Home
-          </Link>
+          {/* Header */}
+          <div className="mobile-menu-header">
+            <Link to="/" className="mobile-menu-logo" onClick={() => setIsMobileMenuOpen(false)}>
+              <img
+                src="https://res.cloudinary.com/dpzndrhse/image/upload/v1750667944/efieplans_logo_edited_kq1tmo.avif"
+                alt="Efie plans Construction Logo"
+                className="mobile-menu-logo-image"
+              />
+            </Link>
+
+            {/* Close Button */}
+            <button
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="mobile-menu-close"
+              aria-label="Close mobile menu"
+            >
+              ✕
+            </button>
+          </div>
+
+          {/* Navigation Links */}
+          <nav className="mobile-menu-nav">
+            <Link
+              to="/"
+              className="mobile-menu-link"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Home
+            </Link>
           <Link
             to="/about"
             className="mobile-menu-link"
@@ -180,7 +220,7 @@ const Navbar = () => {
           >
             About
           </Link>
-            <Link
+          <Link
             to="/projects"
             className="mobile-menu-link"
             onClick={() => setIsMobileMenuOpen(false)}
@@ -239,7 +279,7 @@ const Navbar = () => {
               </div>
             )}
           </div>
-        
+
           <Link
             to="/blog"
             className="mobile-menu-link"
@@ -274,6 +314,7 @@ const Navbar = () => {
               )}
             </div>
           </button>
+          </nav>
         </div>
       </div>
     </nav>
