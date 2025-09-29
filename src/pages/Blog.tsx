@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { mockBlogArticles } from '../data';
 import Post from '../components/blog/Post';
 import Stories from '../components/blog/Stories';
