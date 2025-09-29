@@ -19,7 +19,7 @@ export interface ProjectItem {
   category?: string;
   details: {
     specifications: Record<string, string>;
-   
+
     timeline?: string;
     materials?: string[];
     features?: string[];
@@ -28,4 +28,29 @@ export interface ProjectItem {
     videos?: VideoSource[];
     virtualTour?: string;
   };
+};
+
+export interface Article {
+  id: string;
+  title: string;
+  content: string;
+  excerpt?: string;
+  author_id: string;
+  published_at?: string;
+  is_published: boolean;
+  featured: boolean;
+  tags: string[];
+  category?: string;
+  read_time?: number;
+  image_url?: string;
+  created_at: string;
+  updated_at: string;
+  author?: {
+    username: string;
+    full_name?: string;
+    avatar_url?: string;
+  };
+  likes_count?: number;
+  comments_count?: number;
+  is_liked?: boolean;
 };

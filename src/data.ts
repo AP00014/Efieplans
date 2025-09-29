@@ -1,5 +1,5 @@
 
-import type { ProjectItem } from './types';
+import type { ProjectItem, Article } from './types';
 
 
 
@@ -313,6 +313,155 @@ export const allProjects: ProjectItem[] = [
   
 
 
+     ];
+  
+  
+  
+  export const mockBlogArticles: Article[] = [
+    {
+      id: '1',
+      title: 'Modern Architectural Trends in Ghana',
+      content: 'Exploring the latest trends in contemporary architecture across Ghanaian cities...',
+      excerpt: 'A deep dive into sustainable and innovative building designs shaping the future.',
+      author_id: 'user1',
+      published_at: '2024-09-25T10:00:00Z',
+      is_published: true,
+      featured: true,
+      tags: ['architecture', 'sustainability', 'ghana'],
+      category: 'Architecture',
+      read_time: 5,
+      image_url: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750667824/81945302_2141154495987458_8142382399708200960_n_cpcfed.jpg',
+      created_at: '2024-09-25T09:00:00Z',
+      updated_at: '2024-09-25T09:00:00Z',
+      author: {
+        username: 'efie_architect',
+        full_name: 'Efie Plans',
+        avatar_url: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750667823/795d537546404a15a5edb74793570ebe_lvhdqb.jpg'
+      },
+      likes_count: 42,
+      comments_count: 8,
+      is_liked: false
+    },
+    {
+      id: '2',
+      title: 'Sustainable Construction Materials',
+      content: 'Discover eco-friendly materials revolutionizing the construction industry...',
+      excerpt: 'From recycled steel to bamboo composites, learn about materials that are good for the planet.',
+      author_id: 'user1',
+      published_at: '2024-09-24T14:30:00Z',
+      is_published: true,
+      featured: false,
+      tags: ['sustainability', 'materials', 'construction'],
+      category: 'Construction',
+      read_time: 7,
+      image_url: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750631800/GV-6_iacnvz.jpg',
+      created_at: '2024-09-24T13:00:00Z',
+      updated_at: '2024-09-24T13:00:00Z',
+      author: {
+        username: 'efie_architect',
+        full_name: 'Efie Plans',
+        avatar_url: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750667823/795d537546404a15a5edb74793570ebe_lvhdqb.jpg'
+      },
+      likes_count: 28,
+      comments_count: 5,
+      is_liked: true
+    },
+    {
+      id: '3',
+      title: 'Interior Design Inspiration',
+      content: 'Transforming spaces with thoughtful design and functionality...',
+      excerpt: 'Case studies of beautiful interior transformations that balance aesthetics and practicality.',
+      author_id: 'user2',
+      published_at: '2024-09-23T11:15:00Z',
+      is_published: true,
+      featured: false,
+      tags: ['interior', 'design', 'inspiration'],
+      category: 'Interior Design',
+      read_time: 6,
+      image_url: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750631402/Francess.final-1_n8dmoa.jpg',
+      created_at: '2024-09-23T10:00:00Z',
+      updated_at: '2024-09-23T10:00:00Z',
+      author: {
+        username: 'design_guru',
+        full_name: 'Design Guru',
+        avatar_url: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750628589/Afari_s_final_lrcjvr.jpg'
+      },
+      likes_count: 67,
+      comments_count: 12,
+      is_liked: false
+    },
+    {
+      id: '4',
+      title: 'Urban Planning for Tomorrow',
+      content: 'How cities are adapting to future challenges through innovative planning...',
+      excerpt: 'Exploring smart city concepts and sustainable urban development strategies.',
+      author_id: 'user1',
+      published_at: '2024-09-22T16:45:00Z',
+      is_published: true,
+      featured: true,
+      tags: ['urban', 'planning', 'sustainability'],
+      category: 'Architecture',
+      read_time: 8,
+      image_url: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750628718/Michael_s_final_d78rgo.jpg',
+      created_at: '2024-09-22T15:00:00Z',
+      updated_at: '2024-09-22T15:00:00Z',
+      author: {
+        username: 'efie_architect',
+        full_name: 'Efie Plans',
+        avatar_url: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750667823/795d537546404a15a5edb74793570ebe_lvhdqb.jpg'
+      },
+      likes_count: 89,
+      comments_count: 15,
+      is_liked: false
+    },
+    {
+      id: '5',
+      title: 'Luxury Estate Development',
+      content: 'Creating exclusive residential communities with premium amenities...',
+      excerpt: 'Behind the scenes of developing high-end estates that offer luxury living.',
+      author_id: 'user3',
+      published_at: '2024-09-21T09:20:00Z',
+      is_published: true,
+      featured: false,
+      tags: ['luxury', 'estates', 'development'],
+      category: 'Real Estate',
+      read_time: 4,
+      image_url: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750631768/birdview_mdavmx.jpg',
+      created_at: '2024-09-21T08:00:00Z',
+      updated_at: '2024-09-21T08:00:00Z',
+      author: {
+        username: 'luxury_living',
+        full_name: 'Luxury Living Co.',
+        avatar_url: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750629085/c2_z8gijk.jpg'
+      },
+      likes_count: 34,
+      comments_count: 6,
+      is_liked: true
+    },
+    {
+      id: '6',
+      title: 'Green Building Certification',
+      content: 'Achieving sustainability standards in modern construction projects...',
+      excerpt: 'A guide to obtaining green building certifications and their benefits.',
+      author_id: 'user1',
+      published_at: '2024-09-20T13:10:00Z',
+      is_published: true,
+      featured: false,
+      tags: ['green', 'certification', 'sustainability'],
+      category: 'Construction',
+      read_time: 9,
+      image_url: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750631103/b_kp9qn6.jpg',
+      created_at: '2024-09-20T12:00:00Z',
+      updated_at: '2024-09-20T12:00:00Z',
+      author: {
+        username: 'efie_architect',
+        full_name: 'Efie Plans',
+        avatar_url: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750667823/795d537546404a15a5edb74793570ebe_lvhdqb.jpg'
+      },
+      likes_count: 52,
+      comments_count: 9,
+      is_liked: false
+    }
   ];
 
 

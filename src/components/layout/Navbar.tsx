@@ -155,19 +155,21 @@ const Navbar = () => {
           </Link>
         </div>
 
-        {/* Theme Toggle & Mobile Menu - Far Right */}
+        {/* Controls - Far Right */}
         <div className="navbar-right">
           {/* Desktop Theme Toggle */}
-          <button
-            onClick={toggleTheme}
-            className="desktop-theme-toggle"
-            aria-label="Toggle theme"
-          >
-            {isDarkMode ? <FaSun size={20} /> : <FaMoon size={20} />}
-          </button>
+          <div className="hidden md:flex items-center">
+            <button
+              onClick={toggleTheme}
+              className="desktop-theme-toggle"
+              aria-label="Toggle theme"
+            >
+              {isDarkMode ? <FaSun size={20} /> : <FaMoon size={20} />}
+            </button>
+          </div>
 
           {/* Mobile Menu Button */}
-          <div className="navbar-mobile-controls">
+          <div className="navbar-mobile-controls md:hidden">
             <AnimatedHamburger isOpen={isMobileMenuOpen} onClick={toggleMobileMenu} />
           </div>
         </div>
@@ -281,6 +283,7 @@ const Navbar = () => {
           >
             Contact
           </Link>
+
           {/* Mobile Theme Toggle */}
           <button
             onClick={toggleTheme}
