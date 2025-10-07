@@ -20,6 +20,7 @@ const AnimatedHamburger = ({ isOpen, onClick }: { isOpen: boolean; onClick: () =
 };
 
 const Navbar = () => {
+  console.log('Navbar component rendering');
   const { isDarkMode, toggleTheme } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -101,6 +102,9 @@ const Navbar = () => {
           <Link to="/projects" className="navbar-link">
             Projects
           </Link>
+          <Link to="/blog" className="navbar-link">
+            Blog
+          </Link>
 
           <div className="navbar-dropdown" ref={dropdownRef}>
             <button
@@ -147,9 +151,6 @@ const Navbar = () => {
               </div>
             )}
           </div>
-          <Link to="/blog" className="navbar-link">
-            Blog
-          </Link>
           <Link to="/contact" className="navbar-link">
             Contact
           </Link>
@@ -219,6 +220,13 @@ const Navbar = () => {
           >
             Projects
           </Link>
+          <Link
+            to="/blog"
+            className="mobile-menu-link"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            Blog
+          </Link>
 
           <div className="mobile-menu-dropdown">
             <button
@@ -269,13 +277,6 @@ const Navbar = () => {
             )}
           </div>
 
-          <Link
-            to="/blog"
-            className="mobile-menu-link"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            Blog
-          </Link>
           <Link
             to="/contact"
             className="mobile-menu-link"

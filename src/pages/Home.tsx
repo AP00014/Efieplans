@@ -9,6 +9,7 @@ import TestimonialsSection from '../components/home/TestimonialsSection';
 import ContactSection from '../components/home/ContactSection';
 
 const Home = () => {
+  console.log('Home component rendering');
   return (
     <div className="home-container">
       {/* Hero Section */}
