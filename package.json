@@ -1,6 +1,6 @@
 {
   "name": "efie_plans_website",
-  "Home": "https://github.com/AP00014/Efieplans/",
+  "homepage": "https://ap00014.github.io/Efieplans",
   "description": "A website for efie plans, a company that provides various services including Archiectural designs, Building and construction,architectural and more.",
   "private": true,
   "version": "0.0.0",
