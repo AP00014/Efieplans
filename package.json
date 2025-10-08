@@ -1,6 +1,6 @@
 {
   "name": "efie_plans_website",
-  "homepage": "https://ap00014.github.io/Efieplans",
+  "homepage": "https://ap00014.github.io/EfiePlans",
   "description": "A website for efie plans, a company that provides various services including Archiectural designs, Building and construction,architectural and more.",
   "private": true,
   "version": "0.0.0",
@@ -36,6 +36,7 @@
     "globals": "^16.3.0",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.39.1",
-    "vite": "^7.1.2"
+    "vite": "^7.1.2",
+    "vite-plugin-github-pages": "^0.0.0-alpha.0"
   }
 }
