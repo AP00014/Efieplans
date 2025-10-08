@@ -25,7 +25,7 @@ function App() {
 
   return (
     <ThemeProvider>
-      <Router>
+      <Router basename="/Efieplans/">
       {/* <ScrollToTop /> */}
       <Routes>
         <Route path="/admin" element={<AdminPage />} />
