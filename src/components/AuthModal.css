@@ -81,6 +81,44 @@
   border: 1px solid #fdd;
 }
 
+.google-auth-section {
+  margin-bottom: 24px;
+}
+
+.google-auth-button {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #f0f0f0;
+  border-radius: 12px;
+  background: white;
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.google-auth-button:hover:not(:disabled) {
+  border-color: #ddd;
+  background: #f9f9f9;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.google-auth-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.google-icon {
+  flex-shrink: 0;
+}
+
 .auth-form {
   display: flex;
   flex-direction: column;

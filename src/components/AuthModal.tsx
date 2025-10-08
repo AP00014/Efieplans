@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   X,
   Mail,
@@ -7,10 +7,27 @@ import {
   Eye,
   EyeOff,
   XCircle,
-  AlertTriangle,
   CheckCircle,
 } from "lucide-react";
 import "./AuthModal.css";
+
+// Declare Google Identity Services types
+declare global {
+  interface Window {
+    google?: {
+      accounts?: {
+        id?: {
+          initialize: (config: { client_id: string; callback: (response: { credential: string }) => void }) => void;
+          prompt: () => void;
+        };
+      };
+    };
+  }
+}
+
+interface GoogleSignInResponse {
+  credential: string;
+}
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -41,7 +58,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   // Validation states
   const [emailError, setEmailError] = useState<string | null>(null);
   const [emailSuccess, setEmailSuccess] = useState(false);
-  const [passwordError, setPasswordError] = useState<string | null>(null);
   const [fullNameError, setFullNameError] = useState<string | null>(null);
   const [fullNameSuccess, setFullNameSuccess] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState<PasswordStrength>({
@@ -121,12 +137,47 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
       }
     });
 
-    let color = "#ef4444"; // red
-    if (score >= 4) color = "#10b981"; // green
-    else if (score >= 3) color = "#f59e0b"; // yellow
-    else if (score >= 2) color = "#f97316"; // orange
+    let color = "#ef4444"; // red for low
+    if (score >= 4) color = "#10b981"; // green for strong
+    else if (score >= 2) color = "#3b82f6"; // blue for medium
 
     return { score, feedback, color };
+  };
+
+  // Google Sign-In handler
+  const handleGoogleSignIn = useCallback((response: GoogleSignInResponse) => {
+    console.log('Google sign in credential:', response.credential);
+    // In a real app, you'd send the credential to your backend
+    // For frontend only, we'll simulate success
+    setLoading(true);
+    setTimeout(() => {
+      setSuccessMessage("Google authentication successful!");
+      setLoading(false);
+      setTimeout(() => {
+        onClose();
+        resetForm();
+      }, 1500);
+    }, 1000);
+  }, [onClose]);
+
+  // Initialize Google Sign-In
+  useEffect(() => {
+    if (window.google?.accounts?.id) {
+      window.google.accounts.id.initialize({
+        client_id: 'YOUR_GOOGLE_CLIENT_ID', // This would be set in production
+        callback: handleGoogleSignIn,
+      });
+    }
+  }, [handleGoogleSignIn]);
+
+  // Handle Google Sign-In button click
+  const handleGoogleAuth = () => {
+    if (window.google?.accounts?.id) {
+      window.google.accounts.id.prompt();
+    } else {
+      // Fallback for when Google script isn't loaded
+      handleGoogleSignIn({ credential: 'simulated' });
+    }
   };
 
   // Real-time validation effects
@@ -145,11 +196,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     if (password) {
       const strength = validatePasswordStrength(password);
       setPasswordStrength(strength);
-      setPasswordError(
-        strength.score < 4 ? "Password does not meet requirements" : null
-      );
     } else {
-      setPasswordError(null);
       setPasswordStrength({ score: 0, feedback: [], color: "#ef4444" });
     }
   }, [password]);
@@ -246,6 +293,27 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
           <div className="success-message">{successMessage}</div>
         )}
 
+        <div className="google-auth-section">
+          <button
+            type="button"
+            className="google-auth-button"
+            onClick={handleGoogleAuth}
+            disabled={loading}
+          >
+            <svg className="google-icon" viewBox="0 0 24 24" width="20" height="20">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            Continue with Google
+          </button>
+
+          <div className="divider">
+            <span>or</span>
+          </div>
+        </div>
+
         <form onSubmit={handleSubmit} className="auth-form">
           {!isLogin && (
             <div className="input-group">
@@ -257,6 +325,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                 onChange={(e) => setFullName(e.target.value)}
                 required={!isLogin}
                 className={`auth-input ${fullNameError ? "error" : fullNameSuccess ? "success" : ""} ${fullNameSuccess ? "input-valid" : fullNameError ? "input-invalid" : ""}`}
+                style={{ borderColor: fullName ? (fullNameSuccess ? '#10b981' : fullNameError ? '#ef4444' : undefined) : undefined }}
                 disabled={loading}
               />
               {fullNameError && (
@@ -283,6 +352,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               onChange={(e) => setEmail(e.target.value)}
               required
               className={`auth-input ${emailError ? "error" : emailSuccess ? "success" : ""} ${emailSuccess ? "input-valid" : emailError ? "input-invalid" : ""}`}
+              style={{ borderColor: email ? (emailSuccess ? '#10b981' : emailError ? '#ef4444' : undefined) : undefined }}
               disabled={loading}
             />
             {emailError && (
@@ -307,15 +377,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className={`auth-input ${passwordError ? "error" : ""} ${
-                password && !passwordError
-                  ? passwordStrength.score < 2
-                    ? "password-weak"
-                    : passwordStrength.score >= 2 && passwordStrength.score < 4
-                    ? "password-medium"
-                    : "password-strong"
-                  : ""
-              }`}
+              className="auth-input"
+              style={{ borderColor: password ? passwordStrength.color : undefined }}
               disabled={loading}
             />
             <button
@@ -326,12 +389,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             >
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
-            {passwordError && (
-              <div className="field-error">
-                <AlertTriangle size={16} />
-                <span>{passwordError}</span>
-              </div>
-            )}
           </div>
 
           <button
@@ -340,7 +397,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             disabled={
               loading ||
               !!emailError ||
-              !!passwordError ||
+              passwordStrength.score < 4 ||
               (!isLogin && !!fullNameError)
             }
           >
