@@ -1,5 +1,6 @@
 
 import type { ProjectItem } from './types';
+import type { Post } from './types/index';
 
 
 
@@ -322,3 +323,82 @@ export const allProjects: ProjectItem[] = [
 
 
   
+export const posts: Post[] = [
+  {
+    id: '1',
+    title: 'Innovative Skyscraper Design',
+    description: 'Exploring modern architectural trends in high-rise buildings with sustainable materials and cutting-edge engineering.',
+    images: ['https://via.placeholder.com/400x300?text=Skyscraper+1', 'https://via.placeholder.com/400x300?text=Skyscraper+2'],
+    videos: ['https://www.youtube.com/embed/dQw4w9WgXcQ'],
+    categories: ['Architecture'],
+    likes: 150,
+    comments: [
+      { id: 'c1', user: 'ArchFan', text: 'Amazing design!', timestamp: '2023-10-01T10:00:00Z' },
+      { id: 'c2', user: 'BuilderBob', text: 'How sustainable is this?', timestamp: '2023-10-02T11:00:00Z' }
+    ]
+  },
+  {
+    id: '2',
+    title: 'Minimalist Living Room Interior',
+    description: 'A guide to creating a serene and functional living space with minimalist design principles.',
+    images: ['https://via.placeholder.com/400x300?text=Living+Room+1', 'https://via.placeholder.com/400x300?text=Living+Room+2', 'https://via.placeholder.com/400x300?text=Living+Room+3'],
+    videos: [],
+    categories: ['Interior Design'],
+    likes: 89,
+    comments: [
+      { id: 'c3', user: 'DesignLover', text: 'Love the simplicity!', timestamp: '2023-10-03T12:00:00Z' }
+    ]
+  },
+  {
+    id: '3',
+    title: 'Sustainable Construction Techniques',
+    description: 'Implementing eco-friendly building methods to reduce environmental impact in modern construction.',
+    images: ['https://via.placeholder.com/400x300?text=Sustainable+1'],
+    videos: ['https://www.youtube.com/embed/sample2'],
+    categories: ['Construction'],
+    likes: 200,
+    comments: [
+      { id: 'c4', user: 'EcoBuilder', text: 'Great for the planet!', timestamp: '2023-10-04T13:00:00Z' },
+      { id: 'c5', user: 'ContractorJoe', text: 'Any cost implications?', timestamp: '2023-10-05T14:00:00Z' },
+      { id: 'c6', user: 'GreenArch', text: 'More projects like this please.', timestamp: '2023-10-06T15:00:00Z' }
+    ]
+  },
+  {
+    id: '4',
+    title: 'Historic Building Restoration',
+    description: 'Preserving architectural heritage through careful restoration of historic structures.',
+    images: ['https://via.placeholder.com/400x300?text=Historic+1', 'https://via.placeholder.com/400x300?text=Historic+2'],
+    videos: [],
+    categories: ['Architecture', 'Construction'],
+    likes: 120,
+    comments: [
+      { id: 'c7', user: 'HistoryBuff', text: 'Beautiful work!', timestamp: '2023-10-07T16:00:00Z' },
+      { id: 'c8', user: 'RestorerPro', text: 'Authentic materials used?', timestamp: '2023-10-08T17:00:00Z' }
+    ]
+  },
+  {
+    id: '5',
+    title: 'Luxury Kitchen Design Trends',
+    description: 'Latest trends in high-end kitchen interiors featuring smart appliances and premium finishes.',
+    images: ['https://via.placeholder.com/400x300?text=Kitchen+1', 'https://via.placeholder.com/400x300?text=Kitchen+2'],
+    videos: ['https://www.youtube.com/embed/sample3'],
+    categories: ['Interior Design'],
+    likes: 175,
+    comments: [
+      { id: 'c9', user: 'ChefHome', text: 'Inspiring!', timestamp: '2023-10-09T18:00:00Z' }
+    ]
+  },
+  {
+    id: '6',
+    title: 'Bridge Construction Engineering',
+    description: 'The challenges and innovations in building large-scale bridge infrastructure projects.',
+    images: ['https://via.placeholder.com/400x300?text=Bridge+1'],
+    videos: [],
+    categories: ['Construction'],
+    likes: 95,
+    comments: [
+      { id: 'c10', user: 'EngTech', text: 'Fascinating engineering!', timestamp: '2023-10-10T19:00:00Z' },
+      { id: 'c11', user: 'BridgeFan', text: 'How long did it take?', timestamp: '2023-10-11T20:00:00Z' }
+    ]
+  }
+];

@@ -8,7 +8,9 @@ import {
   EyeOff,
   XCircle,
   CheckCircle,
+  UserCheck,
 } from "lucide-react";
+import { supabase } from "../lib/supabase";
 import "./AuthModal.css";
 
 // Declare Google Identity Services types
@@ -50,6 +52,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [username, setUsername] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -58,6 +61,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   // Validation states
   const [emailError, setEmailError] = useState<string | null>(null);
   const [emailSuccess, setEmailSuccess] = useState(false);
+  const [usernameError, setUsernameError] = useState<string | null>(null);
+  const [usernameSuccess, setUsernameSuccess] = useState(false);
   const [fullNameError, setFullNameError] = useState<string | null>(null);
   const [fullNameSuccess, setFullNameSuccess] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState<PasswordStrength>({
@@ -80,38 +85,34 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     return { isValid: true, message: "" };
   };
 
+  // Username validation
+  const validateUsername = (username: string): ValidationResult => {
+    if (!username.trim()) {
+      return { isValid: false, message: "Username is required" };
+    }
+
+    if (username.trim().length < 3) {
+      return {
+        isValid: false,
+        message: "Username must be at least 3 characters long",
+      };
+    }
+
+    const usernameRegex = /^[a-zA-Z0-9_]+$/;
+    if (!usernameRegex.test(username)) {
+      return {
+        isValid: false,
+        message: "Username can only contain letters, numbers, and underscores",
+      };
+    }
+
+    return { isValid: true, message: "" };
+  };
+
   // Full name validation
   const validateFullName = (fullName: string): ValidationResult => {
     if (!fullName.trim()) {
       return { isValid: false, message: "Full name is required" };
-    }
-
-    if (fullName.trim().length < 2) {
-      return {
-        isValid: false,
-        message: "Full name must be at least 2 characters long",
-      };
-    }
-
-    const nameParts = fullName.trim().split(/\s+/);
-    if (nameParts.length < 2) {
-      return {
-        isValid: false,
-        message: "Please enter both first and last name",
-      };
-    }
-
-    // Check if each word starts with a capital letter
-    const capitalizedParts = nameParts.map(
-      (part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
-    );
-
-    const expectedName = capitalizedParts.join(" ");
-    if (fullName.trim() !== expectedName) {
-      return {
-        isValid: false,
-        message: "Each word should start with a capital letter",
-      };
     }
 
     return { isValid: true, message: "" };
@@ -203,6 +204,17 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
 
   useEffect(() => {
+    if (username && !isLogin) {
+      const result = validateUsername(username);
+      setUsernameError(result.isValid ? null : result.message);
+      setUsernameSuccess(result.isValid);
+    } else {
+      setUsernameError(null);
+      setUsernameSuccess(false);
+    }
+  }, [username, isLogin]);
+
+  useEffect(() => {
     if (fullName && !isLogin) {
       const result = validateFullName(fullName);
       setFullNameError(result.isValid ? null : result.message);
@@ -222,6 +234,9 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     // Comprehensive validation
     const emailValidation = validateEmail(email);
     const passwordValidation = passwordStrength.score >= 4;
+    const usernameValidation = isLogin
+      ? { isValid: true, message: "" }
+      : validateUsername(username);
     const fullNameValidation = isLogin
       ? { isValid: true, message: "" }
       : validateFullName(fullName);
@@ -238,31 +253,136 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
       return;
     }
 
+    if (!usernameValidation.isValid) {
+      setError(usernameValidation.message);
+      setLoading(false);
+      return;
+    }
+
     if (!fullNameValidation.isValid) {
       setError(fullNameValidation.message);
       setLoading(false);
       return;
     }
 
-    // Simulate API call delay
-    setTimeout(() => {
-      setSuccessMessage(
-        isLogin ? "Login successful!" : "Account created successfully!"
-      );
-      setLoading(false);
+    try {
+      if (isLogin) {
+        // Sign in
+        const { data, error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
 
-      // Close modal after success
-      setTimeout(() => {
-        onClose();
-        resetForm();
-      }, 1500);
-    }, 1000);
+        if (signInError) {
+          setError(signInError.message);
+          setLoading(false);
+          return;
+        }
+
+        if (data.user) {
+          // Check if profile exists, if not create it
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .select('id')
+            .eq('id', data.user.id)
+            .single();
+
+          if (profileError && profileError.code === 'PGRST116') {
+            // Profile doesn't exist, create it
+            const { error: insertError } = await supabase
+              .from('profiles')
+              .insert({
+                id: data.user.id,
+                username: data.user.user_metadata?.username || email.split('@')[0],
+                email: data.user.email,
+                full_name: data.user.user_metadata?.full_name || '',
+              });
+
+            if (insertError) {
+              console.error('Error creating profile:', insertError);
+            }
+          }
+
+          setSuccessMessage("Login successful!");
+          setTimeout(() => {
+            onClose();
+            resetForm();
+          }, 1500);
+        }
+      } else {
+        // Check if username is already taken
+        const { data: existingProfile, error: checkError } = await supabase
+          .from('profiles')
+          .select('username')
+          .eq('username', username)
+          .single();
+
+        if (checkError && checkError.code !== 'PGRST116') {
+          setError("Error checking username availability");
+          setLoading(false);
+          return;
+        }
+
+        if (existingProfile) {
+          setError("Username is already taken. Please choose a different one.");
+          setLoading(false);
+          return;
+        }
+
+        // Sign up
+        const { data, error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              username,
+              full_name: fullName,
+            },
+          },
+        });
+
+        if (signUpError) {
+          setError(signUpError.message);
+          setLoading(false);
+          return;
+        }
+
+        if (data.user) {
+          // Create profile immediately after sign up
+          const { error: insertError } = await supabase
+            .from('profiles')
+            .insert({
+              id: data.user.id,
+              username,
+              email,
+              full_name: fullName,
+            });
+
+          if (insertError) {
+            console.error('Error creating profile:', insertError);
+            setError("Account created but profile setup failed. Please try logging in.");
+          } else {
+            setSuccessMessage("Account created successfully! Please check your email to confirm your account.");
+            setIsLogin(true); // Switch to login mode
+            setTimeout(() => {
+              resetForm();
+            }, 3000);
+          }
+        }
+      }
+    } catch (err) {
+      setError("An unexpected error occurred");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const resetForm = () => {
     setEmail("");
     setPassword("");
     setFullName("");
+    setUsername("");
     setError(null);
     setSuccessMessage(null);
   };
@@ -316,31 +436,59 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
         <form onSubmit={handleSubmit} className="auth-form">
           {!isLogin && (
-            <div className="input-group">
-              <User className="input-icon" size={20} />
-              <input
-                type="text"
-                placeholder="Full Name (First Last)"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                required={!isLogin}
-                className={`auth-input ${fullNameError ? "error" : fullNameSuccess ? "success" : ""} ${fullNameSuccess ? "input-valid" : fullNameError ? "input-invalid" : ""}`}
-                style={{ borderColor: fullName ? (fullNameSuccess ? '#10b981' : fullNameError ? '#ef4444' : undefined) : undefined }}
-                disabled={loading}
-              />
-              {fullNameError && (
-                <div className="field-error">
-                  <XCircle size={16} />
-                  <span>{fullNameError}</span>
-                </div>
-              )}
-              {fullNameSuccess && !fullNameError && (
-                <div className="field-success">
-                  <CheckCircle size={16} />
-                  <span>Full name looks good!</span>
-                </div>
-              )}
-            </div>
+            <>
+              <div className="input-group">
+                <UserCheck className="input-icon" size={20} />
+                <input
+                  type="text"
+                  placeholder="Username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required={!isLogin}
+                  className={`auth-input ${usernameError ? "error" : usernameSuccess ? "success" : ""} ${usernameSuccess ? "input-valid" : usernameError ? "input-invalid" : ""}`}
+                  style={{ borderColor: username ? (usernameSuccess ? '#10b981' : usernameError ? '#ef4444' : undefined) : undefined }}
+                  disabled={loading}
+                />
+                {usernameError && (
+                  <div className="field-error">
+                    <XCircle size={16} />
+                    <span>{usernameError}</span>
+                  </div>
+                )}
+                {usernameSuccess && !usernameError && (
+                  <div className="field-success">
+                    <CheckCircle size={16} />
+                    <span>Username looks good!</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="input-group">
+                <User className="input-icon" size={20} />
+                <input
+                  type="text"
+                  placeholder="Full Name"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  required={!isLogin}
+                  className={`auth-input ${fullNameError ? "error" : fullNameSuccess ? "success" : ""} ${fullNameSuccess ? "input-valid" : fullNameError ? "input-invalid" : ""}`}
+                  style={{ borderColor: fullName ? (fullNameSuccess ? '#10b981' : fullNameError ? '#ef4444' : undefined) : undefined }}
+                  disabled={loading}
+                />
+                {fullNameError && (
+                  <div className="field-error">
+                    <XCircle size={16} />
+                    <span>{fullNameError}</span>
+                  </div>
+                )}
+                {fullNameSuccess && !fullNameError && (
+                  <div className="field-success">
+                    <CheckCircle size={16} />
+                    <span>Full name looks good!</span>
+                  </div>
+                )}
+              </div>
+            </>
           )}
 
           <div className="input-group">
@@ -355,18 +503,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               style={{ borderColor: email ? (emailSuccess ? '#10b981' : emailError ? '#ef4444' : undefined) : undefined }}
               disabled={loading}
             />
-            {emailError && (
-              <div className="field-error">
-                <XCircle size={16} />
-                <span>{emailError}</span>
-              </div>
-            )}
-            {emailSuccess && !emailError && (
-              <div className="field-success">
-                <CheckCircle size={16} />
-                <span>Email format is valid!</span>
-              </div>
-            )}
           </div>
 
           <div className="input-group">
@@ -398,7 +534,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               loading ||
               !!emailError ||
               passwordStrength.score < 4 ||
-              (!isLogin && !!fullNameError)
+              (!isLogin && (!!usernameError || !!fullNameError))
             }
           >
             {loading ? "Processing..." : isLogin ? "Sign In" : "Sign Up"}

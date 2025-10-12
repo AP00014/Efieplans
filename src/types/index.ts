@@ -49,3 +49,84 @@ export interface RealtimeEvent<T> {
   old: T | null
   table: string
 }
+// Post and Comment Types (legacy)
+export interface Comment {
+  id: string
+  user: string
+  text: string
+  timestamp: string
+}
+
+export interface Post {
+  id: string
+  title: string
+  description: string
+  images: string[]
+  videos: string[]
+  categories: string[]
+  likes: number
+  comments: Comment[]
+}
+
+// Supabase-compatible types
+export interface SupabasePost {
+  id: string
+  user_id: string
+  title: string
+  content: string
+  image_url?: string
+  video_url?: string
+  tags: string[]
+  category?: string
+  created_at: string
+  updated_at: string
+}
+
+export interface SupabaseComment {
+  id: string
+  post_id: string
+  user_id: string
+  content: string
+  created_at: string
+  updated_at: string
+}
+
+export interface SupabaseLike {
+  id: string
+  post_id: string
+  user_id: string
+  created_at: string
+}
+
+// Profile type for admin management
+export interface Profile {
+  id: string
+  username: string
+  email?: string
+  full_name?: string
+  avatar_url?: string
+  bio?: string
+  role: 'user' | 'admin'
+  created_at: string
+  updated_at: string
+}
+
+// Post with profile info for admin management
+export interface PostWithProfile {
+  id: string
+  user_id: string
+  title?: string
+  content: string
+  image_url?: string
+  video_url?: string
+  tags: string[]
+  category?: string
+  created_at: string
+  updated_at: string
+  profiles: {
+    username: string
+    full_name?: string
+  } | null
+  likes: number
+  comments: number
+}

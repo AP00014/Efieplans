@@ -11,7 +11,7 @@ import {
   User,
   Clock
 } from 'lucide-react';
-import './BlogPage.css';
+import './PostPage.css';
 
 interface PostWithMeta extends SupabasePost {
   author: Profile | null;
@@ -20,12 +20,19 @@ interface PostWithMeta extends SupabasePost {
   userLiked: boolean;
 }
 
-const BlogPage: React.FC = () => {
+interface CommentWithProfile extends SupabaseComment {
+  profiles: {
+    username: string;
+    full_name?: string;
+    avatar_url?: string;
+  } | null;
+}
+
+const PostPage: React.FC = () => {
   const [posts, setPosts] = useState<PostWithMeta[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<Profile | null>(null);
-  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -43,67 +50,77 @@ const BlogPage: React.FC = () => {
     checkAuth();
   }, []);
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        // Fetch posts with author info
-        const { data: postsData, error: postsError } = await supabase
-          .from('posts')
-          .select(`
-            *,
-            profiles: user_id (id, username, full_name, avatar_url)
-          `)
-          .order('created_at', { ascending: false })
-          .limit(20); // Limit initial load to 20 posts
+  const fetchPosts = useCallback(async () => {
+    try {
+      setLoading(true);
 
-        if (postsError) throw postsError;
+      // Get current user for like status
+      const { data: { user } } = await supabase.auth.getUser();
 
-        // Get current user for like status
-        const { data: { user } } = await supabase.auth.getUser();
+      // Build query with filters
+      let query = supabase
+        .from('posts')
+        .select(`
+          *,
+          profiles: user_id (id, username, full_name, avatar_url)
+        `)
+        .order('created_at', { ascending: false })
+        .limit(50); // Increased limit for better filtering
 
-        // Fetch likes and comments counts for each post in parallel
-        const postsWithMeta = await Promise.all(
-          (postsData || []).map(async (post) => {
-            const [likesResult, commentsResult, likeStatus] = await Promise.all([
-              supabase
-                .from('likes')
-                .select('*', { count: 'exact', head: true })
-                .eq('post_id', post.id),
-              supabase
-                .from('comments')
-                .select('*', { count: 'exact', head: true })
-                .eq('post_id', post.id),
-              user ? supabase
-                .from('likes')
-                .select('id')
-                .eq('post_id', post.id)
-                .eq('user_id', user.id)
-                .maybeSingle() : Promise.resolve({ data: null })
-            ]);
-
-            return {
-              ...post,
-              author: post.profiles || null,
-              likesCount: likesResult.count || 0,
-              commentsCount: commentsResult.count || 0,
-              userLiked: !!likeStatus.data
-            };
-          })
-        );
-
-        setPosts(postsWithMeta);
-      } catch (error) {
-        console.error('Error fetching posts:', error);
-      } finally {
-        setLoading(false);
+      // Apply category filter
+      if (selectedCategories.length > 0) {
+        query = query.contains('tags', selectedCategories);
       }
-    };
 
+      const { data: postsData, error: postsError } = await query;
+
+      if (postsError) throw postsError;
+
+      // Fetch likes and comments counts for each post in parallel
+      const postsWithMeta = await Promise.all(
+        (postsData || []).map(async (post) => {
+          const [likesResult, commentsResult, likeStatus] = await Promise.all([
+            supabase
+              .from('likes')
+              .select('*', { count: 'exact', head: true })
+              .eq('post_id', post.id),
+            supabase
+              .from('comments')
+              .select('*', { count: 'exact', head: true })
+              .eq('post_id', post.id),
+            user ? supabase
+              .from('likes')
+              .select('id')
+              .eq('post_id', post.id)
+              .eq('user_id', user.id)
+              .maybeSingle() : Promise.resolve({ data: null })
+          ]);
+
+          return {
+            ...post,
+            author: post.profiles || null,
+            likesCount: likesResult.count || 0,
+            commentsCount: commentsResult.count || 0,
+            userLiked: !!likeStatus.data
+          };
+        })
+      );
+
+      setPosts(postsWithMeta);
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedCategories]);
+
+  useEffect(() => {
     fetchPosts();
-  }, []);
-const filteredPosts = selectedCategories.length === 0 ? posts : posts.filter(post => post.tags?.some((tag: string) => selectedCategories.includes(tag)));
+  }, [fetchPosts]);
 
-const handleLike = async (postId: string) => {
+  // Posts are now filtered at the database level, so we use posts directly
+
+  const handleLike = async (postId: string) => {
     if (!currentUser) {
       alert('Please log in to like posts');
       return;
@@ -166,22 +183,14 @@ const handleLike = async (postId: string) => {
   };
 
   return (
-    <div className="blog-page">
+    <div className="post-page">
       <Header />
 
       <main className="post-content">
         <div className="container">
           <div className="filter-section">
-            <button
-              className="filter-toggle-btn"
-              onClick={() => setShowFilters(!showFilters)}
-            >
-              Filter Posts
-              <span className={`filter-arrow ${showFilters ? 'open' : ''}`}>▼</span>
-            </button>
-
-            {showFilters && (
-              <div className="filter-dropdown">
+            <div className="filter-controls">
+              <div className="category-filters">
                 <button
                   className={selectedCategories.length === 0 ? 'active' : ''}
                   onClick={() => setSelectedCategories([])}
@@ -225,16 +234,16 @@ const handleLike = async (postId: string) => {
                   Interior Design
                 </button>
               </div>
-            )}
+            </div>
           </div>
 
           <div className="posts-feed">
             {loading ? (
               <div className="loading-spinner"></div>
-            ) : filteredPosts.length === 0 ? (
+            ) : posts.length === 0 ? (
               <p className="no-posts">No posts available.</p>
             ) : (
-              filteredPosts.map(post => (
+              posts.map(post => (
                 <FacebookPostCard
                   key={post.id}
                   post={post}
@@ -259,14 +268,20 @@ const FacebookPostCard: React.FC<{
   onShare: (post: PostWithMeta) => void;
 }> = ({ post, currentUser, onLike, onShare }) => {
   const [showComments, setShowComments] = useState(false);
-  const [comments, setComments] = useState<(SupabaseComment & { profiles: Profile | null })[]>([]);
+  const [comments, setComments] = useState<CommentWithProfile[]>([]);
   const [commentText, setCommentText] = useState('');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showImageModal, setShowImageModal] = useState(false);
   const [modalImageIndex, setModalImageIndex] = useState(0);
 
-  // Parse image URLs from JSON string
-  const imageUrls = post.image_url ? JSON.parse(post.image_url) : [];
+  // Parse image URLs from JSON string with error handling
+  const imageUrls: string[] = (() => {
+    try {
+      return post.image_url ? JSON.parse(post.image_url) : [];
+    } catch {
+      return [];
+    }
+  })();
   const hasMultipleImages = imageUrls.length > 1;
 
   const fetchComments = useCallback(async () => {
@@ -447,9 +462,11 @@ const FacebookPostCard: React.FC<{
               {post.likesCount}
             </span>
           )}
-          <span className="comments-count" onClick={() => setShowComments(!showComments)}>
-            {post.commentsCount} comments
-          </span>
+          {post.commentsCount > 0 && (
+            <span className="comments-count" onClick={() => setShowComments(!showComments)}>
+              {post.commentsCount} comments
+            </span>
+          )}
         </div>
       </div>
 
@@ -579,4 +596,4 @@ const FacebookPostCard: React.FC<{
   );
 };
 
-export default BlogPage;
+export default PostPage;
