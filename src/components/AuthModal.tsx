@@ -165,7 +165,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   useEffect(() => {
     if (window.google?.accounts?.id) {
       window.google.accounts.id.initialize({
-        client_id: 'YOUR_GOOGLE_CLIENT_ID', // This would be set in production
+        client_id: '331811061779-qhmm4q1lo85jgd8h5joeeutpakegvide.apps.googleusercontent.com', // This would be set in production
         callback: handleGoogleSignIn,
       });
     }
@@ -249,7 +249,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
     if (!passwordValidation) {
       setError("Please ensure your password meets all requirements");
-      setLoading(false);
+     setLoading(false);
       return;
     }
 
@@ -366,14 +366,15 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
           if (insertError) {
             console.error('Error creating profile:', insertError);
-            setError("Account created but profile setup failed. Please try logging in.");
-          } else {
-            setSuccessMessage("Signup successful! Please check your email to confirm your account.");
-            setIsLogin(true); // Switch to login mode
-            setTimeout(() => {
-              resetForm();
-            }, 3000);
+            // Profile creation failed, but account was created successfully
+            // Log the error but still show success message
           }
+
+          setSuccessMessage("Signup successful! Please check your email to confirm your account.");
+          setIsLogin(true); // Switch to login mode
+          setTimeout(() => {
+            resetForm();
+          }, 3000);
         }
       }
     } catch (err) {
