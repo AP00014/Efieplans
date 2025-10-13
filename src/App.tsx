@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from './contexts/ThemeContext';
+import ScrollToTop from './hooks/useScrollToTop';
 import './App.css';
 
 // Layout
@@ -27,7 +28,7 @@ function App() {
   return (
     <ThemeProvider>
       <Router basename="/Efieplans/">
-      {/* <ScrollToTop /> */}
+      <ScrollToTop />
       <Routes>
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/blog" element={<BlogPage />} />
