@@ -764,6 +764,16 @@
   cursor: not-allowed;
 }
 
+.action-btn.comment.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.comments-count.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* Image Modal */
 .image-modal-overlay {
   position: fixed;
@@ -879,6 +889,65 @@
   border-radius: 16px;
   font-size: 14px;
   font-weight: 500;
+}
+
+/* Custom Alert */
+.custom-alert-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fadeIn 0.3s ease;
+}
+
+.custom-alert {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 400px;
+  width: 90%;
+  animation: slideIn 0.3s ease;
+}
+
+.alert-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 24px;
+}
+
+.alert-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.alert-content p {
+  margin: 0;
+  color: #2d3748;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 /* Loading and Empty States */

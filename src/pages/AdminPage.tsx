@@ -1435,6 +1435,23 @@ const EditPostModal: React.FC<{
               </div>
 
               <div className="form-group">
+                <label htmlFor="edit-category">Category</label>
+                <select
+                  id="edit-category"
+                  name="category"
+                  value={formData.category}
+                  onChange={handleInputChange}
+                  required
+                  className="form-input"
+                >
+                  <option value="">Select a category</option>
+                  <option value="architectural design">Architectural Design</option>
+                  <option value="construction">Construction</option>
+                  <option value="interior design">Interior Design</option>
+                </select>
+              </div>
+
+              <div className="form-group">
                 <label>Tags</label>
                 <div className="tag-input-group">
                   <input

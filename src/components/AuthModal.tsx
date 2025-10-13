@@ -269,7 +269,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
       if (isLogin) {
         // Sign in
         const { data, error: signInError } = await supabase.auth.signInWithPassword({
-          email,
+          email: email.trim(),
           password,
         });
 
@@ -293,9 +293,12 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               .from('profiles')
               .insert({
                 id: data.user.id,
-                username: data.user.user_metadata?.username || email.split('@')[0],
-                email: data.user.email,
-                full_name: data.user.user_metadata?.full_name || '',
+                username: (data.user.user_metadata?.username || email.split('@')[0]).trim(),
+                email: data.user.email?.trim(),
+                full_name: (data.user.user_metadata?.full_name || '').trim(),
+                bio: '',
+                avatar_url: '',
+                role: 'user'
               });
 
             if (insertError) {
@@ -314,7 +317,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         const { data: existingProfile, error: checkError } = await supabase
           .from('profiles')
           .select('username')
-          .eq('username', username)
+          .eq('username', username.trim())
           .single();
 
         if (checkError && checkError.code !== 'PGRST116') {
@@ -331,12 +334,12 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
         // Sign up
         const { data, error: signUpError } = await supabase.auth.signUp({
-          email,
+          email: email.trim(),
           password,
           options: {
             data: {
-              username,
-              full_name: fullName,
+              username: username.trim(),
+              full_name: fullName.trim(),
             },
           },
         });
@@ -353,16 +356,19 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             .from('profiles')
             .insert({
               id: data.user.id,
-              username,
-              email,
-              full_name: fullName,
+              username: username.trim(),
+              email: email.trim(),
+              full_name: fullName.trim(),
+              bio: '',
+              avatar_url: '',
+              role: 'user'
             });
 
           if (insertError) {
             console.error('Error creating profile:', insertError);
             setError("Account created but profile setup failed. Please try logging in.");
           } else {
-            setSuccessMessage("Account created successfully! Please check your email to confirm your account.");
+            setSuccessMessage("Signup successful! Please check your email to confirm your account.");
             setIsLogin(true); // Switch to login mode
             setTimeout(() => {
               resetForm();

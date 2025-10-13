@@ -462,8 +462,13 @@ const FacebookPostCard: React.FC<{
               {post.likesCount}
             </span>
           )}
-          {post.commentsCount > 0 && (
+          {currentUser && post.commentsCount > 0 && (
             <span className="comments-count" onClick={() => setShowComments(!showComments)}>
+              {post.commentsCount} comments
+            </span>
+          )}
+          {!currentUser && post.commentsCount > 0 && (
+            <span className="comments-count disabled">
               {post.commentsCount} comments
             </span>
           )}
@@ -479,13 +484,23 @@ const FacebookPostCard: React.FC<{
           <Heart size={18} fill={post.userLiked ? 'currentColor' : 'none'} />
           Like
         </button>
-        <button
-          className="action-btn comment"
-          onClick={() => setShowComments(!showComments)}
-        >
-          <MessageCircle size={18} />
-          Comment
-        </button>
+        {currentUser ? (
+          <button
+            className="action-btn comment"
+            onClick={() => setShowComments(!showComments)}
+          >
+            <MessageCircle size={18} />
+            Comment
+          </button>
+        ) : (
+          <button
+            className="action-btn comment disabled"
+            onClick={() => alert('Please log in to view comments')}
+          >
+            <MessageCircle size={18} />
+            Comment
+          </button>
+        )}
         <button
           className="action-btn share"
           onClick={() => onShare(post)}
@@ -496,7 +511,7 @@ const FacebookPostCard: React.FC<{
       </div>
 
       {/* Comments Section */}
-      {showComments && (
+      {showComments && currentUser && (
         <div className="comments-section">
           <div className="comments-list">
             {comments.map((comment) => (
@@ -521,33 +536,31 @@ const FacebookPostCard: React.FC<{
             ))}
           </div>
 
-          {currentUser && (
-            <div className="add-comment">
-              <div className="comment-avatar">
-                {currentUser.avatar_url ? (
-                  <img src={currentUser.avatar_url} alt={currentUser.username} />
-                ) : (
-                  <User size={24} />
-                )}
-              </div>
-              <div className="comment-input-container">
-                <input
-                  type="text"
-                  value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
-                  placeholder="Write a comment..."
-                  onKeyDown={(e) => e.key === 'Enter' && handleAddComment()}
-                />
-                <button
-                  onClick={handleAddComment}
-                  disabled={!commentText.trim()}
-                  className="post-comment-btn"
-                >
-                  Post
-                </button>
-              </div>
+          <div className="add-comment">
+            <div className="comment-avatar">
+              {currentUser.avatar_url ? (
+                <img src={currentUser.avatar_url} alt={currentUser.username} />
+              ) : (
+                <User size={24} />
+              )}
             </div>
-          )}
+            <div className="comment-input-container">
+              <input
+                type="text"
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                placeholder="Write a comment..."
+                onKeyDown={(e) => e.key === 'Enter' && handleAddComment()}
+              />
+              <button
+                onClick={handleAddComment}
+                disabled={!commentText.trim()}
+                className="post-comment-btn"
+              >
+                Post
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
@@ -592,6 +605,7 @@ const FacebookPostCard: React.FC<{
           </div>
         </div>
       )}
+
     </article>
   );
 };

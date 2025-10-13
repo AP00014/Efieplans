@@ -1973,6 +1973,24 @@
     padding: 12px 20px;
     font-size: 14px;
   }
+
+.cancel-btn {
+ background: linear-gradient(135deg, #f56565, #e53e3e);
+ color: white;
+ border: none;
+ border-radius: 8px;
+ font-size: 14px;
+ font-weight: 500;
+ cursor: pointer;
+ transition: all 0.2s ease;
+ box-shadow: 0 2px 8px rgba(245, 101, 101, 0.3);
+}
+
+.cancel-btn:hover:not(:disabled) {
+ background: linear-gradient(135deg, #e53e3e, #c53030);
+ transform: translateY(-1px);
+ box-shadow: 0 4px 12px rgba(229, 62, 62, 0.4);
+}
 }
 
 @media (max-width: 480px) {
