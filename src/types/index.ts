@@ -107,6 +107,9 @@ export interface Profile {
   avatar_url?: string
   bio?: string
   role: 'user' | 'admin'
+  is_banned?: boolean
+  banned_at?: string
+  ban_reason?: string
   created_at: string
   updated_at: string
 }
@@ -129,4 +132,30 @@ export interface PostWithProfile {
   } | null
   likes: number
   comments: number
+}
+// Contact Message Types
+export interface ContactMessage {
+  id: string;
+  name: string;
+  email: string;
+  subject?: string;
+  message: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface EmailSubscription {
+  id: string;
+  email: string;
+  subscribed_at: string;
+  is_active: boolean;
+}
+
+export interface NewsletterSend {
+  id: string;
+  subject: string;
+  content: string;
+  sent_at?: string;
+  recipient_count: number;
 }

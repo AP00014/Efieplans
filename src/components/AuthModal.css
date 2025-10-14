@@ -1,3 +1,108 @@
+/* AuthModal Dark Mode Variables */
+.dark .modal-overlay {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.dark .modal-content {
+  background: linear-gradient(145deg, #2D2D4A, #1A1A2E);
+  border: 1px solid rgba(255, 140, 0, 0.1);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.dark .modal-header h2 {
+  color: #FFFFFF;
+}
+
+.dark .modal-header p {
+  color: #D1D5DB;
+}
+
+.dark .error-message {
+  background: rgba(239, 68, 68, 0.1);
+  color: #FCA5A5;
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+.dark .success-message {
+  background: rgba(16, 185, 129, 0.1);
+  color: #6EE7B7;
+  border-color: rgba(16, 185, 129, 0.2);
+}
+
+.dark .google-auth-button {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 140, 0, 0.2);
+  color: #FFFFFF;
+}
+
+.dark .google-auth-button:hover:not(:disabled) {
+  background: rgba(255, 140, 0, 0.1);
+  border-color: rgba(255, 140, 0, 0.4);
+}
+
+.dark .auth-input {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 140, 0, 0.2);
+  color: #FFFFFF;
+}
+
+.dark .auth-input:focus {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #FF8C00;
+  color: #FFFFFF;
+}
+
+.dark .auth-input::placeholder {
+  color: #9CA3AF;
+}
+
+.dark .auth-button.primary {
+  background: linear-gradient(135deg, #FF8C00, #E67E00);
+  color: #FFFFFF;
+}
+
+.dark .auth-button.primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #E67E00, #CC6600);
+}
+
+.dark .divider span {
+  background: linear-gradient(145deg, #2D2D4A, #1A1A2E);
+  color: #D1D5DB;
+}
+
+.dark .auth-switch p {
+  color: #D1D5DB;
+}
+
+.dark .switch-button {
+  color: #FF8C00;
+}
+
+.dark .switch-button:hover {
+  color: #FFA726;
+}
+
+.dark .field-error {
+  color: #FCA5A5;
+}
+
+.dark .field-success {
+  color: #6EE7B7;
+}
+
+.dark .info-icon {
+  background: rgba(255, 140, 0, 0.1);
+  color: #FF8C00;
+}
+
+.dark .info-label {
+  color: #9CA3AF;
+}
+
+.dark .info-value {
+  color: #FFFFFF;
+}
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -16,12 +121,14 @@
 .modal-content {
   background: white;
   border-radius: 20px;
-  padding: 32px;
+  padding: 24px;
   width: 100%;
   max-width: 400px;
   position: relative;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
   animation: modalSlideIn 0.3s ease-out;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 @keyframes modalSlideIn {
@@ -55,7 +162,7 @@
 
 .modal-header {
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .modal-header h2 {
@@ -82,12 +189,12 @@
 }
 
 .google-auth-section {
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .google-auth-button {
   width: 100%;
-  padding: 14px 16px;
+  padding: 10px 12px;
   border: 2px solid #f0f0f0;
   border-radius: 12px;
   background: white;
@@ -122,8 +229,8 @@
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  margin-bottom: 20px;
+  gap: 12px;
+  margin-bottom: 16px;
 }
 
 .input-group {
@@ -145,7 +252,7 @@
 
 .auth-input {
   width: 100%;
-  padding: 16px 44px 16px 48px;
+  padding: 12px 40px 12px 44px;
   border: 2px solid #f0f0f0;
   border-radius: 12px;
   font-size: 14px;
@@ -183,7 +290,7 @@
 
 .auth-button {
   width: 100%;
-  padding: 16px;
+  padding: 12px;
   border: none;
   border-radius: 12px;
   font-size: 14px;
@@ -253,7 +360,7 @@
 
 .auth-switch {
   text-align: center;
-  margin-top: 20px;
+  margin-top: 12px;
   color: #666;
   font-size: 14px;
 }

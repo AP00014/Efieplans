@@ -1,22 +1,24 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  FaWhatsapp, 
-  FaFacebook, 
-  FaTwitter, 
-  FaTiktok, 
-  FaLinkedin, 
-  FaSnapchat, 
+import {
+  FaWhatsapp,
+  FaFacebook,
+  FaTwitter,
+  FaTiktok,
+  FaLinkedin,
+  FaSnapchat,
   FaYoutube,
 } from 'react-icons/fa';
-import { FiUser, FiPhone, FiMail, FiMessageSquare, FiSend } from 'react-icons/fi';
+import { FiUser, FiMail, FiMessageSquare, FiSend, FiTag } from 'react-icons/fi';
+import { supabase } from '../lib/supabase';
 import '../styles/pages/contact.css';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
     name: '',
-    mobile: '',
     email: '',
+    phone: '',
+    service: '',
     message: ''
   });
   const [loading, setLoading] = useState(false);
@@ -42,8 +44,8 @@ const Contact = () => {
       setError('Please enter a valid email address');
       return false;
     }
-    if (!/^\+?[1-9]\d{1,14}$/.test(formData.mobile)) {
-      setError('Please enter a valid mobile number');
+    if (!formData.service) {
+      setError('Please select a service');
       return false;
     }
     if (!formData.message.trim()) {
@@ -56,43 +58,55 @@ const Contact = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    
+
     if (!validateForm()) {
       return;
     }
 
     setLoading(true);
 
-    const formPayload = {
-      access_key: '1f7e12ba-66e5-454e-b758-59b18cc50237',
-      name: formData.name,
-      email: formData.email,
-      mobile: formData.mobile,
-      message: formData.message,
-      subject: 'New Contact Form Submission',
-    };
-
     try {
-      const response = await fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(formPayload)
-      });
+      const { error: supabaseError } = await supabase
+        .from('contact_messages')
+        .insert([
+          {
+            name: formData.name,
+            email: formData.email,
+            subject: `Service Inquiry: ${formData.service}`,
+            message: formData.message,
+            phone: formData.phone,
+          }
+        ]);
 
-      const data = await response.json();
-      
-      if (data.success) {
-        setSuccess(true);
-        setFormData({ name: '', mobile: '', email: '', message: '' });
-        setTimeout(() => setSuccess(false), 3000);
+      if (supabaseError) {
+        setError('There was an error submitting the form. Please try again.');
+        console.error('Supabase error:', supabaseError);
       } else {
-        setError(data.message || 'There was an error submitting the form');
+        // Send notification email after successful database insert
+        try {
+          await supabase.functions.invoke('send-contact-notification', {
+            body: {
+              record: {
+                name: formData.name,
+                email: formData.email,
+                subject: `Service Inquiry: ${formData.service}`,
+                message: formData.message,
+                phone: formData.phone,
+              }
+            }
+          });
+        } catch (emailError) {
+          console.warn('Email notification failed, but message was saved:', emailError);
+          // Don't show error to user since the main action (saving message) succeeded
+        }
+
+        setSuccess(true);
+        setFormData({ name: '', email: '', phone: '', service: '', message: '' });
+        setTimeout(() => setSuccess(false), 3000);
       }
-    } catch {
+    } catch (error) {
       setError('There was an error submitting the form. Please try again.');
+      console.error('Submission error:', error);
     } finally {
       setLoading(false);
     }
@@ -170,18 +184,6 @@ const Contact = () => {
               </div>
 
               <div className="input-group">
-                <FiPhone className="input-icon" />
-                <input
-                  type="tel"
-                  placeholder="Mobile Number"
-                  value={formData.mobile}
-                  onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
-                  required
-                  pattern="^\+?[1-9]\d{1,14}$"
-                />
-              </div>
-
-              <div className="input-group">
                 <FiMail className="input-icon" />
                 <input
                   type="email"
@@ -190,6 +192,69 @@ const Contact = () => {
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   required
                 />
+              </div>
+
+              <div className="input-group">
+                <FiUser className="input-icon" />
+                <input
+                  type="tel"
+                  placeholder="Phone Number (Optional)"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  style={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                    border: '2px solid rgba(255, 140, 0, 0.2)',
+                    borderRadius: '12px',
+                    padding: '1rem 1rem 1rem 3rem',
+                    fontSize: '1rem',
+                    color: 'var(--text)',
+                    width: '100%',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = 'var(--primary)';
+                    e.target.style.boxShadow = '0 0 12px rgba(255, 140, 0, 0.1)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = 'rgba(255, 140, 0, 0.2)';
+                    e.target.style.boxShadow = 'none';
+                  }}
+                />
+              </div>
+
+              <div className="input-group">
+                <FiTag className="input-icon" />
+                <select
+                  value={formData.service}
+                  onChange={(e) => setFormData({ ...formData, service: e.target.value })}
+                  required
+                  className="form-select"
+                  style={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                    border: '2px solid rgba(255, 140, 0, 0.2)',
+                    borderRadius: '12px',
+                    padding: '1rem 3rem 1rem 3rem',
+                    fontSize: '1rem',
+                    color: 'var(--text)',
+                    width: '100%',
+                    transition: 'all 0.3s ease',
+                    cursor: 'pointer'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = 'var(--primary)';
+                    e.target.style.boxShadow = '0 0 12px rgba(255, 140, 0, 0.1)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = 'rgba(255, 140, 0, 0.2)';
+                    e.target.style.boxShadow = 'none';
+                  }}
+                >
+                  <option value="">Select a service</option>
+                  <option value="construction">🏗️ Building Construction</option>
+                  <option value="management">📋 Construction Management</option>
+                  <option value="design">🎨 Architectural Design</option>
+                  <option value="consultation">💬 Project Consultation</option>
+                </select>
               </div>
             </div>
 
@@ -217,9 +282,33 @@ const Contact = () => {
             <motion.button
               type="submit"
               className="cta-button"
-              whileHover={{ scale: 1.05 }}
+              whileHover={{
+                scale: 1.05,
+                boxShadow: "0 16px 40px rgba(255, 140, 0, 0.5)"
+              }}
               whileTap={{ scale: 0.95 }}
               disabled={loading}
+              style={{
+                width: '100%',
+                padding: '1.5rem 2rem',
+                background: 'linear-gradient(135deg, #ff8c00 0%, #ff6b35 50%, #3b82f6 100%)',
+                color: 'white',
+                border: '2px solid transparent',
+                borderRadius: '16px',
+                fontSize: '1.2rem',
+                fontWeight: '600',
+                cursor: 'pointer',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: '0.75rem',
+                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                position: 'relative',
+                overflow: 'hidden',
+                boxShadow: '0 8px 24px rgba(255, 140, 0, 0.4)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px'
+              }}
             >
               {loading ? (
                 'Sending...'

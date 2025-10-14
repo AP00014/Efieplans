@@ -19,7 +19,6 @@ import InteriorDesign from './pages/InteriorDesign';
 import Construction from './pages/Construction';
 import AdminPage from './pages/AdminPage';
 import BlogPage from './pages/BlogPage';
-import PostPage from './pages/PostPage';
 
 
 function App() {
@@ -41,7 +40,7 @@ function App() {
         <Route path="/projects" element={<Layout><Portfolio /></Layout>} />
         <Route path="/projects/:id" element={<Layout><ProjectDetail /></Layout>} />
         <Route path="/contact" element={<Layout><Contact /></Layout>} />
-        <Route path="/posts" element={<Layout><PostPage /></Layout>} />
+        <Route path="/posts" element={<Layout><BlogPage /></Layout>} />
         <Route path="*" element={<Layout><div className="container-custom py-20 text-center"><h1 className="text-3xl font-bold mb-4">Page Not Found</h1><p>The page you are looking for doesn't exist or has been moved.</p></div></Layout>} />
       </Routes>
       </Router>

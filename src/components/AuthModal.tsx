@@ -340,6 +340,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             data: {
               username: username.trim(),
               full_name: fullName.trim(),
+              email: email.trim(),
             },
           },
         });
@@ -357,8 +358,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             .insert({
               id: data.user.id,
               username: username.trim(),
-              email: email.trim(),
-              full_name: fullName.trim(),
+              email: data.user.email || email.trim(),
+              full_name: data.user.user_metadata?.full_name || fullName.trim(),
               bio: '',
               avatar_url: '',
               role: 'user'

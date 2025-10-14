@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import type { Profile, PostWithProfile, SupabaseComment } from '../types/index';
+import { useTheme } from '../hooks/useTheme';
+import type { Profile, PostWithProfile, SupabaseComment, ContactMessage, EmailSubscription } from '../types/index';
 import {
   LayoutDashboard,
   Users,
@@ -18,8 +19,12 @@ import {
   Video,
   LogOut,
   Home,
-  Search
+  Search,
+  Sun,
+  Moon,
+  Send
 } from 'lucide-react';
+import MDEditor from '@uiw/react-md-editor';
 import './AdminPage.css';
 
 interface UserActivity {
@@ -49,6 +54,7 @@ const AdminPage: React.FC = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { isDarkMode, toggleTheme } = useTheme();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -86,6 +92,9 @@ const AdminPage: React.FC = () => {
     { id: 'create-post', label: 'Create Post', icon: FileText },
     { id: 'posts', label: 'Post Management', icon: FileText },
     { id: 'users', label: 'User Management', icon: Users },
+    { id: 'contact-messages', label: 'Contacts', icon: FileText },
+    { id: 'email-subscriptions', label: 'Subscriptions', icon: Users },
+    { id: 'send-newsletter', label: 'Send Newsletter', icon: Send },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
     { id: 'settings', label: 'Settings', icon: Settings },
     { id: 'home', label: 'Main Site', icon: Home },
@@ -101,6 +110,12 @@ const AdminPage: React.FC = () => {
         return <PostManagement />;
       case 'users':
         return <UserManagement />;
+      case 'contact-messages':
+        return <ContactMessagesManagement />;
+      case 'email-subscriptions':
+        return <EmailSubscriptionsManagement />;
+      case 'send-newsletter':
+        return <SendNewsletterContent />;
       case 'analytics':
         return <AnalyticsContent />;
       case 'settings':
@@ -133,7 +148,7 @@ const AdminPage: React.FC = () => {
       </button>
 
       {/* Sidebar */}
-      <aside className={`admin-sidebar ${sidebarOpen ? 'open' : ''}`}>
+      <aside className={`admin-sidebar ${sidebarOpen ? 'open' : ''} ${isDarkMode ? 'dark' : ''}`}>
         <div className="sidebar-header">
           <Shield size={32} className="admin-icon" />
           <h2>Admin Panel</h2>
@@ -159,15 +174,25 @@ const AdminPage: React.FC = () => {
         </nav>
 
         <div className="sidebar-footer">
-          <p>Logged in as: {profile?.username}</p>
-          <button
-            className="logout-btn"
-            onClick={handleLogout}
-          >
-            <LogOut size={16} />
-            Logout
-          </button>
-        </div>
+           <p>Logged in as: {profile?.username}</p>
+           <div className="sidebar-controls">
+             <button
+               className="theme-toggle-btn"
+               onClick={toggleTheme}
+               title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+               style={{ background: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.9)', border: isDarkMode ? '1px solid rgba(255, 255, 255, 0.2)' : '1px solid rgba(0, 123, 255, 0.2)', color: isDarkMode ? '#FFFFFF' : '#4a5568' }}
+             >
+               {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
+             </button>
+             <button
+               className="logout-btn"
+               onClick={handleLogout}
+             >
+               <LogOut size={16} />
+               Logout
+             </button>
+           </div>
+         </div>
       </aside>
 
       {/* Main content */}
@@ -661,6 +686,7 @@ const UserManagement: React.FC = () => {
     }
   };
 
+
   const updateUserRole = async (userId: string, newRole: string) => {
     try {
       const { error } = await supabase
@@ -676,22 +702,32 @@ const UserManagement: React.FC = () => {
     }
   };
 
-  const deleteUser = async (userId: string) => {
-    if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+  const banUser = async (userId: string, ban: boolean) => {
+    const action = ban ? 'ban' : 'unban';
+    const confirmed = window.confirm(`Are you sure you want to ${action} this user?`);
+    if (!confirmed) {
       return;
     }
 
     try {
       const { error } = await supabase
         .from('profiles')
-        .delete()
+        .update({
+          is_banned: ban,
+          banned_at: ban ? new Date().toISOString() : null,
+          ban_reason: ban ? 'Banned by admin' : null
+        })
         .eq('id', userId);
 
       if (error) throw error;
+
+      alert(`User ${action}ned successfully`);
       fetchUsers(); // Refresh the list
+      // Force re-render by updating state
+      setUsers(prev => [...prev]);
     } catch (error) {
-      console.error('Error deleting user:', error);
-      alert('Failed to delete user');
+      console.error(`Error ${action}ning user:`, error);
+      alert(`Failed to ${action} user`);
     }
   };
 
@@ -781,11 +817,11 @@ const UserManagement: React.FC = () => {
                 <td>{new Date(user.created_at).toLocaleDateString()}</td>
                 <td>
                   <button
-                    className="action-btn delete"
-                    onClick={() => deleteUser(user.id)}
-                    disabled={user.role === 'admin'} // Prevent deleting other admins
+                    className={`action-btn ${user.is_banned ? 'unban' : 'ban'}`}
+                    onClick={() => banUser(user.id, !user.is_banned)}
+                    disabled={user.role === 'admin'} // Prevent banning other admins
                   >
-                    Delete
+                    {user.is_banned ? 'Unban' : 'Ban'}
                   </button>
                 </td>
               </tr>
@@ -827,6 +863,12 @@ const UserManagement: React.FC = () => {
                 <span className="detail-value">{new Date(user.created_at).toLocaleDateString()}</span>
               </div>
               <div className="detail-item">
+                <span className="detail-label">Status:</span>
+                <span className={`detail-value ${user.is_banned ? 'banned' : 'active'}`}>
+                  {user.is_banned ? 'Banned' : 'Active'}
+                </span>
+              </div>
+              <div className="detail-item">
                 <span className="detail-label">Bio:</span>
                 <span className="detail-value">{user.bio || 'No bio available'}</span>
               </div>
@@ -845,11 +887,11 @@ const UserManagement: React.FC = () => {
                 </select>
               </div>
               <button
-                className="action-btn delete-mobile"
-                onClick={() => deleteUser(user.id)}
+                className={`action-btn ${user.is_banned ? 'unban-mobile' : 'ban-mobile'}`}
+                onClick={() => banUser(user.id, !user.is_banned)}
                 disabled={user.role === 'admin'}
               >
-                Delete User
+                {user.is_banned ? 'Unban User' : 'Ban User'}
               </button>
             </div>
           </div>
@@ -1602,11 +1644,787 @@ const AnalyticsContent: React.FC = () => (
   </div>
 );
 
+// Contact Messages Management Component
+const ContactMessagesManagement: React.FC = () => {
+  const [messages, setMessages] = useState<ContactMessage[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [showReplyModal, setShowReplyModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [selectedMessage, setSelectedMessage] = useState<ContactMessage | null>(null);
+  const [replyMessage, setReplyMessage] = useState('');
+  const [replySubject, setReplySubject] = useState('');
+  const [replying, setReplying] = useState(false);
+
+  useEffect(() => {
+    fetchMessages();
+  }, []);
+
+  const fetchMessages = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('contact_messages')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setMessages(data || []);
+    } catch (error) {
+      console.error('Error fetching contact messages:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateMessageStatus = async (messageId: string, status: string) => {
+    try {
+      const { error } = await supabase
+        .from('contact_messages')
+        .update({ status, updated_at: new Date().toISOString() })
+        .eq('id', messageId);
+
+      if (error) throw error;
+      fetchMessages(); // Refresh the list
+    } catch (error) {
+      console.error('Error updating message status:', error);
+      alert('Failed to update message status');
+    }
+  };
+
+  const handleReply = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedMessage || !replyMessage.trim()) return;
+
+    setReplying(true);
+    try {
+      const { error } = await supabase.functions.invoke('send-contact-reply', {
+        body: {
+          contactMessageId: selectedMessage.id,
+          replyMessage: replyMessage.trim(),
+          replySubject: replySubject.trim() || undefined
+        },
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (error) throw error;
+
+      alert('Reply sent successfully!');
+      setShowReplyModal(false);
+      setReplyMessage('');
+      setReplySubject('');
+      setSelectedMessage(null);
+      fetchMessages(); // Refresh to show updated status
+    } catch (error) {
+      console.error('Error sending reply:', error);
+      alert('Failed to send reply');
+    } finally {
+      setReplying(false);
+    }
+  };
+
+  const openReplyModal = (message: ContactMessage) => {
+    setSelectedMessage(message);
+    setReplySubject(`Re: ${message.subject || 'Your Contact Message'}`);
+    setShowReplyModal(true);
+  };
+
+  const openDetailsModal = (message: ContactMessage) => {
+    setSelectedMessage(message);
+    setShowDetailsModal(true);
+  };
+
+  const closeModals = () => {
+    setShowReplyModal(false);
+    setShowDetailsModal(false);
+    setSelectedMessage(null);
+    setReplyMessage('');
+    setReplySubject('');
+  };
+
+  const filteredMessages = messages.filter(message =>
+    message.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    message.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    message.subject?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    message.message?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const getStatusBadge = (status: string) => {
+    const statusClasses = {
+      pending: 'status-pending',
+      read: 'status-read',
+      replied: 'status-replied'
+    };
+    return statusClasses[status as keyof typeof statusClasses] || 'status-pending';
+  };
+
+  if (loading) {
+    return (
+      <div className="content-section">
+        <div className="loading-spinner"></div>
+        <p>Loading contact messages...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="content-section">
+      <div className="section-header">
+        <h1>Contact Messages</h1>
+        <p>Manage and respond to contact form submissions</p>
+      </div>
+
+      <div className="management-controls">
+        <div className="search-container">
+          <button
+            className="search-toggle-btn"
+            onClick={() => setIsSearchExpanded(!isSearchExpanded)}
+            aria-label="Toggle search"
+          >
+            <Search size={20} />
+          </button>
+          <input
+            type="text"
+            placeholder="Search messages by name, email, subject, or content..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className={`search-input ${isSearchExpanded ? 'expanded' : ''}`}
+          />
+          {searchTerm && (
+            <button
+              className="clear-search-btn"
+              onClick={() => setSearchTerm('')}
+              aria-label="Clear search"
+            >
+              <X size={16} />
+            </button>
+          )}
+        </div>
+        <div className="stats-summary">
+          <span>Total Messages: {messages.length}</span>
+          <span>Pending: {messages.filter(m => m.status === 'pending').length}</span>
+          <span>Replied: {messages.filter(m => m.status === 'replied').length}</span>
+        </div>
+      </div>
+
+      {/* Desktop Table View */}
+      <div className="data-table-container desktop-table">
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Subject</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredMessages.map((message) => (
+              <tr key={message.id}>
+                <td>{message.name}</td>
+                <td>{message.email}</td>
+                <td>{message.subject || 'No subject'}</td>
+                <td>
+                  <span className={`status-badge ${getStatusBadge(message.status)}`}>
+                    {message.status}
+                  </span>
+                </td>
+                <td>{new Date(message.created_at).toLocaleDateString()}</td>
+                <td>
+                  <button
+                    className="action-btn view"
+                    onClick={() => openDetailsModal(message)}
+                  >
+                    View
+                  </button>
+                  {message.status !== 'replied' && (
+                    <>
+                      <button
+                        className="action-btn mark-read"
+                        onClick={() => updateMessageStatus(message.id, 'read')}
+                      >
+                        Mark Read
+                      </button>
+                      <button
+                        className="action-btn reply"
+                        onClick={() => openReplyModal(message)}
+                      >
+                        Reply
+                      </button>
+                    </>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="mobile-cards-view">
+        {filteredMessages.map((message) => (
+          <div key={message.id} className="message-card">
+            <div className="message-card-header">
+              <div className="message-info">
+                <h3 className="message-name">{message.name}</h3>
+                <p className="message-email">{message.email}</p>
+                <div className="message-status">
+                  <span className={`status-badge ${getStatusBadge(message.status)}`}>
+                    {message.status}
+                  </span>
+                </div>
+              </div>
+              <span className="message-date">{new Date(message.created_at).toLocaleDateString()}</span>
+            </div>
+
+            <div className="message-card-content">
+              <h4 className="message-subject">{message.subject || 'No subject'}</h4>
+              <p className="message-preview">
+                {message.message.length > 100 ? message.message.substring(0, 100) + '...' : message.message}
+              </p>
+            </div>
+
+            <div className="message-card-actions">
+              <button
+                className="action-btn view"
+                onClick={() => openDetailsModal(message)}
+              >
+                View Details
+              </button>
+              {message.status !== 'replied' && (
+                <>
+                  <button
+                    className="action-btn mark-read"
+                    onClick={() => updateMessageStatus(message.id, 'read')}
+                  >
+                    Mark Read
+                  </button>
+                  <button
+                    className="action-btn reply"
+                    onClick={() => openReplyModal(message)}
+                  >
+                    Reply
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Reply Modal */}
+      {showReplyModal && selectedMessage && (
+        <div className="modal-overlay" onClick={closeModals}>
+          <div className="modal-content reply-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Reply to {selectedMessage.name}</h2>
+              <button className="close-btn" onClick={closeModals}>×</button>
+            </div>
+            <form onSubmit={handleReply} className="reply-form">
+              <div className="form-group">
+                <label htmlFor="reply-subject">Subject</label>
+                <input
+                  type="text"
+                  id="reply-subject"
+                  value={replySubject}
+                  onChange={(e) => setReplySubject(e.target.value)}
+                  className="form-input"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="reply-message">Your Reply</label>
+                <textarea
+                  id="reply-message"
+                  value={replyMessage}
+                  onChange={(e) => setReplyMessage(e.target.value)}
+                  placeholder="Type your reply message here..."
+                  rows={8}
+                  className="form-textarea"
+                  required
+                />
+              </div>
+              <div className="original-message">
+                <h4>Original Message:</h4>
+                <div className="original-content">
+                  <p><strong>Subject:</strong> {selectedMessage.subject || 'No subject'}</p>
+                  <p><strong>Message:</strong></p>
+                  <div className="original-text">{selectedMessage.message}</div>
+                </div>
+              </div>
+              <div className="form-actions">
+                <button type="button" className="cancel-btn" onClick={closeModals}>
+                  Cancel
+                </button>
+                <button type="submit" className="submit-btn" disabled={replying}>
+                  {replying ? (
+                    <>
+                      <div className="loading-spinner small"></div>
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Upload size={16} />
+                      Send Reply
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Details Modal */}
+      {showDetailsModal && selectedMessage && (
+        <div className="modal-overlay" onClick={closeModals}>
+          <div className="modal-content details-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Message Details</h2>
+              <button className="close-btn" onClick={closeModals}>×</button>
+            </div>
+            <div className="modal-body">
+              <div className="message-details">
+                <div className="detail-row">
+                  <span className="detail-label">Name:</span>
+                  <span className="detail-value">{selectedMessage.name}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Email:</span>
+                  <span className="detail-value">{selectedMessage.email}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Subject:</span>
+                  <span className="detail-value">{selectedMessage.subject || 'No subject'}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Status:</span>
+                  <span className={`detail-value status-${selectedMessage.status}`}>
+                    {selectedMessage.status}
+                  </span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Date:</span>
+                  <span className="detail-value">
+                    {new Date(selectedMessage.created_at).toLocaleString()}
+                  </span>
+                </div>
+                <div className="detail-row message-content">
+                  <span className="detail-label">Message:</span>
+                  <div className="detail-value message-text">{selectedMessage.message}</div>
+                </div>
+              </div>
+              {selectedMessage.status !== 'replied' && (
+                <div className="modal-actions">
+                  <button
+                    className="action-btn mark-read"
+                    onClick={() => {
+                      updateMessageStatus(selectedMessage.id, 'read');
+                      closeModals();
+                    }}
+                  >
+                    Mark as Read
+                  </button>
+                  <button
+                    className="action-btn reply"
+                    onClick={() => {
+                      closeModals();
+                      openReplyModal(selectedMessage);
+                    }}
+                  >
+                    Reply to Message
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const SettingsContent: React.FC = () => (
   <div className="content-section">
     <h1>Settings</h1>
     <p>Settings content coming soon...</p>
   </div>
 );
+
+// Send Newsletter Component
+const SendNewsletterContent: React.FC = () => {
+  const [formData, setFormData] = useState({
+    subject: '',
+    content: ''
+  });
+  const [loading, setLoading] = useState(false);
+  const [sendingProgress, setSendingProgress] = useState<{
+    isSending: boolean;
+    current: number;
+    total: number;
+    message: string;
+  } | null>(null);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleContentChange = (value?: string) => {
+    setFormData(prev => ({ ...prev, content: value || '' }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.subject.trim() || !formData.content.trim()) {
+      alert('Please fill in both subject and content');
+      return;
+    }
+
+    setLoading(true);
+    setSendingProgress({
+      isSending: true,
+      current: 0,
+      total: 0,
+      message: 'Preparing newsletter...'
+    });
+
+    try {
+      // Get active subscribers count first
+      const { data: subscribers, error: countError } = await supabase
+        .from('email_subscriptions')
+        .select('email', { count: 'exact', head: true })
+        .eq('is_active', true);
+
+      if (countError) throw countError;
+
+      const totalSubscribers = subscribers?.length || 0;
+
+      setSendingProgress({
+        isSending: true,
+        current: 0,
+        total: totalSubscribers,
+        message: `Sending to ${totalSubscribers} subscribers...`
+      });
+
+      // Send newsletter
+      const { error } = await supabase.functions.invoke('send-newsletter', {
+        body: {
+          subject: formData.subject.trim(),
+          content: formData.content.trim()
+        },
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (error) throw error;
+
+      setSendingProgress({
+        isSending: false,
+        current: totalSubscribers,
+        total: totalSubscribers,
+        message: `Newsletter sent successfully to ${totalSubscribers} subscribers!`
+      });
+
+      // Reset form after successful send
+      setTimeout(() => {
+        setFormData({ subject: '', content: '' });
+        setSendingProgress(null);
+      }, 3000);
+
+    } catch (error) {
+      console.error('Error sending newsletter:', error);
+      setSendingProgress({
+        isSending: false,
+        current: 0,
+        total: 0,
+        message: 'Failed to send newsletter. Please try again.'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="content-section">
+      <div className="section-header">
+        <h1>Send Newsletter</h1>
+        <p>Send newsletters to all active subscribers</p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="newsletter-form">
+        <div className="form-grid">
+          <div className="form-section">
+            <div className="form-group">
+              <label htmlFor="subject">Subject Line</label>
+              <input
+                type="text"
+                id="subject"
+                name="subject"
+                value={formData.subject}
+                onChange={handleInputChange}
+                placeholder="Enter newsletter subject..."
+                required
+                className="form-input"
+                disabled={loading}
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Content (Markdown)</label>
+              <div data-color-mode="light" className="markdown-editor">
+                <MDEditor
+                  value={formData.content}
+                  onChange={handleContentChange}
+                  preview="edit"
+                  hideToolbar={false}
+                  textareaProps={{
+                    placeholder: 'Write your newsletter content here...',
+                    disabled: loading
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {sendingProgress && (
+          <div className="sending-progress">
+            <div className="progress-bar">
+              <div
+                className="progress-fill"
+                style={{
+                  width: sendingProgress.total > 0
+                    ? `${(sendingProgress.current / sendingProgress.total) * 100}%`
+                    : '0%'
+                }}
+              />
+            </div>
+            <p className="progress-message">{sendingProgress.message}</p>
+            {sendingProgress.isSending && (
+              <div className="loading-spinner small"></div>
+            )}
+          </div>
+        )}
+
+        <div className="form-actions">
+          <button
+            type="submit"
+            className="submit-btn"
+            disabled={loading || !formData.subject.trim() || !formData.content.trim()}
+          >
+            {loading ? (
+              <>
+                <div className="loading-spinner small"></div>
+                Sending Newsletter...
+              </>
+            ) : (
+              <>
+                <Send size={16} />
+                Send Newsletter
+              </>
+            )}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+// Email Subscriptions Management Component
+const EmailSubscriptionsManagement: React.FC = () => {
+  const [subscriptions, setSubscriptions] = useState<EmailSubscription[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+
+  useEffect(() => {
+    fetchSubscriptions();
+  }, []);
+
+  const fetchSubscriptions = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('email_subscriptions')
+        .select('*')
+        .order('subscribed_at', { ascending: false });
+
+      if (error) throw error;
+      setSubscriptions(data || []);
+    } catch (error) {
+      console.error('Error fetching email subscriptions:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const toggleSubscriptionStatus = async (subscriptionId: string, currentStatus: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('email_subscriptions')
+        .update({ is_active: !currentStatus })
+        .eq('id', subscriptionId);
+
+      if (error) throw error;
+      fetchSubscriptions(); // Refresh the list
+    } catch (error) {
+      console.error('Error updating subscription status:', error);
+      alert('Failed to update subscription status');
+    }
+  };
+
+  const deleteSubscription = async (subscriptionId: string) => {
+    if (!confirm('Are you sure you want to delete this email subscription? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('email_subscriptions')
+        .delete()
+        .eq('id', subscriptionId);
+
+      if (error) throw error;
+      fetchSubscriptions(); // Refresh the list
+    } catch (error) {
+      console.error('Error deleting subscription:', error);
+      alert('Failed to delete subscription');
+    }
+  };
+
+  const filteredSubscriptions = subscriptions.filter(subscription =>
+    subscription.email?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  if (loading) {
+    return (
+      <div className="content-section">
+        <div className="loading-spinner"></div>
+        <p>Loading email subscriptions...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="content-section">
+      <div className="section-header">
+        <h1>Email Subscriptions</h1>
+        <p>Manage email newsletter subscriptions</p>
+      </div>
+
+      <div className="management-controls">
+        <div className="search-container">
+          <button
+            className="search-toggle-btn"
+            onClick={() => setIsSearchExpanded(!isSearchExpanded)}
+            aria-label="Toggle search"
+          >
+            <Search size={20} />
+          </button>
+          <input
+            type="text"
+            placeholder="Search subscriptions by email..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className={`search-input ${isSearchExpanded ? 'expanded' : ''}`}
+          />
+          {searchTerm && (
+            <button
+              className="clear-search-btn"
+              onClick={() => setSearchTerm('')}
+              aria-label="Clear search"
+            >
+              <X size={16} />
+            </button>
+          )}
+        </div>
+        <div className="stats-summary">
+          <span>Total Subscriptions: {subscriptions.length}</span>
+          <span>Active: {subscriptions.filter(s => s.is_active).length}</span>
+        </div>
+      </div>
+
+      {/* Desktop Table View */}
+      <div className="data-table-container desktop-table">
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Subscribed Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredSubscriptions.map((subscription) => (
+              <tr key={subscription.id}>
+                <td>{subscription.email}</td>
+                <td>{new Date(subscription.subscribed_at).toLocaleDateString()}</td>
+                <td>
+                  <span className={`status-badge ${subscription.is_active ? 'active' : 'inactive'}`}>
+                    {subscription.is_active ? 'Active' : 'Inactive'}
+                  </span>
+                </td>
+                <td>
+                  <button
+                    className={`action-btn ${subscription.is_active ? 'deactivate' : 'activate'}`}
+                    onClick={() => toggleSubscriptionStatus(subscription.id, subscription.is_active)}
+                  >
+                    {subscription.is_active ? 'Deactivate' : 'Activate'}
+                  </button>
+                  <button
+                    className="action-btn delete"
+                    onClick={() => deleteSubscription(subscription.id)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="mobile-cards-view">
+        {filteredSubscriptions.map((subscription) => (
+          <div key={subscription.id} className="subscription-card">
+            <div className="subscription-card-header">
+              <div className="subscription-info">
+                <h3 className="subscription-email">{subscription.email}</h3>
+                <div className="subscription-status">
+                  <span className={`status-badge ${subscription.is_active ? 'active' : 'inactive'}`}>
+                    {subscription.is_active ? 'Active' : 'Inactive'}
+                  </span>
+                </div>
+              </div>
+              <span className="subscription-date">{new Date(subscription.subscribed_at).toLocaleDateString()}</span>
+            </div>
+
+            <div className="subscription-card-actions">
+              <button
+                className={`action-btn ${subscription.is_active ? 'deactivate-mobile' : 'activate-mobile'}`}
+                onClick={() => toggleSubscriptionStatus(subscription.id, subscription.is_active)}
+              >
+                {subscription.is_active ? 'Deactivate' : 'Activate'}
+              </button>
+              <button
+                className="action-btn delete"
+                onClick={() => deleteSubscription(subscription.id)}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 export default AdminPage;

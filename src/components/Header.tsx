@@ -3,13 +3,15 @@ import { Link } from 'react-router-dom';
 import AuthModal from './AuthModal';
 import UserAvatar from './UserAvatar';
 import { supabase } from '../lib/supabase';
+import { useTheme } from '../hooks/useTheme';
 import type { User } from '@supabase/supabase-js';
-import { UserPlus } from 'lucide-react';
+import { UserPlus, Sun, Moon } from 'lucide-react';
 import './Header.css';
 
 const Header: React.FC = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const { isDarkMode, toggleTheme } = useTheme();
 
   useEffect(() => {
     // Get initial user
@@ -48,13 +50,25 @@ const Header: React.FC = () => {
                  <UserAvatar />
                </div>
              ) : (
-               <button
-                 className="auth-button"
-                 onClick={() => setIsAuthModalOpen(true)}
-               >
-                 <UserPlus size={20} />
-                 <span>Get Started</span>
-               </button>
+               <div className="header-controls">
+                 <button
+                   className="theme-toggle-btn"
+                   onClick={() => {
+                     console.log('Header theme toggle clicked');
+                     toggleTheme();
+                   }}
+                   title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                 >
+                   {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+                 </button>
+                 <button
+                   className="auth-button"
+                   onClick={() => setIsAuthModalOpen(true)}
+                 >
+                   <UserPlus size={20} />
+                   <span>Get Started</span>
+                 </button>
+               </div>
              )}
            </div>
         </div>

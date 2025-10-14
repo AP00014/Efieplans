@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { LogOut, Settings, User, Mail, UserCheck, Shield } from 'lucide-react';
+import { useTheme } from '../hooks/useTheme';
+import { LogOut, Settings, User, Mail, UserCheck, Shield, Sun, Moon } from 'lucide-react';
 import './UserAvatar.css';
 
 interface Profile {
@@ -17,6 +18,8 @@ const UserAvatar: React.FC = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { isDarkMode, toggleTheme } = useTheme();
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const getProfile = async () => {
@@ -62,6 +65,18 @@ const UserAvatar: React.FC = () => {
     return () => subscription.unsubscribe();
   }, []);
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   if (loading) {
     return <div className="user-avatar loading">...</div>;
   }
@@ -85,7 +100,7 @@ const UserAvatar: React.FC = () => {
   };
 
   return (
-    <div className="user-avatar-container">
+    <div className="user-avatar-container" ref={dropdownRef}>
       <button className="avatar-button" onClick={toggleDropdown}>
         {profile.avatar_url ? (
           <img src={profile.avatar_url} alt={profile.username} className="avatar-image" />
@@ -128,6 +143,14 @@ const UserAvatar: React.FC = () => {
               </div>
             </div>
           </div>
+          <div className="dropdown-divider"></div>
+          <button className="dropdown-item theme-toggle" onClick={() => {
+            console.log('UserAvatar theme toggle clicked');
+            toggleTheme();
+          }}>
+            {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
+            {isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+          </button>
           <div className="dropdown-divider"></div>
           {profile.role === 'admin' && (
             <Link to="/admin" className="dropdown-item admin-link">

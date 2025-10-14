@@ -213,6 +213,27 @@
   transition: all var(--transition-normal);
 }
 
+.footer-message {
+  margin-top: var(--spacing-4);
+  padding: var(--spacing-3);
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.footer-message-success {
+  background-color: rgba(34, 197, 94, 0.1);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.footer-message-error {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
 .footer-newsletter:hover {
   background: rgba(255, 255, 255, 0.08);
   transform: translateY(-2px);
@@ -270,6 +291,22 @@
   transition: all var(--transition-normal);
   position: relative;
   overflow: hidden;
+}
+
+.footer-newsletter-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.footer-newsletter-button:disabled:hover {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-primary-dark) 100%
+  );
+  transform: none;
+  box-shadow: none;
 }
 
 .footer-newsletter-button::before {

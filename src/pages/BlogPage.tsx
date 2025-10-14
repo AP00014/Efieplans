@@ -353,7 +353,7 @@ const FacebookPostCard: React.FC<{
             )}
           </div>
           <div className="author-details">
-            <h3>{post.author?.full_name || post.author?.username || 'Anonymous'}</h3>
+            <h3 className="author-name">{post.author?.full_name || post.author?.username || 'Anonymous'}</h3>
             <span className="post-time">
               <Clock size={14} />
               {new Date(post.created_at).toLocaleDateString('en-US', {

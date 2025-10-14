@@ -1,18 +1,57 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaPhone, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
+import { supabase } from '../../lib/supabase';
 import '../../styles/components/Footer.css';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
   const [email, setEmail] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-  const handleNewsletterSubmit = (e: React.FormEvent) => {
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle newsletter signup - for now just log
-    console.log('Newsletter signup:', email);
-    setEmail('');
-    // In a real app, this would send to backend
+
+    if (!email.trim()) {
+      setMessage({ type: 'error', text: 'Please enter your email address.' });
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setMessage({ type: 'error', text: 'Please enter a valid email address.' });
+      return;
+    }
+
+    setIsLoading(true);
+    setMessage(null);
+
+    try {
+      const { error } = await supabase
+        .from('email_subscriptions')
+        .insert([{ email: email.trim() }]);
+
+      if (error) {
+        if (error.code === '23505') { // Unique constraint violation
+          setMessage({ type: 'error', text: 'This email is already subscribed to our newsletter.' });
+        } else {
+          setMessage({ type: 'error', text: 'Failed to subscribe. Please try again.' });
+        }
+      } else {
+        setMessage({ type: 'success', text: 'Thank you for subscribing! You\'ll receive our latest updates.' });
+        setEmail('');
+      }
+    } catch (error) {
+      console.error('Subscription error:', error);
+      setMessage({ type: 'error', text: 'An unexpected error occurred. Please try again.' });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -149,11 +188,26 @@ const Footer = () => {
                 className="footer-newsletter-input"
                 required
                 aria-describedby="newsletter-description"
+                disabled={isLoading}
               />
-              <button type="submit" className="footer-newsletter-button" aria-label="Subscribe to newsletter">
-                Subscribe
+              <button
+                type="submit"
+                className="footer-newsletter-button"
+                aria-label="Subscribe to newsletter"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Subscribing...' : 'Subscribe'}
               </button>
             </form>
+            {message && (
+              <div
+                className={`footer-message ${message.type === 'success' ? 'footer-message-success' : 'footer-message-error'}`}
+                role="alert"
+                aria-live="polite"
+              >
+                {message.text}
+              </div>
+            )}
             <p id="newsletter-description" className="sr-only">
               We'll send you updates about our design services and projects.
             </p>
