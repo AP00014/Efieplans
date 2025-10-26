@@ -42,7 +42,7 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="hero-section">
+    <section id="home" className="hero-section">
       {/* Image Carousel Background */}
       <div className="hero-carousel" onMouseEnter={() => setIsAutoPlaying(false)} onMouseLeave={() => setIsAutoPlaying(true)}>
         {carouselImages.map((image, index) => (

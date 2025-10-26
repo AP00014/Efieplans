@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { FaCheck, FaExclamationTriangle, FaSpinner, FaYoutube, FaFacebook, FaTwitter, FaInstagram, FaTiktok, FaWhatsapp } from 'react-icons/fa';
+import { supabase } from '../../lib/supabase';
 import '../../styles/components/ContactSection.css';
 
 interface FormErrors {
@@ -23,6 +24,7 @@ const ContactSection = () => {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   const formRef = useRef<HTMLFormElement>(null);
@@ -87,8 +89,19 @@ const ContactSection = () => {
     }));
   };
 
+  const validateForm = () => {
+    const newErrors: FormErrors = {};
+    Object.entries(formData).forEach(([key, value]) => {
+      const error = validateField(key, value);
+      if (error) newErrors[key as keyof FormErrors] = error;
+    });
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError('');
 
     // Mark all fields as touched
     const allTouched = Object.keys(formData).reduce((acc, key) => ({
@@ -98,23 +111,61 @@ const ContactSection = () => {
     setTouched(allTouched);
 
     // Validate all fields
-    const newErrors: FormErrors = {};
-    Object.entries(formData).forEach(([key, value]) => {
-      const error = validateField(key, value);
-      if (error) newErrors[key as keyof FormErrors] = error;
-    });
+    if (!validateForm()) {
+      // Focus first error field
+      const firstErrorField = Object.keys(errors)[0];
+      const element = formRef.current?.querySelector(`[name="${firstErrorField}"]`) as HTMLElement;
+      element?.focus();
+      return;
+    }
 
-    setErrors(newErrors);
+    setIsSubmitting(true);
 
-    // If no errors, submit
-    if (Object.keys(newErrors).length === 0) {
-      setIsSubmitting(true);
+    try {
+      const { error: supabaseError } = await supabase
+        .from('contact_messages')
+        .insert([
+          {
+            name: formData.name,
+            email: formData.email,
+            subject: `Service Inquiry: ${formData.service}`,
+            message: formData.message,
+            phone: formData.phone,
+          }
+        ]);
 
-      try {
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 2000));
+      if (supabaseError) {
+        setSubmitError('There was an error submitting the form. Please try again.');
+        console.error('Supabase error:', supabaseError);
+      } else {
+        // Send notification email after successful database insert
+        try {
+          const response = await fetch('http://localhost:54321/functions/v1/send-contact-notification', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+            },
+            body: JSON.stringify({
+              record: {
+                name: formData.name,
+                email: formData.email,
+                subject: `Service Inquiry: ${formData.service}`,
+                message: formData.message,
+                phone: formData.phone,
+              }
+            })
+          });
 
-        console.log('Form submitted:', formData);
+          if (!response.ok) {
+            console.warn('Email notification failed, but message was saved:', response.statusText);
+            // Don't show error to user since the main action (saving message) succeeded
+          }
+        } catch (emailError) {
+          console.warn('Email notification failed, but message was saved:', emailError);
+          // Don't show error to user since the main action (saving message) succeeded
+        }
+
         setSubmitSuccess(true);
 
         // Reset form
@@ -130,21 +181,17 @@ const ContactSection = () => {
 
         // Reset success message after 5 seconds
         setTimeout(() => setSubmitSuccess(false), 5000);
-      } catch (error) {
-        console.error('Submission error:', error);
-      } finally {
-        setIsSubmitting(false);
       }
-    } else {
-      // Focus first error field
-      const firstErrorField = Object.keys(newErrors)[0];
-      const element = formRef.current?.querySelector(`[name="${firstErrorField}"]`) as HTMLElement;
-      element?.focus();
+    } catch (error) {
+      setSubmitError('There was an error submitting the form. Please try again.');
+      console.error('Submission error:', error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <section className="contact-section" aria-labelledby="contact-title">
+    <section id="contact" className="contact-section" aria-labelledby="contact-title">
       <div className="container-custom">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -202,7 +249,28 @@ const ContactSection = () => {
                   >
                     <FaCheck aria-hidden="true" />
                   </motion.div>
-                  <span>Thank you for your inquiry! We will contact you soon.</span>
+                  <span>Message sent successfully! 🎉</span>
+                </motion.div>
+              )}
+
+              {submitError && (
+                <motion.div
+                  initial={{ opacity: 0, y: -20, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -20, scale: 0.9 }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                  className="form-error-message"
+                  role="alert"
+                  aria-live="polite"
+                >
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                  >
+                    <FaExclamationTriangle aria-hidden="true" />
+                  </motion.div>
+                  <span>{submitError}</span>
                 </motion.div>
               )}
 

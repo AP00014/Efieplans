@@ -16,7 +16,7 @@ const Home = () => {
       <HeroSection />
 
       {/* About Section */}
-      <section className="about-section">
+      <section id="about" className="about-section">
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

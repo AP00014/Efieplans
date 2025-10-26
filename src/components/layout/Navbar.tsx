@@ -92,10 +92,10 @@ const Navbar = () => {
 
         {/* Desktop Navigation - Center */}
         <div className="navbar-desktop">
-          <Link to="/" className="navbar-link">
+          <Link to="/#home" className="navbar-link">
             Home
           </Link>
-          <Link to="/about" className="navbar-link">
+          <Link to="/#about" className="navbar-link">
             About
           </Link>
 
@@ -151,7 +151,7 @@ const Navbar = () => {
               </div>
             )}
           </div>
-          <Link to="/contact" className="navbar-link">
+          <Link to="/#contact" className="navbar-link">
             Contact
           </Link>
         </div>
@@ -200,14 +200,14 @@ const Navbar = () => {
           {/* Navigation Links */}
           <nav className="mobile-menu-nav">
             <Link
-              to="/"
+              to="/#home"
               className="mobile-menu-link"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Home
             </Link>
           <Link
-            to="/about"
+            to="/#about"
             className="mobile-menu-link"
             onClick={() => setIsMobileMenuOpen(false)}
           >
@@ -278,7 +278,7 @@ const Navbar = () => {
           </div>
 
           <Link
-            to="/contact"
+            to="/#contact"
             className="mobile-menu-link"
             onClick={() => setIsMobileMenuOpen(false)}
           >
