@@ -4,17 +4,20 @@ import { FaSun, FaMoon, FaChevronDown } from "react-icons/fa";
 import { useTheme } from "../../hooks/useTheme";
 import "../../styles/components/Navbar.css";
 
-// Animated Hamburger Menu Component
-const AnimatedHamburger = ({ isOpen, onClick }: { isOpen: boolean; onClick: () => void }) => {
+// Simple, Fast Hamburger Menu Component
+const FastHamburger = ({ isOpen, onClick }: { isOpen: boolean; onClick: () => void }) => {
   return (
     <button
       onClick={onClick}
-      className={`mobile-menu-toggle ${isOpen ? 'active' : ''}`}
+      className={`fast-menu-toggle ${isOpen ? 'open' : ''}`}
       aria-label="Toggle mobile menu"
+      type="button"
     >
-      <span></span>
-      <span></span>
-      <span></span>
+      <div className="hamburger-lines">
+        <span className="line line1"></span>
+        <span className="line line2"></span>
+        <span className="line line3"></span>
+      </div>
     </button>
   );
 };
@@ -171,143 +174,138 @@ const Navbar = () => {
 
           {/* Mobile Menu Button */}
           <div className="navbar-mobile-controls md:hidden">
-            <AnimatedHamburger isOpen={isMobileMenuOpen} onClick={toggleMobileMenu} />
+            <FastHamburger isOpen={isMobileMenuOpen} onClick={toggleMobileMenu} />
           </div>
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      <div
-        className={`mobile-menu ${
-          isMobileMenuOpen ? "mobile-menu-open" : "mobile-menu-closed"
-        }`}
-        onClick={handleMobileMenuClick}
-      >
-        <div className="mobile-menu-container">
-          {/* Header */}
-          <div className="mobile-menu-header">
-            <Link to="/" className="mobile-menu-logo" onClick={() => setIsMobileMenuOpen(false)}>
-              <img
-                src="https://res.cloudinary.com/dpzndrhse/image/upload/v1750667944/efieplans_logo_edited_kq1tmo.avif"
-                alt="Efie plans Construction Logo"
-                className="mobile-menu-logo-image"
-              />
-            </Link>
-
-           
-          </div>
-
-          {/* Navigation Links */}
-          <nav className="mobile-menu-nav">
-            <Link
-              to="/#home"
-              className="mobile-menu-link"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Home
-            </Link>
-          <Link
-            to="/#about"
-            className="mobile-menu-link"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            About
-          </Link>
-          <Link
-            to="/projects"
-            className="mobile-menu-link"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            Projects
-          </Link>
-          <Link
-            to="/blog"
-            className="mobile-menu-link"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            Blog
-          </Link>
-
-          <div className="mobile-menu-dropdown">
-            <button
-              className="mobile-menu-link mobile-menu-dropdown-toggle"
-              onClick={() => setIsMobileServicesDropdownOpen(!isMobileServicesDropdownOpen)}
-              aria-expanded={isMobileServicesDropdownOpen}
-              aria-haspopup="true"
-            >
-              Services
-              <FaChevronDown
-                className={`dropdown-icon ${isMobileServicesDropdownOpen ? 'rotated' : ''}`}
-                size={12}
-              />
-            </button>
-            {isMobileServicesDropdownOpen && (
-              <div className="mobile-menu-dropdown-menu">
-                <Link
-                  to="/services/architectural-design"
-                  className="mobile-menu-dropdown-item"
-                  onClick={() => {
-                    setIsMobileServicesDropdownOpen(false);
-                    setTimeout(() => setIsMobileMenuOpen(false), 100);
-                  }}
-                >
-                  Architectural Design
-                </Link>
-                <Link
-                  to="/services/interior-design"
-                  className="mobile-menu-dropdown-item"
-                  onClick={() => {
-                    setIsMobileServicesDropdownOpen(false);
-                    setTimeout(() => setIsMobileMenuOpen(false), 100);
-                  }}
-                >
-                  Interior Design
-                </Link>
-                <Link
-                  to="/services/construction"
-                  className="mobile-menu-dropdown-item"
-                  onClick={() => {
-                    setIsMobileServicesDropdownOpen(false);
-                    setTimeout(() => setIsMobileMenuOpen(false), 100);
-                  }}
-                >
-                  Construction
-                </Link>
-              </div>
-            )}
-          </div>
-
-          <Link
-            to="/#contact"
-            className="mobile-menu-link"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            Contact
-          </Link>
-
-          {/* Mobile Theme Toggle */}
-          <button
-            onClick={toggleTheme}
-            className="mobile-menu-link mobile-theme-toggle"
-            aria-label="Toggle theme"
-          >
-            <div className="mobile-theme-content">
-              {isDarkMode ? (
-                <>
-                  <FaSun className="mobile-theme-icon" />
-                  Light Mode
-                </>
-              ) : (
-                <>
-                  <FaMoon className="mobile-theme-icon" />
-                  Dark Mode
-                </>
-              )}
+      {/* Fast Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="fast-mobile-overlay" onClick={handleMobileMenuClick}>
+          <div className="fast-mobile-menu" onClick={(e) => e.stopPropagation()}>
+            {/* Header */}
+            <div className="fast-menu-header">
+              <Link to="/" className="fast-menu-logo" onClick={() => setIsMobileMenuOpen(false)}>
+                <img
+                  src="https://res.cloudinary.com/dpzndrhse/image/upload/v1750667944/efieplans_logo_edited_kq1tmo.avif"
+                  alt="Efie plans Construction Logo"
+                  className="fast-menu-logo-img"
+                />
+              </Link>
             </div>
-          </button>
-          </nav>
+
+            {/* Navigation Links */}
+            <nav className="fast-menu-nav">
+              <Link
+                to="/#home"
+                className="fast-menu-link"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Home
+              </Link>
+              <Link
+                to="/#about"
+                className="fast-menu-link"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                About
+              </Link>
+              <Link
+                to="/projects"
+                className="fast-menu-link"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Projects
+              </Link>
+              <Link
+                to="/blog"
+                className="fast-menu-link"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Blog
+              </Link>
+
+              <div className="fast-menu-dropdown">
+                <button
+                  className="fast-menu-link fast-dropdown-toggle"
+                  onClick={() => setIsMobileServicesDropdownOpen(!isMobileServicesDropdownOpen)}
+                  aria-expanded={isMobileServicesDropdownOpen}
+                  aria-haspopup="true"
+                >
+                  Services
+                  <FaChevronDown
+                    className={`fast-dropdown-icon ${isMobileServicesDropdownOpen ? 'rotated' : ''}`}
+                    size={12}
+                  />
+                </button>
+                {isMobileServicesDropdownOpen && (
+                  <div className="fast-dropdown-menu">
+                    <Link
+                      to="/services/architectural-design"
+                      className="fast-dropdown-item"
+                      onClick={() => {
+                        setIsMobileServicesDropdownOpen(false);
+                        setIsMobileMenuOpen(false);
+                      }}
+                    >
+                      Architectural Design
+                    </Link>
+                    <Link
+                      to="/services/interior-design"
+                      className="fast-dropdown-item"
+                      onClick={() => {
+                        setIsMobileServicesDropdownOpen(false);
+                        setIsMobileMenuOpen(false);
+                      }}
+                    >
+                      Interior Design
+                    </Link>
+                    <Link
+                      to="/services/construction"
+                      className="fast-dropdown-item"
+                      onClick={() => {
+                        setIsMobileServicesDropdownOpen(false);
+                        setIsMobileMenuOpen(false);
+                      }}
+                    >
+                      Construction
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              <Link
+                to="/#contact"
+                className="fast-menu-link"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Contact
+              </Link>
+
+              {/* Mobile Theme Toggle */}
+              <button
+                onClick={toggleTheme}
+                className="fast-menu-link fast-theme-toggle"
+                aria-label="Toggle theme"
+              >
+                <div className="fast-theme-content">
+                  {isDarkMode ? (
+                    <>
+                      <FaSun className="fast-theme-icon" />
+                      Light Mode
+                    </>
+                  ) : (
+                    <>
+                      <FaMoon className="fast-theme-icon" />
+                      Dark Mode
+                    </>
+                  )}
+                </div>
+              </button>
+            </nav>
+          </div>
         </div>
-      </div>
+      )}
     </nav>
   );
 };

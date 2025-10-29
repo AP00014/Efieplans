@@ -8,7 +8,6 @@ import {
   Users,
   FileText,
   BarChart3,
-  Settings,
   Menu,
   X,
   Shield,
@@ -95,9 +94,8 @@ const AdminPage: React.FC = () => {
     { id: 'contact-messages', label: 'Contacts', icon: FileText },
     { id: 'email-subscriptions', label: 'Subscriptions', icon: Users },
     { id: 'send-newsletter', label: 'Send Newsletter', icon: Send },
-    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
-    { id: 'settings', label: 'Settings', icon: Settings },
-    { id: 'home', label: 'Main Site', icon: Home },
+    { id: 'home', label: 'Homepage', icon: Home },
+    { id: 'blogpage', label: 'Blogpage', icon: FileText },
   ];
 
   const renderContent = () => {
@@ -116,11 +114,10 @@ const AdminPage: React.FC = () => {
         return <EmailSubscriptionsManagement />;
       case 'send-newsletter':
         return <SendNewsletterContent />;
-      case 'analytics':
-        return <AnalyticsContent />;
-      case 'settings':
-        return <SettingsContent />;
       case 'home':
+        navigate('/');
+        return <DashboardContent />;
+      case 'blogpage':
         navigate('/blog');
         return <DashboardContent />;
       default:
@@ -1637,12 +1634,6 @@ const EditPostModal: React.FC<{
   );
 };
 
-const AnalyticsContent: React.FC = () => (
-  <div className="content-section">
-    <h1>Analytics</h1>
-    <p>Analytics content coming soon...</p>
-  </div>
-);
 
 // Contact Messages Management Component
 const ContactMessagesManagement: React.FC = () => {
@@ -2048,12 +2039,6 @@ const ContactMessagesManagement: React.FC = () => {
   );
 };
 
-const SettingsContent: React.FC = () => (
-  <div className="content-section">
-    <h1>Settings</h1>
-    <p>Settings content coming soon...</p>
-  </div>
-);
 
 // Send Newsletter Component
 const SendNewsletterContent: React.FC = () => {

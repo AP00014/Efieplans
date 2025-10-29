@@ -117,11 +117,11 @@ const HeroSection = () => {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="hero-buttons"
         >
-          <Link to="/contact" className="btn btn-primary">
+          <Link to="/#contact" className="btn btn-primary">
             Get a Free Quote
           </Link>
           <Link
-            to="/portfolio"
+            to="/projects"
             className="btn btn-outline hero-secondary-button"
           >
             View Our Projects

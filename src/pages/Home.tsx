@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { FaBuilding, FaChartLine, FaGlobe } from 'react-icons/fa';
+import { FaBuilding, FaPaintRoller, FaBullseye, FaEye } from 'react-icons/fa';
 
 // Import components for each section
 import HeroSection from '../components/home/HeroSection';
@@ -16,85 +16,110 @@ const Home = () => {
       <HeroSection />
 
       {/* About Section */}
-      <section id="about" className="about-section">
-        <div className="container-custom">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="about-heading"
-          >
-            <h2 className="about-title">About <span className="about-title-highlight">Us</span></h2>
-            <p className="about-description">
-              Efie Plans designs luxury homes and commercial buildings for Ghanaians and Africans all over the world, creating personalized spaces that reflect your unique personality and vision.
+      <div className="about-container1">
+     
+      {/* Company Profile Section */}
+      <section className="company-profile-section">
+        <h2 className="section-heading">About Us</h2>
+        
+        <div className="company-grid-container">
+          {/* About Card */}
+          <div className="company-card">
+            <div className="company-card-header">
+              <div className="icon-wrapper-blue">
+                <FaBuilding size={24} className="icon-blue" />
+              </div>
+              <h3 className="company-card-title">About Efie Plans</h3>
+            </div>
+            <p className="company-body-text">
+              We transform living spaces into personalized masterpieces, blending contemporary 
+              design with cultural authenticity. As Africa's premier architectural studio, 
+              we specialize in creating bespoke homes that tell your unique story through 
+              intelligent spatial design and meticulous attention to detail.
             </p>
-          </motion.div>
-
-          <div className="about-cards-container">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-               transition={{ duration: 0.6, delay: 0.1 }}
-              viewport={{ once: true }}
-              className="about-card"
-            >
-              <div className="about-card-icon-container">
-                <FaBuilding className="about-card-icon" />
-              </div>
-              <h3 className="about-card-title">Our Mission</h3>
-              <p className="about-card-description">
-                Efie Plans designs luxury homes and commercial buildings for Ghanaians and Africans all over the world. At Efie Plans, we pride ourselves on doing more than just designing houses. We help create a home that you have always wanted and reflected your personality.
-              </p>
-              
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="about-card"
-            >
-              <div className="about-card-icon-container">
-                <FaGlobe className="about-card-icon" />
-              </div>
-              <h3 className="about-card-title">Client Collaboration</h3>
-              <p className="about-card-description">
-                We work with you the client, throughout the design process to ensure you are completely satisfied with the schematic design before we move onto the next stage. The projects we design are custom to suit individual preferences so no two projects are the same and we start from scratch.
-              </p>
-              
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              viewport={{ once: true }}
-              className="about-card"
-            >
-              <div className="about-card-icon-container">
-                <FaChartLine className="about-card-icon" />
-              </div>
-              <h3 className="about-card-title">Quality & Services</h3>
-              <p className="about-card-description">
-                Our attention to detail distinguishes us from the rest as we take into consideration the surrounding environment. Every project goes through rigorous quality control. Our services include full construction documentation, interior design, landscaping, and material selection guidance.
-              </p>
-              
-            </motion.div>
+            <div className="service-heading">
+              <FaPaintRoller className="icon-blue" />
+              <span className="sub-heading">
+                Full-service design solutions including:
+              </span>
+            </div>
+            <ul className="feature-list">
+              <li>✓ Architectural Design</li>
+              <li>✓ Interior Styling</li>
+              <li>✓ Landscape Architecture</li>
+              <li>✓ Construction Oversight</li>
+            </ul>
           </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            viewport={{ once: true }}
-            className="about-cta"
-          >
-            
-          </motion.div>
+          {/* Mission & Vision Card */}
+          <div className="company-card">
+            <div className="company-card-header">
+              <div className="icon-wrapper-green">
+                <FaBullseye size={24} className="icon-green" />
+              </div>
+              <h3 className="company-card-title">Our Compass</h3>
+            </div>
+            <div className="mission-item">
+              <FaEye className="icon-green" />
+              <div>
+                <h4 className="sub-heading">Vision</h4>
+                <p className="company-body-text">
+                  Redefine African luxury living by creating timeless architectural 
+                  statements that harmonize modern innovation with cultural heritage.
+                </p>
+              </div>
+            </div>
+            <div className="mission-item">
+              <FaBullseye className="icon-green" />
+              <div>
+                <h4 className="sub-heading">Mission</h4>
+                <p className="company-body-text">
+                  Empower homeowners through collaborative design processes that 
+                  transform personal aspirations into breathtaking living 
+                  environments exceeding every expectation.
+                </p>
+              </div>
+            </div>
+            <div className="quote-box">
+              <p className="quote-text">
+                "We don't just design houses - we curate living experiences that 
+                resonate with your soul and stand the test of time."
+              </p>
+            </div>
+          </div>
         </div>
       </section>
+
+     
+
+     
+      {/* Process Section 
+      <div className="process-section1">
+        <h3 className="process-heading">Our Creative Process</h3>
+        <div className="process-steps">
+          {processSteps.map((step, index) => (
+            <motion.div 
+              className="process-card1"
+              key={index}
+              whileHover={{ scale: 1.05 }}
+            >
+              <div className="process-number">0{index + 1}</div>
+              <h4>{step.title}</h4>
+              <p>{step.description}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>*/}
+
+      {/* CTA Section */}
+      <motion.div 
+        className="cta-section"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+      >
+        
+      </motion.div>
+    </div>
 
       {/* Services Section */}
       <ServicesSection />
