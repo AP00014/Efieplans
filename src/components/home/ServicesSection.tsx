@@ -1,40 +1,70 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { FaBuilding,  FaHardHat, FaPencilRuler, FaClipboardCheck } from 'react-icons/fa';
+import {
+  FaDraftingCompass,
+  FaPaintBrush,
+  FaHammer,
+  FaArrowRight,
+  FaCheckCircle
+} from 'react-icons/fa';
 import '../../styles/components/ServicesSection.css';
 
-const services = [
-  {
-    id: 1,
-    title: 'Building Construction',
-    description: 'From residential homes to commercial buildings, we handle all aspects of construction with precision and quality.',
-    icon: <FaBuilding className="service-icon" />
-  },
-
-  {
-    id: 2,
-    title: 'Construction Management',
-    description: 'Our experienced team ensures your project is completed on time, within budget, and to the highest standards.',
-    icon: <FaHardHat className="service-icon" />
-  },
-  {
-    id: 3,
-    title: 'Architectural Design',
-    description: 'Our design team creates functional and aesthetically pleasing spaces that meet your specific requirements.',
-    icon: <FaPencilRuler className="service-icon" />
-  },
-  {
-    id: 4,
-    title: 'Interior Design',
-    description: 'We provide innovative interior design solutions that enhance the beauty and functionality of your spaces.',
-    icon: <FaClipboardCheck className="service-icon" />
-  }
-];
-
 const ServicesSection = () => {
+  const services = [
+    {
+      id: 1,
+      icon: <FaDraftingCompass />,
+      title: 'Architectural Design',
+      description: 'Transform your vision into reality with our expert architectural design services. We create innovative, functional, and aesthetically pleasing designs that reflect your unique style and needs.',
+      features: [
+        'Custom home design',
+        'Commercial building design',
+        'Renovation planning',
+        '3D visualization',
+        'Permit assistance'
+      ],
+      link: '/architectural-design',
+      gradient: 'linear-gradient(135deg, #FF8C00 0%, #FF6B35 100%)',
+      delay: 0.1
+    },
+    {
+      id: 2,
+      icon: <FaPaintBrush />,
+      title: 'Interior Design',
+      description: 'Create stunning interior spaces that blend functionality with beauty. Our interior design experts help you curate spaces that tell your story and enhance your lifestyle.',
+      features: [
+        'Space planning',
+        'Color consultation',
+        'Furniture selection',
+        'Lighting design',
+        'Material sourcing'
+      ],
+      link: '/interior-design',
+      gradient: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+      delay: 0.2
+    },
+    {
+      id: 3,
+      icon: <FaHammer />,
+      title: 'Construction',
+      description: 'Expert construction services bringing your architectural designs to life. Our skilled team ensures quality workmanship, timely delivery, and adherence to all safety standards.',
+      features: [
+        'Project management',
+        'Quality construction',
+        'Timeline adherence',
+        'Budget control',
+        'Safety compliance'
+      ],
+      link: '/construction',
+      gradient: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
+      delay: 0.3
+    }
+  ];
+
   return (
-    <section className="services-section">
+    <section id="services" className="services-section">
       <div className="container-custom">
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -42,39 +72,102 @@ const ServicesSection = () => {
           viewport={{ once: true }}
           className="services-header"
         >
-          <h2 className="services-title">Our <span className="services-title-highlight">Services</span></h2>
+          <h2 className="services-title">
+            Our <span className="services-title-highlight">Services</span>
+          </h2>
           <p className="services-description">
-            We offer a comprehensive range of construction and architectural services to meet all your building needs.
+            Comprehensive design and construction solutions tailored to bring your architectural dreams to life.
+            From concept to completion, we provide end-to-end services with excellence and precision.
           </p>
         </motion.div>
 
+        {/* Services Grid */}
         <div className="services-grid">
-          {services.map((service, index) => (
+          {services.map((service) => (
             <motion.div
               key={service.id}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              transition={{
+                duration: 0.6,
+                delay: service.delay,
+                type: "spring",
+                stiffness: 100
+              }}
               viewport={{ once: true }}
               className="service-card"
             >
-              <div className="service-icon-container">{service.icon}</div>
-              <h3 className="service-title">{service.title}</h3>
-              <p className="service-description">{service.description}</p>
+              {/* Card Background */}
+              <div
+                className="service-card-bg"
+                style={{ background: service.gradient }}
+              ></div>
+
+              {/* Card Content */}
+              <div className="service-card-content">
+                {/* Icon */}
+                <div className="service-icon-container">
+                  <div className="service-icon">
+                    {service.icon}
+                  </div>
+                </div>
+
+                {/* Title */}
+                <h3 className="service-title">{service.title}</h3>
+
+                {/* Description */}
+                <p className="service-description">{service.description}</p>
+
+                {/* Features */}
+                <ul className="service-features">
+                  {service.features.map((feature, idx) => (
+                    <li key={idx} className="service-feature-item">
+                      <FaCheckCircle className="service-feature-icon" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                {/* CTA Button */}
+                <Link
+                  to={service.link}
+                  className="service-cta-button"
+                >
+                  <span>Learn More</span>
+                  <FaArrowRight className="service-cta-icon" />
+                </Link>
+              </div>
+
+              {/* Hover Overlay */}
+              <div className="service-card-overlay"></div>
             </motion.div>
           ))}
         </div>
 
+        {/* CTA Section */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
           viewport={{ once: true }}
           className="services-cta"
         >
-          <Link to="/services" className="services-cta-button">
-            View All Services
-          </Link>
+          <div className="services-cta-content">
+            <h3 className="services-cta-title">Ready to Start Your Project?</h3>
+            <p className="services-cta-text">
+              Let's discuss your vision and create something extraordinary together.
+              Contact us today to begin your architectural journey.
+            </p>
+            <motion.a
+              href="/contact"
+              className="services-cta-button-main"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <span>Get Started</span>
+              <FaArrowRight />
+            </motion.a>
+          </div>
         </motion.div>
       </div>
     </section>

@@ -1,6 +1,6 @@
 {
   "name": "efie_plans_website",
-  "homepage": "https://ap00014.github.io/Efieplans/",
+  "homepage": "https://ap00014.github.io/EfiePlans/",
   "description": "A website for efie plans, a company that provides various services including Archiectural designs, Building and construction,architectural and more.",
   "private": true,
   "version": "0.0.0",
@@ -18,6 +18,7 @@
     "@supabase/supabase-js": "^2.75.0",
     "@types/react-image-gallery": "^1.2.4",
     "@uiw/react-md-editor": "^4.0.8",
+    "cors": "^2.8.5",
     "framer-motion": "^12.23.12",
     "lucide-react": "^0.544.0",
     "react": "^19.1.1",

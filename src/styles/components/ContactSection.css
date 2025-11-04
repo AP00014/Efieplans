@@ -745,8 +745,8 @@
 }
 
 .social-link:hover .social-icon {
-  transform: scale(1.1) rotate(5deg);
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+  transform: none;
+  filter: none;
 }
 
 .social-label {

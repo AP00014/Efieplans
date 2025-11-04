@@ -1,16 +1,16 @@
 /* Portfolio Page Styles - Enhanced Modern Design */
 
 :root {
-  /* Color Palette */
-  --primary-gray: #6b7280;
-  --primary-purple: #7c3aed;
-  --primary-pink: #ec4899;
-  --accent-yellow: #fbbf24;
-  --accent-orange: #f97316;
+  /* Color Palette - Updated to match site theme */
+  --primary-orange: #FF8C00;
+  --primary-orange-dark: #E67E00;
+  --primary-blue: #3B82F6;
+  --primary-green: #10B981;
+  --accent-yellow: #FACC15;
 
-  /* Gradients */
-  --primary-gradient: linear-gradient(135deg, var(--primary-gray) 0%, var(--primary-purple) 50%, var(--primary-pink) 100%);
-  --secondary-gradient: linear-gradient(135deg, var(--accent-yellow) 0%, var(--accent-orange) 100%);
+  /* Gradients - Updated to match site theme */
+  --primary-gradient: linear-gradient(135deg, var(--primary-orange) 0%, var(--primary-orange-dark) 100%);
+  --secondary-gradient: linear-gradient(135deg, var(--primary-orange) 0%, var(--primary-orange-dark) 100%);
   --glass-gradient: linear-gradient(145deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
   --dark-glass-gradient: linear-gradient(145deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.1) 100%);
 
@@ -19,7 +19,7 @@
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  --shadow-neon: 0 0 20px rgba(107, 114, 128, 0.3);
+  --shadow-neon: 0 0 20px rgba(255, 140, 0, 0.3);
 
   /* Colors */
   --bg-light: #ffffff;
@@ -68,7 +68,7 @@
   width: 100%;
   height: 45vh;
   min-height: 300px;
-  background: linear-gradient(135deg, rgba(107, 114, 128, 0.1) 0%, rgba(124, 58, 237, 0.1) 100%);
+  background: linear-gradient(135deg, rgba(255, 140, 0, 0.1) 0%, rgba(255, 126, 0, 0.1) 100%);
 }
 
 .headerControls {
@@ -93,13 +93,13 @@
   justify-content: center;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: var(--shadow-neon);
+  box-shadow: 0 0 20px rgba(255, 140, 0, 0.3);
   color: white;
 }
 
 .headerControlBtn:hover {
   transform: scale(1.15) rotate(5deg);
-  box-shadow: 0 0 30px rgba(107, 114, 128, 0.5);
+  box-shadow: 0 0 30px rgba(255, 140, 0, 0.5);
 }
 
 .headerControlBtn svg {
@@ -165,13 +165,13 @@
 }
 
 .headerStatus.completed {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: linear-gradient(135deg, var(--primary-orange) 0%, var(--primary-orange-dark) 100%);
   color: white;
   box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
 }
 
 .headerStatus.ongoing {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  background: linear-gradient(135deg, var(--primary-orange) 0%, var(--primary-orange-dark) 100%);
   color: white;
   box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
 }
@@ -235,7 +235,7 @@
 }
 
 .slide-view-more {
-  color: var(--primary-gray);
+  color: var(--primary-orange);
   text-decoration: none;
   font-weight: 700;
   font-size: 0.9rem;
@@ -255,40 +255,44 @@
 }
 
 .dark .slide-view-more {
-  background: rgba(251, 191, 36, 0.1);
-  color: var(--accent-yellow);
+  background: rgba(255, 140, 0, 0.1);
+  color: var(--primary-orange);
 }
 
 .dark .slide-view-more:hover {
-  background: var(--accent-yellow);
-  color: var(--bg-dark);
+  background: var(--primary-orange);
+  color: var(--bg-light);
 }
 
 .headerProgress {
   position: absolute;
-  bottom: 2rem;
+  bottom: 1rem;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 1rem;
+  gap: 0.75rem;
+  z-index: 10;
 }
 
 .headerProgressDot {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.8);
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: 2px solid rgba(255, 140, 0, 0.4);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .headerProgressDot.active {
-  width: 32px;
-  border-radius: 16px;
+  width: 36px;
+  height: 12px;
+  border-radius: 6px;
   background: var(--primary-gradient);
-  box-shadow: var(--shadow-neon);
-  transform: scale(1.1);
+  box-shadow: 0 0 25px rgba(255, 140, 0, 0.5);
+  transform: scale(1.2);
+  border: 2px solid rgba(255, 255, 255, 0.8);
 }
 
 /* Category Filter */
@@ -400,7 +404,7 @@
   font-size: 1.6rem;
   font-weight: 800;
   margin-bottom: 2rem;
-  background: var(--primary-gradient);
+  background: var(--secondary-gradient);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -445,7 +449,7 @@
   content: '';
   position: absolute;
   inset: -2px;
-  background: var(--primary-gradient);
+  background: var(--secondary-gradient);
   z-index: -1;
   filter: blur(20px);
   opacity: 0;
@@ -586,6 +590,7 @@
     border-radius: 16px 16px 0 0;
     position: relative;
     z-index: 2;
+    min-height: 300px;
   }
 
   .dark .headerSlideContent {
@@ -603,15 +608,45 @@
   }
 
   .headerSlideMeta {
+    display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 1rem;
+    gap: 0.75rem;
+    width: 100%;
+    position: relative;
   }
 
-  /* Keep View More inline with location for mobile */
+  .headerLocation {
+    position: absolute;
+    top: 0;
+    right: 1rem;
+    font-size: 0.85rem;
+    padding: 0.5rem 0.75rem;
+    background: rgba(255, 140, 0, 0.1);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 140, 0, 0.2);
+    color: var(--primary-orange);
+    font-weight: 600;
+    width: fit-content;
+    max-width: calc(100% - 2rem);
+  }
+
   .slide-view-more {
-    align-self: flex-start;
-    margin-top: 0.5rem;
+    align-self: stretch;
+    text-align: center;
+    margin-top: 0;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    background: var(--primary-gradient);
+    color: white;
+    border-radius: 8px;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(255, 140, 0, 0.3);
+  }
+
+  .slide-view-more:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 140, 0, 0.4);
   }
 
   .headerControls {
@@ -695,14 +730,47 @@
   }
 
   .headerSlideMeta {
-    gap: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    width: 100%;
+    position: relative;
   }
 
-  /* Keep View More inline with location on small screens */
-  .slide-view-more {
-    align-self: flex-start;
-    margin-top: 0.3rem;
+  .headerLocation {
+    position: absolute;
+    top: 0;
+    right: 1rem;
+    font-size: 0.8rem;
+    padding: 0.4rem 0.6rem;
+    background: rgba(255, 140, 0, 0.1);
+    border-radius: 6px;
+    border: 1px solid rgba(255, 140, 0, 0.2);
+    color: var(--primary-orange);
+    font-weight: 600;
+    width: fit-content;
+    max-width: calc(100% - 2rem);
   }
+
+  .slide-view-more {
+    align-self: stretch;
+    text-align: center;
+    margin-top: 0;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.85rem;
+    background: var(--primary-gradient);
+    color: white;
+    border-radius: 6px;
+    font-weight: 700;
+    box-shadow: 0 3px 10px rgba(255, 140, 0, 0.3);
+  }
+
+  .slide-view-more:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 14px rgba(255, 140, 0, 0.4);
+  }
+
 
   .headerStatus {
     top: 0.8rem;
