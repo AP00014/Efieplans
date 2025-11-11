@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { useTheme } from '../hooks/useTheme';
-import { 
-  ArrowLeft, 
-  User, 
-  Upload, 
-  X, 
-  Check, 
-  Camera, 
+import {
+  ArrowLeft,
+  User,
+  X,
+  Camera,
   Loader2,
   Save,
   AlertCircle,
@@ -19,15 +16,14 @@ import './SettingsPage.css';
 interface Profile {
   id: string;
   username: string;
-  full_name?: string;
+  full_name?: string | null;
   email?: string;
-  avatar_url?: string;
+  avatar_url?: string | null;
   role?: string;
 }
 
 const SettingsPage: React.FC = () => {
   const navigate = useNavigate();
-  const { isDarkMode } = useTheme();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -240,8 +236,9 @@ const SettingsPage: React.FC = () => {
         try {
           avatarUrl = await uploadAvatar(selectedFile);
           setSelectedFile(null);
-        } catch (uploadErr: any) {
-          setError(uploadErr.message || 'Failed to upload avatar');
+        } catch (uploadErr: unknown) {
+          const errorMessage = uploadErr instanceof Error ? uploadErr.message : 'Failed to upload avatar';
+          setError(errorMessage);
           setUploading(false);
           setSaving(false);
           return;
@@ -288,9 +285,10 @@ const SettingsPage: React.FC = () => {
       setTimeout(() => {
         setSuccess(null);
       }, 3000);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error saving profile:', err);
-      setError(err.message || 'An unexpected error occurred');
+      const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred';
+      setError(errorMessage);
     } finally {
       setSaving(false);
     }
