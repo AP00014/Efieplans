@@ -12,9 +12,7 @@ const AboutSection = () => {
           {/* About Card */}
           <div className="company-card">
             <div className="company-card-header">
-              <div className="icon-wrapper-blue">
-                <FaBuilding size={24} className="icon-blue" />
-              </div>
+              <FaBuilding size={24} className="icon-blue" />
               <h3 className="company-card-title">About Efie Plans</h3>
             </div>
             <p className="company-body-text">
@@ -40,9 +38,7 @@ const AboutSection = () => {
           {/* Mission & Vision Card */}
           <div className="company-card">
             <div className="company-card-header">
-              <div className="icon-wrapper-green">
-                <FaBullseye size={24} className="icon-green" />
-              </div>
+              <FaBullseye size={24} className="icon-green" />
               <h3 className="company-card-title">Our Compass</h3>
             </div>
             <div className="mission-item">

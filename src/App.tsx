@@ -18,6 +18,7 @@ import InteriorDesign from './pages/InteriorDesign';
 import Construction from './pages/Construction';
 import AdminPage from './pages/AdminPage';
 import BlogPage from './pages/BlogPage';
+import SettingsPage from './pages/SettingsPage';
 
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
       <Routes>
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/blog" element={<BlogPage />} />
+        <Route path="/settings" element={<Layout><SettingsPage /></Layout>} />
         <Route path="/" element={<Layout><Home /></Layout>} />
         
         <Route path="/services" element={<Layout><Services /></Layout>} />

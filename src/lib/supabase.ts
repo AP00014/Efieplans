@@ -12,8 +12,26 @@ if (!supabaseAnonKey) {
   throw new Error('Missing VITE_SUPABASE_ANON_KEY environment variable. Please check your .env file.');
 }
 
-// Create client for regular app usage
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Create client for regular app usage with custom fetch to remove apikey header
+const customFetch = (url: RequestInfo | URL, options: RequestInit = {}) => {
+  return fetch(url, options).then((response) => {
+    // Remove apikey header from requests when Authorization header is present
+    if (options.headers && 'Authorization' in options.headers) {
+      const headers = new Headers(options.headers as HeadersInit);
+      headers.delete('apikey');
+      headers.delete('Authorization'); // Temporarily remove to avoid duplication
+      headers.set('Authorization', options.headers['Authorization']); // Re-add clean Authorization
+      options.headers = headers;
+    }
+    return response;
+  });
+};
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  global: {
+    fetch: customFetch,
+  },
+});
 
 // Create service role client for admin operations (server-side only)
 const supabaseServiceRoleKey = import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY;

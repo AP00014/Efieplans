@@ -1,302 +1,214 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import { motion } from 'framer-motion';
+import { FiVideo, FiArrowUpRight,} from 'react-icons/fi';
+import ReactPlayer from 'react-player';
 import { Link } from 'react-router-dom';
-import {
-  FaArrowRight,
-  FaPlay,
- 
-  FaHeart,
-  FaEye,
-  FaCalendarAlt,
-  FaMapMarkerAlt,
-  FaRulerCombined,
-  
-  FaAward,
-  FaLightbulb,
-  FaCogs,
-  FaRocket,
-  FaCheckCircle,
-  
-  FaBuilding,
- 
-} from 'react-icons/fa';
-import '../styles/pages/ArchitecturalDesign.css';
 import { allProjects } from '../data';
 
-const ArchitecturalDesign = () => {
-  const [likedProjects, setLikedProjects] = useState(new Set<string | number>());
+import '../styles/pages/ArchitecturalDesign.css';
 
-  const toggleLike = (projectId: string | number) => {
-    setLikedProjects(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(projectId)) {
-        newSet.delete(projectId);
-      } else {
-        newSet.add(projectId);
-      }
-      return newSet;
-    });
-  };
 
-  // Architectural projects from data
-  const architecturalProjects = allProjects.filter(p => p.category === 'architectural').map(p => ({
-    id: p.id,
-    title: p.title,
-    description: p.description,
-    image: p.image,
-    video: p.details?.videos?.[0]?.url || '',
-    type: "Architectural",
-    location: p.location,
-    year: p.details?.specifications?.completion || '2023',
-    size: p.details?.specifications?.area || 'N/A',
-    budget: "Contact for details",
-    status: p.status,
-    features: p.details?.materials || [],
-    architect: "Efie Plans Team",
-    likes: 0,
-    views: 0
+interface MediaItem {
+  id: number;
+  type: 'image' | 'video';
+  url: string;
+  title: string;
+  location: string;
+  description: string;
+  thumbnail?: string;
+}
+
+const ArchitecturePage = () => {
+  const [playingId, setPlayingId] = useState<number | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const playerRefs = useRef<{ [key: number]: any }>({});
+
+  // Filter architectural projects from data.ts
+  const architecturalProjects = allProjects.filter(project => project.category === 'architectural');
+
+  // Transform projects to match the MediaItem interface
+  const mediaItems: MediaItem[] = architecturalProjects.map(project => ({
+    id: project.id,
+    type: project.details?.videos && project.details.videos.length > 0 ? 'video' : 'image',
+    url: project.details?.videos && project.details.videos.length > 0 ? project.details.videos[0].url : project.image,
+    title: project.title,
+    location: project.location,
+    description: project.description,
+    thumbnail: project.details?.videos && project.details.videos.length > 0 ? project.details.videos[0].thumbnail : project.image
   }));
 
-  const services = [
-    {
-      icon: <FaLightbulb />,
-      title: "Conceptual Design",
-      description: "Transform your ideas into detailed architectural concepts that capture the essence of your vision while considering functionality and aesthetics."
-    },
-    {
-      icon: <FaCogs />,
-      title: "Technical Drawings",
-      description: "Precise technical drawings and specifications that meet building codes and ensure seamless construction execution."
-    },
-    {
-      icon: <FaRocket />,
-      title: "Sustainable Design",
-      description: "Eco-friendly architectural solutions that minimize environmental impact while maximizing energy efficiency and comfort."
-    },
-    {
-      icon: <FaBuilding />,
-      title: "3D Visualization",
-      description: "Experience your project before construction begins with detailed 3D renderings and virtual tours."
-    },
-    {
-      icon: <FaCheckCircle />,
-      title: "Code Compliance",
-      description: "All designs meet local building codes and regulations, ensuring smooth approval processes."
-    },
-    {
-      icon: <FaAward />,
-      title: "Quality Assurance",
-      description: "Strategic design decisions that balance aesthetics with construction efficiency and budget constraints."
-    }
-  ];
+  // Separate videos and images
+  const videoItems = mediaItems.filter(item => item.type === 'video');
+  const imageItems = mediaItems.filter(item => item.type === 'image');
 
-  const processSteps = [
-    {
-      number: 1,
-      title: "Consultation",
-      description: "Understanding your vision, requirements, and budget through detailed discussions and site analysis."
-    },
-    {
-      number: 2,
-      title: "Design Development",
-      description: "Creating initial concepts and refining them based on your feedback and site analysis."
-    },
-    {
-      number: 3,
-      title: "Technical Documentation",
-      description: "Developing detailed plans, elevations, and specifications for construction."
-    },
-    {
-      number: 4,
-      title: "Project Handover",
-      description: "Delivering complete documentation and supporting you through the construction phase."
+  const handlePlay = (id: number) => {
+    console.log('Playing video:', id);
+    setPlayingId(id);
+  };
+
+
+  const handleReady = (id: number) => {
+    console.log('ReactPlayer ready for video:', id);
+    if (playerRefs.current[id]) {
+      console.log('Player ref exists, adding class');
+      // Note: ReactPlayer ref doesn't have classList, this was incorrect
+      // The className prop should be used instead
     }
-  ];
+  };
 
   return (
-    <div className="architectural-design-page">
+    <motion.div className="architectural-design-page">
       {/* Hero Section */}
       <section className="arch-hero">
-        <div className="arch-floating-elements">
-          <div className="arch-floating-element"></div>
-          <div className="arch-floating-element"></div>
-          <div className="arch-floating-element"></div>
-        </div>
-        
-        <div className="arch-hero-content">
-          <h1>Architectural Design Excellence</h1>
-          <p>
-            Creating innovative and sustainable building solutions that blend functionality,
-            aesthetics, and environmental consciousness. Discover our portfolio of award-winning
-            architectural designs that transform spaces and inspire communities.
+        <motion.div
+          className="arch-hero-content"
+          initial={{ y: 50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.8 }}
+        >
+          <h1 className="arch-hero h1">
+            <span>Architectural</span> Innovation
+            <br />
+            That Shapes Tomorrow
+          </h1>
+          <p className="arch-hero p">
+            Creating spaces that <span>inspire human connection</span>,
+            <br />
+            blending cutting-edge technology with sustainable design principles.
           </p>
-          <div className="arch-hero-buttons">
-            <Link to="/contact" className="arch-btn arch-btn-primary">
-              Start Your Project
-            </Link>
-            <Link to="#portfolio" className="arch-btn arch-btn-secondary">
-              View Our Work
-            </Link>
-          </div>
-        </div>
+        </motion.div>
       </section>
 
-      {/* Portfolio Showcase */}
-      <section id="portfolio" className="arch-portfolio">
+      {/* Media Gallery Section */}
+      <section className="arch-portfolio">
         <div className="arch-portfolio-header">
-          <h2>Our Architectural Portfolio</h2>
-          <p>
-            Explore our diverse collection of architectural projects, from residential villas to 
-            commercial complexes, each designed with precision, innovation, and sustainability in mind.
-          </p>
+          <h2>Featured Projects</h2>
+          <p>Exploring the intersection of form and function</p>
+        </div>
+
+        {/* Video Projects Section */}
+        <div className="section-divider">
+          <div className="divider-line"></div>
+          <h3 className="section-title">Video Showcases</h3>
+          <div className="divider-line"></div>
         </div>
 
         <div className="arch-projects-grid">
-          {architecturalProjects.map((project) => (
-            <div key={project.id} className="arch-project-card">
+          {videoItems.map((item, index) => (
+            <motion.div
+              key={item.id}
+              className="arch-project-card"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ delay: index * 0.1, duration: 0.5 }}
+            >
               <div className="arch-project-media">
-                <img 
-                  src={project.image} 
-                  alt={project.title}
+                {playingId === item.id ? (
+                  <div className="video-player-wrapper">
+                    <ReactPlayer
+                      ref={(player) => { playerRefs.current[item.id] = player }}
+                      src={item.url}
+                      width="100%"
+                      height="100%"
+                      playing={true}
+                      controls={true}
+                      onReady={() => handleReady(item.id)}
+                      className="react-player"
+                    />
+                    <div className="video-badge">
+                      <FiVideo size={16} />
+                      <span>Video</span>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <img
+                      src={item.thumbnail}
+                      alt={item.title}
+                      loading="lazy"
+                      className="arch-project-image"
+                    />
+                    <div className="arch-project-overlay">
+                      <button
+                        className="arch-play-button"
+                        onClick={() => handlePlay(item.id)}
+                      >
+                        <FiVideo size={40} />
+                      </button>
+                    </div>
+                    <div className="video-badge">
+                      <FiVideo size={16} />
+                      <span>Video</span>
+                    </div>
+                  </>
+                )}
+              </div>
+              <div className="arch-project-info">
+                <h3 className="arch-project-title">{item.title}</h3>
+                <p>{item.location}</p>
+                <p className="arch-project-description">{item.description}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Image Projects Section */}
+        <div className="section-divider">
+          <div className="divider-line"></div>
+          <h3 className="section-title">Architectural Photography</h3>
+          <div className="divider-line"></div>
+        </div>
+
+        <div className="arch-projects-grid">
+          {imageItems.map((item, index) => (
+            <motion.div
+              key={item.id}
+              className="arch-project-card"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ delay: index * 0.1, duration: 0.5 }}
+            >
+              <div className="arch-project-media">
+                <img
+                  src={item.url}
+                  alt={item.title}
+                  loading="lazy"
                   className="arch-project-image"
                 />
                 <div className="arch-project-overlay">
                   <div className="arch-play-button">
-                    <FaPlay />
+                    <FiVideo size={40} />
                   </div>
                 </div>
               </div>
-              
               <div className="arch-project-info">
-                <h3 className="arch-project-title">{project.title}</h3>
-                <p className="arch-project-description">{project.description}</p>
-                
-                <div className="arch-project-details">
-                  <span className="arch-project-detail">
-                    <FaMapMarkerAlt style={{ marginRight: '8px' }} />
-                    {project.location}
-                  </span>
-                  <span className="arch-project-detail">
-                    <FaCalendarAlt style={{ marginRight: '8px' }} />
-                    {project.year}
-                  </span>
-                  <span className="arch-project-detail">
-                    <FaRulerCombined style={{ marginRight: '8px' }} />
-                    {project.size}
-                  </span>
-                  <span className="arch-project-detail">
-                    <FaBuilding style={{ marginRight: '8px' }} />
-                    {project.type}
-                  </span>
-                </div>
-
-                <div className="arch-project-features">
-                  {project.features.map((feature, index) => (
-                    <span key={index} className="arch-project-detail">
-                      {feature}
-                    </span>
-                  ))}
-                </div>
-
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '16px' }}>
-                  <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-                    <button 
-                      onClick={() => toggleLike(project.id)}
-                      style={{ 
-                        background: 'none', 
-                        border: 'none', 
-                        color: likedProjects.has(project.id) ? '#ff6b6b' : '#666',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px'
-                      }}
-                    >
-                      <FaHeart />
-                      {project.likes + (likedProjects.has(project.id) ? 1 : 0)}
-                    </button>
-                    <span style={{ color: '#666', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <FaEye />
-                      {project.views}
-                    </span>
-                  </div>
-                  
-                  <Link to={`/projects/${project.id}`} className="arch-project-link">
-                    View Details <FaArrowRight />
-                  </Link>
-                </div>
+                <h3 className="arch-project-title">{item.title}</h3>
+                <p>{item.location}</p>
+                <p className="arch-project-description">{item.description}</p>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </section>
 
-      {/* Services Section */}
-      <section className="arch-services">
-        <div className="arch-services-content">
-          <div className="arch-services-header">
-            <h2>Our Architectural Services</h2>
-            <p>
-              From concept to completion, we provide comprehensive architectural design services
-              that bring your vision to life with precision and excellence.
-            </p>
-          </div>
-
-          <div className="arch-services-grid">
-            {services.map((service, index) => (
-              <div key={index} className="arch-service-card">
-                <div className="arch-service-icon">
-                  {service.icon}
-                </div>
-                <h3>{service.title}</h3>
-                <p>{service.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Process Section */}
-      <section className="arch-process">
-        <div className="arch-process-content">
-          <div className="arch-process-header">
-            <h2>Our Design Process</h2>
-            <p>
-              A systematic approach to bringing your architectural vision to life
-            </p>
-          </div>
-
-          <div className="arch-process-steps">
-            {processSteps.map((step, index) => (
-              <div key={index} className="arch-process-step">
-                <div className="arch-step-number">{step.number}</div>
-                <h3 className="arch-step-title">{step.title}</h3>
-                <p className="arch-step-description">{step.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Call to Action */}
+      {/* Project CTA */}
       <section className="arch-cta">
         <div className="arch-cta-content">
           <h2>Ready to Bring Your Vision to Life?</h2>
-          <p>
-            Let's discuss your architectural project and create something truly extraordinary together.
-            Our team of experienced architects is ready to transform your ideas into reality.
-          </p>
+          <p>Let's collaborate to create architectural marvels that stand the test of time</p>
+
           <div className="arch-cta-buttons">
             <Link to="/contact" className="arch-btn arch-btn-primary">
-              Get Started Today <FaArrowRight />
-            </Link>
-            <Link to="/projects" className="arch-btn arch-btn-secondary">
-              View Our Portfolio
+              Start Your Project
+              <FiArrowUpRight />
             </Link>
           </div>
         </div>
       </section>
-    </div>
+    </motion.div>
   );
 };
 
-export default ArchitecturalDesign;
+export default ArchitecturePage;

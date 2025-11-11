@@ -88,6 +88,57 @@ serve(async (req: Request) => {
       });
     }
 
+    // Authenticate user - check for Authorization header
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return new Response(JSON.stringify({
+        error: 'Unauthorized - Missing or invalid Authorization header'
+      }), {
+        status: 401,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
+    }
+
+    // Verify the JWT token with Supabase
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+
+    if (authError || !user) {
+      console.error('Authentication error:', authError);
+      return new Response(JSON.stringify({
+        error: 'Unauthorized - Invalid token'
+      }), {
+        status: 401,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
+    }
+
+    // Check if user is admin
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    if (profileError || !profile || profile.role !== 'admin') {
+      console.error('Authorization error - not admin:', profileError);
+      return new Response(JSON.stringify({
+        error: 'Forbidden - Admin access required'
+      }), {
+        status: 403,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
+    }
+
     const body = await req.json();
 
     if (!body.contactMessageId || !body.replyMessage) {
@@ -102,7 +153,7 @@ serve(async (req: Request) => {
       });
     }
 
-    // 1. Fetch contact message
+    // 1. Fetch contact message with ownership check
     const { data: contactMessage, error: fetchErr } = await supabase
       .from('contact_messages')
       .select('*')
@@ -134,11 +185,14 @@ serve(async (req: Request) => {
       });
     }
 
-    // 2. Update contact message status
+    // 2. Update contact message status and store reply
     const { error: updateErr } = await supabase
       .from('contact_messages')
       .update({
         status: 'replied',
+        reply: body.replyMessage,
+        reply_subject: body.replySubject || `Re: ${contactMessage.subject || 'Your Contact Message'}`,
+        reply_sent_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       })
       .eq('id', body.contactMessageId);

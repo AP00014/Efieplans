@@ -140,13 +140,8 @@ const ContactSection = () => {
       } else {
         // Send notification email after successful database insert
         try {
-          const response = await fetch('http://localhost:54321/functions/v1/send-contact-notification', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-            },
-            body: JSON.stringify({
+          const { error: functionError } = await supabase.functions.invoke('send-contact-notification', {
+            body: {
               record: {
                 name: formData.name,
                 email: formData.email,
@@ -154,11 +149,11 @@ const ContactSection = () => {
                 message: formData.message,
                 phone: formData.phone,
               }
-            })
+            }
           });
 
-          if (!response.ok) {
-            console.warn('Email notification failed, but message was saved:', response.statusText);
+          if (functionError) {
+            console.warn('Email notification failed, but message was saved:', functionError);
             // Don't show error to user since the main action (saving message) succeeded
           }
         } catch (emailError) {

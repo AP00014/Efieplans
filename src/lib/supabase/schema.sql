@@ -59,6 +59,9 @@ CREATE TABLE likes (
     message TEXT NOT NULL,
     phone TEXT,
     status TEXT DEFAULT 'pending',
+    reply TEXT,
+    reply_subject TEXT,
+    reply_sent_at TIMESTAMP WITH TIME ZONE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
   );
@@ -175,6 +178,30 @@ USING (bucket_id = 'storage' AND EXISTS (
   SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'
 ));
 */
+
+-- Enable RLS on storage.objects
+ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
+
+-- Allow public access to view files
+CREATE POLICY "Public Access" ON storage.objects FOR SELECT USING (bucket_id = 'storage');
+
+-- Only admins can upload files
+CREATE POLICY "Admins can upload files" ON storage.objects FOR INSERT
+WITH CHECK (bucket_id = 'storage' AND EXISTS (
+  SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'
+));
+
+-- Only admins can update files
+CREATE POLICY "Admins can update files" ON storage.objects FOR UPDATE
+USING (bucket_id = 'storage' AND EXISTS (
+  SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'
+));
+
+-- Only admins can delete files
+CREATE POLICY "Admins can delete files" ON storage.objects FOR DELETE
+USING (bucket_id = 'storage' AND EXISTS (
+  SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'
+));
 
 -- Create indexes for performance
 CREATE INDEX posts_user_id_idx ON posts(user_id);

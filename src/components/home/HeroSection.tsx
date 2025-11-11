@@ -53,7 +53,14 @@ const HeroSection = () => {
               backgroundImage: `url(${image})`,
               transform: `translateX(${(index - currentSlide) * 100}%)`
             }}
-          />
+          >
+            <img
+              src={image}
+              alt={`Hero slide ${index + 1}`}
+              loading="lazy"
+              style={{ display: 'none' }}
+            />
+          </div>
         ))}
 
         {/* Navigation Arrows */}

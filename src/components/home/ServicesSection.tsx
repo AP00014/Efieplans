@@ -106,10 +106,8 @@ const ServicesSection = () => {
               {/* Card Content */}
               <div className="service-card-content">
                 {/* Icon */}
-                <div className="service-icon-container">
-                  <div className="service-icon">
-                    {service.icon}
-                  </div>
+                <div className="service-icon">
+                  {service.icon}
                 </div>
 
                 {/* Title */}
@@ -144,31 +142,6 @@ const ServicesSection = () => {
           ))}
         </div>
 
-        {/* CTA Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
-          viewport={{ once: true }}
-          className="services-cta"
-        >
-          <div className="services-cta-content">
-            <h3 className="services-cta-title">Ready to Start Your Project?</h3>
-            <p className="services-cta-text">
-              Let's discuss your vision and create something extraordinary together.
-              Contact us today to begin your architectural journey.
-            </p>
-            <motion.a
-              href="/contact"
-              className="services-cta-button-main"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <span>Get Started</span>
-              <FaArrowRight />
-            </motion.a>
-          </div>
-        </motion.div>
       </div>
     </section>
   );

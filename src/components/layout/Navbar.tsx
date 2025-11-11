@@ -125,7 +125,7 @@ const Navbar = () => {
             {isServicesDropdownOpen && (
               <div className="navbar-dropdown-menu">
                 <Link
-                  to="/services/architectural-design"
+                  to="/architectural-design"
                   className="navbar-dropdown-item"
                   onClick={() => {
                     setIsServicesDropdownOpen(false);
@@ -134,7 +134,7 @@ const Navbar = () => {
                   Architectural Design
                 </Link>
                 <Link
-                  to="/services/interior-design"
+                  to="/interior-design"
                   className="navbar-dropdown-item"
                   onClick={() => {
                     setIsServicesDropdownOpen(false);
@@ -143,7 +143,7 @@ const Navbar = () => {
                   Interior Design
                 </Link>
                 <Link
-                  to="/services/construction"
+                  to="/construction"
                   className="navbar-dropdown-item"
                   onClick={() => {
                     setIsServicesDropdownOpen(false);
@@ -241,7 +241,7 @@ const Navbar = () => {
                 {isMobileServicesDropdownOpen && (
                   <div className="fast-dropdown-menu">
                     <Link
-                      to="/services/architectural-design"
+                      to="/architectural-design"
                       className="fast-dropdown-item"
                       onClick={() => {
                         setIsMobileServicesDropdownOpen(false);
@@ -251,7 +251,7 @@ const Navbar = () => {
                       Architectural Design
                     </Link>
                     <Link
-                      to="/services/interior-design"
+                      to="/interior-design"
                       className="fast-dropdown-item"
                       onClick={() => {
                         setIsMobileServicesDropdownOpen(false);
@@ -261,7 +261,7 @@ const Navbar = () => {
                       Interior Design
                     </Link>
                     <Link
-                      to="/services/construction"
+                      to="/construction"
                       className="fast-dropdown-item"
                       onClick={() => {
                         setIsMobileServicesDropdownOpen(false);

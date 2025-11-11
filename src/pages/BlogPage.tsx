@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Header from '../components/Header';
 import { supabase } from '../lib/supabase';
 import type { SupabasePost, Profile, SupabaseComment } from '../types/index';
@@ -9,7 +9,14 @@ import {
   ChevronLeft,
   ChevronRight,
   User,
-  Clock
+  Clock,
+  Play,
+  Pause,
+  Volume2,
+  VolumeX,
+  Maximize,
+  Search,
+  X
 } from 'lucide-react';
 import './BlogPage.css';
 
@@ -22,10 +29,12 @@ interface PostWithMeta extends SupabasePost {
 
 const BlogPage: React.FC = () => {
   const [posts, setPosts] = useState<PostWithMeta[]>([]);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<Profile | null>(null);
-  const [showFilters, setShowFilters] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -101,7 +110,51 @@ const BlogPage: React.FC = () => {
 
     fetchPosts();
   }, []);
-const filteredPosts = selectedCategories.length === 0 ? posts : posts.filter(post => post.tags?.some((tag: string) => selectedCategories.includes(tag)));
+  // Generate suggestions based on available content
+  useEffect(() => {
+    if (posts.length > 0) {
+      const allSuggestions = new Set<string>();
+
+      posts.forEach(post => {
+        // Add titles
+        if (post.title) allSuggestions.add(post.title);
+
+        // Add author names
+        if (post.author?.username) allSuggestions.add(post.author.username);
+        if (post.author?.full_name) allSuggestions.add(post.author.full_name);
+
+        // Add tags
+        post.tags?.forEach(tag => allSuggestions.add(tag));
+
+        // Add category keywords
+        if (post.category) allSuggestions.add(post.category);
+      });
+
+      // Add common search terms
+      ['architectural design', 'construction', 'interior design'].forEach(term => allSuggestions.add(term));
+
+      setSuggestions(Array.from(allSuggestions).sort());
+    }
+  }, [posts]);
+
+  // Filter suggestions based on current input
+  const filteredSuggestions = suggestions.filter(suggestion =>
+    suggestion.toLowerCase().includes(searchQuery.toLowerCase()) &&
+    suggestion.toLowerCase() !== searchQuery.toLowerCase()
+  ).slice(0, 8); // Limit to 8 suggestions
+
+  const filteredPosts = posts.filter(post => {
+    // Search filter (includes categories in search)
+    const searchLower = searchQuery.toLowerCase().trim();
+    const searchMatch = !searchLower ||
+      post.title?.toLowerCase().includes(searchLower) ||
+      post.content?.toLowerCase().includes(searchLower) ||
+      post.author?.username?.toLowerCase().includes(searchLower) ||
+      post.author?.full_name?.toLowerCase().includes(searchLower) ||
+      post.tags?.some(tag => tag.toLowerCase().includes(searchLower));
+
+    return searchMatch;
+  });
 
 
 const handleLike = async (postId: string) => {
@@ -148,21 +201,136 @@ const handleLike = async (postId: string) => {
     }
   };
 
+  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    setShowSuggestions(value.length > 0);
+    setSelectedSuggestionIndex(-1);
+  };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setSearchQuery(suggestion);
+    setShowSuggestions(false);
+    setSelectedSuggestionIndex(-1);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!showSuggestions || filteredSuggestions.length === 0) return;
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setSelectedSuggestionIndex(prev =>
+          prev < filteredSuggestions.length - 1 ? prev + 1 : prev
+        );
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setSelectedSuggestionIndex(prev => prev > 0 ? prev - 1 : -1);
+        break;
+      case 'Enter':
+        e.preventDefault();
+        if (selectedSuggestionIndex >= 0) {
+          setSearchQuery(filteredSuggestions[selectedSuggestionIndex]);
+        }
+        setShowSuggestions(false);
+        setSelectedSuggestionIndex(-1);
+        break;
+      case 'Escape':
+        setShowSuggestions(false);
+        setSelectedSuggestionIndex(-1);
+        break;
+    }
+  };
+
+  const handleSearchBlur = () => {
+    // Delay hiding suggestions to allow for clicks
+    setTimeout(() => setShowSuggestions(false), 150);
+  };
+
   const handleShare = async (post: PostWithMeta) => {
+    const postUrl = `${window.location.origin}/blog/post/${post.id}`;
+    const shareData = {
+      title: post.title || 'Check out this post',
+      text: post.content ? post.content.substring(0, 150) + (post.content.length > 150 ? '...' : '') : 'Check out this interesting post',
+      url: postUrl
+    };
+
     if (navigator.share) {
       try {
-        await navigator.share({
-          title: post.title,
-          text: post.content.substring(0, 100) + '...',
-          url: window.location.href
-        });
+        await navigator.share(shareData);
+        // The share API doesn't return a result, but if we get here without error, it was successful
+        showShareSuccess();
       } catch (error) {
-        console.error('Error sharing:', error);
+        if (error instanceof Error && error.name === 'AbortError') {
+          // User cancelled the share - don't show any message
+          return;
+        } else {
+          console.error('Error sharing:', error);
+          // Fallback to clipboard
+          await fallbackToClipboard(postUrl);
+        }
       }
     } else {
       // Fallback: copy to clipboard
-      navigator.clipboard.writeText(window.location.href);
-      alert('Link copied to clipboard!');
+      await fallbackToClipboard(postUrl);
+    }
+  };
+
+  const showShareSuccess = () => {
+    // Create and show a temporary success message
+    const successToast = document.createElement('div');
+    successToast.className = 'share-success-toast';
+    successToast.innerHTML = `
+      <div class="share-success-content">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 2L11 13"></path>
+          <path d="M22 2L15 22 11 13 2 9 22 2Z"></path>
+        </svg>
+        <span>Post shared successfully!</span>
+      </div>
+    `;
+    document.body.appendChild(successToast);
+
+    // Remove after animation
+    setTimeout(() => {
+      if (successToast.parentNode) {
+        successToast.parentNode.removeChild(successToast);
+      }
+    }, 3000);
+  };
+
+  const fallbackToClipboard = async (url: string) => {
+    try {
+      await navigator.clipboard.writeText(url);
+      showShareSuccess();
+      // Also show a more detailed message for clipboard copy
+      const clipboardToast = document.createElement('div');
+      clipboardToast.className = 'share-success-toast clipboard-toast';
+      clipboardToast.innerHTML = `
+        <div class="share-success-content">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 4h.01"></path>
+            <path d="M16 20h.01"></path>
+            <path d="M8 8h.01"></path>
+            <path d="M8 16h.01"></path>
+            <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+            <path d="M9 12l2 2 4-4"></path>
+          </svg>
+          <span>Link copied to clipboard!</span>
+        </div>
+      `;
+      document.body.appendChild(clipboardToast);
+
+      setTimeout(() => {
+        if (clipboardToast.parentNode) {
+          clipboardToast.parentNode.removeChild(clipboardToast);
+        }
+      }, 3000);
+    } catch (error) {
+      console.error('Failed to copy to clipboard:', error);
+      // Final fallback: show the URL in an alert
+      alert(`Share this link: ${url}`);
     }
   };
 
@@ -172,61 +340,50 @@ const handleLike = async (postId: string) => {
 
       <main className="post-content">
         <div className="container">
-          <div className="filter-section">
-            <button
-              className="filter-toggle-btn"
-              onClick={() => setShowFilters(!showFilters)}
-            >
-              Filter Posts
-              <span className={`filter-arrow ${showFilters ? 'open' : ''}`}>▼</span>
-            </button>
+          <div className="search-filter-section">
+            <div className="search-container">
+              <Search size={20} className="search-icon" />
+              <input
+                type="text"
+                placeholder="Search posts by title, content, author, tags, or categories (Architectural Design, Construction, Interior Design)..."
+                value={searchQuery}
+                onChange={handleSearchInputChange}
+                onKeyDown={handleKeyDown}
+                onBlur={handleSearchBlur}
+                className="search-input expanded"
+                autoComplete="off"
+              />
+              {searchQuery && (
+                <button
+                  className="clear-search-btn"
+                  onClick={() => {
+                    setSearchQuery('');
+                    setShowSuggestions(false);
+                    setSelectedSuggestionIndex(-1);
+                  }}
+                  aria-label="Clear search"
+                >
+                  <X size={16} />
+                </button>
+              )}
 
-            {showFilters && (
-              <div className="filter-dropdown">
-                <button
-                  className={selectedCategories.length === 0 ? 'active' : ''}
-                  onClick={() => setSelectedCategories([])}
-                >
-                  All Posts
-                </button>
-                <button
-                  className={selectedCategories.includes('architectural design') ? 'active' : ''}
-                  onClick={() => {
-                    if (selectedCategories.includes('architectural design')) {
-                      setSelectedCategories(selectedCategories.filter(c => c !== 'architectural design'));
-                    } else {
-                      setSelectedCategories([...selectedCategories, 'architectural design']);
-                    }
-                  }}
-                >
-                  Architectural Design
-                </button>
-                <button
-                  className={selectedCategories.includes('construction') ? 'active' : ''}
-                  onClick={() => {
-                    if (selectedCategories.includes('construction')) {
-                      setSelectedCategories(selectedCategories.filter(c => c !== 'construction'));
-                    } else {
-                      setSelectedCategories([...selectedCategories, 'construction']);
-                    }
-                  }}
-                >
-                  Construction
-                </button>
-                <button
-                  className={selectedCategories.includes('interior design') ? 'active' : ''}
-                  onClick={() => {
-                    if (selectedCategories.includes('interior design')) {
-                      setSelectedCategories(selectedCategories.filter(c => c !== 'interior design'));
-                    } else {
-                      setSelectedCategories([...selectedCategories, 'interior design']);
-                    }
-                  }}
-                >
-                  Interior Design
-                </button>
-              </div>
-            )}
+              {/* Suggestions Dropdown */}
+              {showSuggestions && filteredSuggestions.length > 0 && (
+                <div className="suggestions-dropdown">
+                  {filteredSuggestions.map((suggestion, index) => (
+                    <button
+                      key={suggestion}
+                      className={`suggestion-item ${index === selectedSuggestionIndex ? 'selected' : ''}`}
+                      onClick={() => handleSuggestionClick(suggestion)}
+                      onMouseEnter={() => setSelectedSuggestionIndex(index)}
+                    >
+                      <Search size={14} />
+                      <span>{suggestion}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="posts-feed">
@@ -252,6 +409,211 @@ const handleLike = async (postId: string) => {
   );
 };
 
+// Facebook-style Video Player Component
+const FacebookStyleVideoPlayer: React.FC<{
+  videoUrl: string;
+  poster?: string;
+  index: number;
+}> = ({ videoUrl, poster }) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [showControls, setShowControls] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
+  const [duration, setDuration] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const handleLoadedMetadata = () => setDuration(video.duration);
+    const handleTimeUpdate = () => setCurrentTime(video.currentTime);
+    const handleEnded = () => {
+      setIsPlaying(false);
+      setShowControls(true);
+    };
+
+    video.addEventListener('loadedmetadata', handleLoadedMetadata);
+    video.addEventListener('timeupdate', handleTimeUpdate);
+    video.addEventListener('ended', handleEnded);
+
+    return () => {
+      video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      video.removeEventListener('timeupdate', handleTimeUpdate);
+      video.removeEventListener('ended', handleEnded);
+    };
+  }, []);
+
+  const togglePlay = async () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    try {
+      if (isPlaying) {
+        video.pause();
+        setIsPlaying(false);
+      } else {
+        // Try to play with user interaction
+        await video.play();
+        setIsPlaying(true);
+        setShowControls(true);
+
+        // Auto-hide controls after 3 seconds when playing
+        if (controlsTimeoutRef.current) {
+          clearTimeout(controlsTimeoutRef.current);
+        }
+        controlsTimeoutRef.current = setTimeout(() => {
+          setShowControls(false);
+        }, 3000);
+      }
+    } catch (error) {
+      console.error('Video play failed:', error);
+      // If autoplay fails, try with muted
+      if (!isMuted) {
+        video.muted = true;
+        setIsMuted(true);
+        try {
+          await video.play();
+          setIsPlaying(true);
+          setShowControls(true);
+        } catch (retryError) {
+          console.error('Video play retry failed:', retryError);
+        }
+      }
+    }
+  };
+
+  const toggleMute = () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.muted = !video.muted;
+    setIsMuted(video.muted);
+  };
+
+  const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const percentage = clickX / rect.width;
+    const newTime = percentage * duration;
+
+    video.currentTime = newTime;
+    setCurrentTime(newTime);
+  };
+
+  const toggleFullscreen = () => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    if (!isFullscreen) {
+      if (container.requestFullscreen) {
+        container.requestFullscreen();
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+    }
+    setIsFullscreen(!isFullscreen);
+  };
+
+  const formatTime = (time: number): string => {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  return (
+    <div
+      ref={containerRef}
+      className="facebook-video-player"
+      onMouseEnter={() => setShowControls(true)}
+      onMouseLeave={() => {
+        if (isPlaying && controlsTimeoutRef.current) {
+          clearTimeout(controlsTimeoutRef.current);
+        }
+        if (!isPlaying) {
+          setShowControls(false);
+        }
+      }}
+      onClick={(e) => {
+        // Only show controls if clicking on the video area, not on controls
+        if (e.target === e.currentTarget || e.target === videoRef.current) {
+          setShowControls(true);
+        }
+      }}
+    >
+      <video
+        ref={videoRef}
+        src={videoUrl}
+        poster={poster}
+        preload="metadata"
+        playsInline
+        muted={isMuted}
+        crossOrigin="anonymous"
+        className="facebook-video-element"
+        onError={(e) => {
+          console.error('Video load error:', videoUrl, e);
+          // Try to reload with different CORS settings
+          const video = e.currentTarget;
+          if (video.src !== videoUrl) {
+            video.src = videoUrl;
+            video.load();
+          }
+        }}
+      />
+
+      {/* Play Button Overlay */}
+      {!isPlaying && (
+        <div className="video-play-overlay" onClick={togglePlay}>
+          <div className="play-button">
+            <Play size={60} fill="white" stroke="white" strokeWidth={1} />
+          </div>
+        </div>
+      )}
+
+      {/* Video Controls */}
+      <div className={`video-controls ${showControls ? 'visible' : ''}`}>
+        {/* Progress Bar */}
+        <div className="progress-container" onClick={handleProgressClick}>
+          <div
+            className="progress-bar"
+            style={{ width: duration > 0 ? `${(currentTime / duration) * 100}%` : '0%' }}
+          />
+          <div className="progress-background" />
+        </div>
+
+        {/* Control Buttons */}
+        <div className="control-buttons">
+          <button className="control-btn play-pause" onClick={togglePlay}>
+            {isPlaying ? <Pause size={24} /> : <Play size={24} />}
+          </button>
+
+          <div className="time-display">
+            <span className="current-time">{formatTime(currentTime)}</span>
+            <span className="time-separator">/</span>
+            <span className="duration">{formatTime(duration)}</span>
+          </div>
+
+          <button className="control-btn volume" onClick={toggleMute}>
+            {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
+          </button>
+
+          <button className="control-btn fullscreen" onClick={toggleFullscreen}>
+            <Maximize size={24} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Facebook-style Post Card Component
 const FacebookPostCard: React.FC<{
   post: PostWithMeta;
@@ -265,10 +627,142 @@ const FacebookPostCard: React.FC<{
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showImageModal, setShowImageModal] = useState(false);
   const [modalImageIndex, setModalImageIndex] = useState(0);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   // Parse image URLs from JSON string
   const imageUrls = post.image_url ? JSON.parse(post.image_url) : [];
   const hasMultipleImages = imageUrls.length > 1;
+
+  // Parse video URLs from JSON string or handle single URL string
+  const parseVideoUrl = (videoUrl: string | undefined): string[] => {
+    if (!videoUrl) return [];
+    try {
+      // Try to parse as JSON first (new format)
+      const parsed = JSON.parse(videoUrl);
+      return Array.isArray(parsed) ? parsed : [parsed];
+    } catch {
+      // If parsing fails, treat as single URL string (legacy format)
+      return [videoUrl];
+    }
+  };
+  const videoUrls = parseVideoUrl(post.video_url);
+  const hasVideos = videoUrls.length > 0;
+
+  // Debug logging for video URLs (removed for production)
+
+  // Check if URL is a direct video file or external video platform
+  const isDirectVideoFile = (url: string): boolean => {
+    try {
+      const urlObj = new URL(url);
+      const pathname = urlObj.pathname.toLowerCase();
+      return /\.(mp4|webm|ogg|avi|mov|wmv|flv|m4v|3gp)$/i.test(pathname);
+    } catch {
+      return false;
+    }
+  };
+
+  // Check if URL is an external video platform (YouTube, Vimeo, etc.)
+  const isExternalVideo = (url: string): boolean => {
+    if (isDirectVideoFile(url)) return false;
+    try {
+      const urlObj = new URL(url);
+      const hostname = urlObj.hostname.toLowerCase();
+      return hostname.includes('youtube.com') ||
+             hostname.includes('youtu.be') ||
+             hostname.includes('vimeo.com') ||
+             hostname.includes('dailymotion.com') ||
+             hostname.includes('tiktok.com') ||
+             hostname.includes('instagram.com') ||
+             hostname.includes('facebook.com') ||
+             hostname.includes('twitter.com') ||
+             hostname.includes('x.com');
+    } catch {
+      return false;
+    }
+  };
+
+  // Convert external video URLs to embed format
+  const getEmbedUrl = (url: string): string => {
+    try {
+      const urlObj = new URL(url);
+      const hostname = urlObj.hostname.toLowerCase();
+
+      // YouTube
+      if (hostname.includes('youtube.com') || hostname.includes('youtu.be')) {
+        let videoId = urlObj.searchParams.get('v');
+
+        if (!videoId && hostname.includes('youtu.be')) {
+          videoId = urlObj.pathname.split('/').pop() || null;
+        } else if (!videoId) {
+          // Try to extract from pathname like /watch?v=VIDEO_ID or /embed/VIDEO_ID
+          const pathMatch = urlObj.pathname.match(/\/(?:watch|embed)\/([^/?]+)/);
+          if (pathMatch) {
+            videoId = pathMatch[1];
+          }
+        }
+
+        if (videoId) {
+          // Add autoplay=0 to prevent autoplay, enablejsapi=1 for better control
+          return `https://www.youtube.com/embed/${videoId}?autoplay=0&enablejsapi=1&modestbranding=1&rel=0`;
+        }
+      }
+
+      // Vimeo
+      if (hostname.includes('vimeo.com')) {
+        const videoId = urlObj.pathname.split('/').pop();
+        if (videoId && /^\d+$/.test(videoId)) {
+          return `https://player.vimeo.com/video/${videoId}?autoplay=0`;
+        }
+      }
+
+      // TikTok
+      if (hostname.includes('tiktok.com')) {
+        const pathParts = urlObj.pathname.split('/');
+        const videoIndex = pathParts.findIndex(part => part === 'video');
+        if (videoIndex !== -1 && pathParts[videoIndex + 1]) {
+          const videoId = pathParts[videoIndex + 1];
+          return `https://www.tiktok.com/embed/${videoId}`;
+        }
+      }
+
+      // Instagram
+      if (hostname.includes('instagram.com')) {
+        if (urlObj.pathname.includes('/reel/') || urlObj.pathname.includes('/p/')) {
+          return `https://www.instagram.com${urlObj.pathname}/embed/`;
+        }
+      }
+
+      // Facebook
+      if (hostname.includes('facebook.com')) {
+        if (urlObj.pathname.includes('/videos/')) {
+          return `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=false`;
+        }
+      }
+
+      // Twitter/X
+      if (hostname.includes('twitter.com') || hostname.includes('x.com')) {
+        const statusMatch = urlObj.pathname.match(/\/status\/(\d+)/);
+        if (statusMatch) {
+          const tweetId = statusMatch[1];
+          return `https://platform.twitter.com/embed/Tweet.html?id=${tweetId}`;
+        }
+      }
+
+      // DailyMotion
+      if (hostname.includes('dailymotion.com')) {
+        const videoMatch = urlObj.pathname.match(/\/video\/([a-zA-Z0-9]+)/);
+        if (videoMatch) {
+          const videoId = videoMatch[1];
+          return `https://www.dailymotion.com/embed/video/${videoId}`;
+        }
+      }
+
+      return '';
+    } catch (error) {
+      console.error('Error parsing video URL:', url, error);
+      return '';
+    }
+  };
 
   const fetchComments = useCallback(async () => {
     try {
@@ -370,7 +864,29 @@ const FacebookPostCard: React.FC<{
       {/* Post Content */}
       <div className="post-content">
         {post.title && <h4 className="post-title">{post.title}</h4>}
-        <p className="post-text">{post.content}</p>
+        <div className="post-text-container">
+          <div className={`post-text-wrapper ${!isExpanded ? 'truncated' : ''}`}>
+            <p className="post-text">
+              {post.content}
+            </p>
+            {!isExpanded && post.content && post.content.length > 100 && (
+              <button
+                className="read-more-btn"
+                onClick={() => setIsExpanded(!isExpanded)}
+              >
+                Read More
+              </button>
+            )}
+          </div>
+          {isExpanded && post.content && post.content.length > 100 && (
+            <button
+              className="read-more-btn read-less-btn"
+              onClick={() => setIsExpanded(!isExpanded)}
+            >
+              Read Less
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Media Section */}
@@ -417,14 +933,55 @@ const FacebookPostCard: React.FC<{
       )}
 
       {/* Video Section */}
-      {post.video_url && (
+      {hasVideos && (
         <div className="post-media">
-          <video
-            src={post.video_url}
-            controls
-            className="post-media-video"
-            poster={imageUrls.length > 0 ? imageUrls[0] : undefined}
-          />
+          {videoUrls.map((videoUrl, index) => {
+            const isDirectVideo = isDirectVideoFile(videoUrl);
+            const isExternal = isExternalVideo(videoUrl);
+            const embedUrl = isExternal ? getEmbedUrl(videoUrl) : '';
+
+            return (
+              <div key={index} className="post-video-container">
+                {isDirectVideo ? (
+                  <FacebookStyleVideoPlayer
+                    videoUrl={videoUrl}
+                    poster={imageUrls.length > 0 ? imageUrls[0] : undefined}
+                    index={index}
+                  />
+                ) : embedUrl ? (
+                  <div className="external-video-wrapper">
+                    <iframe
+                      src={embedUrl}
+                      className="post-media-video"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      title={`Video ${index + 1}`}
+                      onLoad={() => {}}
+                      onError={(e) => console.error('External video iframe error:', e)}
+                    />
+                    {/* Debug info */}
+                    <div style={{
+                      position: 'absolute',
+                      bottom: '5px',
+                      right: '5px',
+                      background: 'rgba(0,0,0,0.7)',
+                      color: 'white',
+                      padding: '2px 6px',
+                      borderRadius: '3px',
+                      fontSize: '10px',
+                      zIndex: 10
+                    }}>
+                      External Video
+                    </div>
+                  </div>
+                ) : (
+                  <div className="video-error">
+                    Unable to load video. Unsupported URL format.
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
 

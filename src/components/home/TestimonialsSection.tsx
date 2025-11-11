@@ -168,6 +168,7 @@ const TestimonialsSection = () => {
                       src={testimonials[activeIndex].image}
                       alt={testimonials[activeIndex].name}
                       className="testimonial-author-image"
+                      loading="lazy"
                     />
                     <div className="testimonial-author-info">
                       <h4 className="testimonial-author-name">{testimonials[activeIndex].name}</h4>

@@ -1,8 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
-import { useTheme } from '../hooks/useTheme';
-import type { Profile, PostWithProfile, SupabaseComment, ContactMessage, EmailSubscription } from '../types/index';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "../lib/supabase";
+import { useTheme } from "../hooks/useTheme";
+import type {
+  Profile,
+  PostWithProfile,
+  SupabaseComment,
+  ContactMessage,
+  EmailSubscription,
+} from "../types/index";
 import {
   LayoutDashboard,
   Users,
@@ -21,10 +27,10 @@ import {
   Search,
   Sun,
   Moon,
-  Send
-} from 'lucide-react';
-import MDEditor from '@uiw/react-md-editor';
-import './AdminPage.css';
+  Send,
+} from "lucide-react";
+import MDEditor from "@uiw/react-md-editor";
+import "./AdminPage.css";
 
 interface UserActivity {
   username: string;
@@ -48,7 +54,7 @@ interface DashboardStats {
 }
 
 const AdminPage: React.FC = () => {
-  const [activeSection, setActiveSection] = useState('dashboard');
+  const [activeSection, setActiveSection] = useState("dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -57,25 +63,27 @@ const AdminPage: React.FC = () => {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    navigate('/');
+    navigate("/");
   };
 
   useEffect(() => {
     const checkAdminAccess = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
-        navigate('/');
+        navigate("/");
         return;
       }
 
       const { data: profileData } = await supabase
-        .from('profiles')
-        .select('id, username, role, created_at, updated_at')
-        .eq('id', user.id)
+        .from("profiles")
+        .select("id, username, role, created_at, updated_at")
+        .eq("id", user.id)
         .single();
 
-      if (!profileData || profileData.role !== 'admin') {
-        navigate('/');
+      if (!profileData || profileData.role !== "admin") {
+        navigate("/");
         return;
       }
 
@@ -87,39 +95,33 @@ const AdminPage: React.FC = () => {
   }, [navigate]);
 
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'create-post', label: 'Create Post', icon: FileText },
-    { id: 'posts', label: 'Post Management', icon: FileText },
-    { id: 'users', label: 'User Management', icon: Users },
-    { id: 'contact-messages', label: 'Contacts', icon: FileText },
-    { id: 'email-subscriptions', label: 'Subscriptions', icon: Users },
-    { id: 'send-newsletter', label: 'Send Newsletter', icon: Send },
-    { id: 'home', label: 'Homepage', icon: Home },
-    { id: 'blogpage', label: 'Blogpage', icon: FileText },
+    { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { id: "create-post", label: "Create Post", icon: FileText },
+    { id: "posts", label: "Post Management", icon: FileText },
+    { id: "users", label: "User Management", icon: Users },
+    { id: "contact-messages", label: "Contacts", icon: FileText },
+    { id: "email-subscriptions", label: "Subscriptions", icon: Users },
+    { id: "send-newsletter", label: "Send Newsletter", icon: Send },
+    { id: "home", label: "Homepage", icon: Home },
+    { id: "blogpage", label: "Blogpage", icon: FileText },
   ];
 
   const renderContent = () => {
     switch (activeSection) {
-      case 'dashboard':
+      case "dashboard":
         return <DashboardContent />;
-      case 'create-post':
+      case "create-post":
         return <CreatePostContent />;
-      case 'posts':
+      case "posts":
         return <PostManagement />;
-      case 'users':
+      case "users":
         return <UserManagement />;
-      case 'contact-messages':
+      case "contact-messages":
         return <ContactMessagesManagement />;
-      case 'email-subscriptions':
+      case "email-subscriptions":
         return <EmailSubscriptionsManagement />;
-      case 'send-newsletter':
+      case "send-newsletter":
         return <SendNewsletterContent />;
-      case 'home':
-        navigate('/');
-        return <DashboardContent />;
-      case 'blogpage':
-        navigate('/blog');
-        return <DashboardContent />;
       default:
         return <DashboardContent />;
     }
@@ -145,7 +147,11 @@ const AdminPage: React.FC = () => {
       </button>
 
       {/* Sidebar */}
-      <aside className={`admin-sidebar ${sidebarOpen ? 'open' : ''} ${isDarkMode ? 'dark' : ''}`}>
+      <aside
+        className={`admin-sidebar ${sidebarOpen ? "open" : ""} ${
+          isDarkMode ? "dark" : ""
+        }`}
+      >
         <div className="sidebar-header">
           <Shield size={32} className="admin-icon" />
           <h2>Admin Panel</h2>
@@ -157,9 +163,17 @@ const AdminPage: React.FC = () => {
             return (
               <button
                 key={item.id}
-                className={`nav-item ${activeSection === item.id ? 'active' : ''}`}
+                className={`nav-item ${
+                  activeSection === item.id ? "active" : ""
+                }`}
                 onClick={() => {
-                  setActiveSection(item.id);
+                  if (item.id === "home") {
+                    navigate("/");
+                  } else if (item.id === "blogpage") {
+                    navigate("/blog");
+                  } else {
+                    setActiveSection(item.id);
+                  }
                   setSidebarOpen(false);
                 }}
               >
@@ -171,32 +185,37 @@ const AdminPage: React.FC = () => {
         </nav>
 
         <div className="sidebar-footer">
-           <p>Logged in as: {profile?.username}</p>
-           <div className="sidebar-controls">
-             <button
-               className="theme-toggle-btn"
-               onClick={toggleTheme}
-               title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-               style={{ background: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.9)', border: isDarkMode ? '1px solid rgba(255, 255, 255, 0.2)' : '1px solid rgba(0, 123, 255, 0.2)', color: isDarkMode ? '#FFFFFF' : '#4a5568' }}
-             >
-               {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
-             </button>
-             <button
-               className="logout-btn"
-               onClick={handleLogout}
-             >
-               <LogOut size={16} />
-               Logout
-             </button>
-           </div>
-         </div>
+          <p>Logged in as: {profile?.username}</p>
+          <div className="sidebar-controls">
+            <button
+              className="theme-toggle-btn"
+              onClick={toggleTheme}
+              title={
+                isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"
+              }
+              style={{
+                background: isDarkMode
+                  ? "rgba(255, 255, 255, 0.1)"
+                  : "rgba(255, 255, 255, 0.9)",
+                border: isDarkMode
+                  ? "1px solid rgba(255, 255, 255, 0.2)"
+                  : "1px solid rgba(0, 123, 255, 0.2)",
+                color: isDarkMode ? "#FFFFFF" : "#4a5568",
+              }}
+            >
+              {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
+            </button>
+            <button className="logout-btn" onClick={handleLogout}>
+              <LogOut size={16} />
+              Logout
+            </button>
+          </div>
+        </div>
       </aside>
 
       {/* Main content */}
       <main className="admin-main">
-        <div className="admin-content">
-          {renderContent()}
-        </div>
+        <div className="admin-content">{renderContent()}</div>
       </main>
     </div>
   );
@@ -205,59 +224,156 @@ const AdminPage: React.FC = () => {
 // Create Post Component
 const CreatePostContent: React.FC = () => {
   const [formData, setFormData] = useState({
-    title: '',
-    content: '',
+    title: "",
+    content: "",
     images: [] as string[],
-    video_url: '',
+    videos: [] as string[],
     tags: [] as string[],
-    category: '' as string
+    category: "" as string,
   });
-  const [tagInput, setTagInput] = useState('');
-  const [imageUrlInput, setImageUrlInput] = useState('');
-  const [videoUrlInput, setVideoUrlInput] = useState('');
+  const [tagInput, setTagInput] = useState("");
+  const [imageUrlInput, setImageUrlInput] = useState("");
+  const [videoUrlInput, setVideoUrlInput] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const addTag = () => {
     if (tagInput.trim() && !formData.tags.includes(tagInput.trim())) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        tags: [...prev.tags, tagInput.trim()]
+        tags: [...prev.tags, tagInput.trim()],
       }));
-      setTagInput('');
+      setTagInput("");
     }
   };
 
   const removeTag = (tagToRemove: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      tags: prev.tags.filter(tag => tag !== tagToRemove)
+      tags: prev.tags.filter((tag) => tag !== tagToRemove),
     }));
   };
 
   const addImageUrl = () => {
     if (imageUrlInput.trim() && formData.images.length < 4) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        images: [...prev.images, imageUrlInput.trim()]
+        images: [...prev.images, imageUrlInput.trim()],
       }));
-      setImageUrlInput('');
+      setImageUrlInput("");
     } else if (formData.images.length >= 4) {
-      alert('Maximum 4 images allowed');
+      alert("Maximum 4 images allowed");
     }
   };
 
   const addVideoUrl = () => {
     if (videoUrlInput.trim()) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        video_url: videoUrlInput.trim()
+        videos: [...(prev.videos || []), videoUrlInput.trim()],
       }));
-      setVideoUrlInput('');
+      setVideoUrlInput("");
+    }
+  };
+
+  const validateFile = (file: File, type: "image" | "video"): boolean => {
+    const allowedTypes =
+      type === "image"
+        ? ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"]
+        : ["video/mp4", "video/avi", "video/mov", "video/wmv", "video/webm"];
+
+    if (!allowedTypes.includes(file.type)) {
+      alert(`Please select a valid ${type} file (${allowedTypes.join(", ")})`);
+      return false;
+    }
+
+    return true;
+  };
+
+  const uploadFileToSupabase = async (
+    file: File,
+    type: "image" | "video"
+  ): Promise<string> => {
+    // Check authentication before uploading
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      throw new Error("You must be logged in to upload files");
+    }
+
+    const fileExt = file.name.split(".").pop();
+    const fileName = `${Date.now()}-${Math.random()
+      .toString(36)
+      .substring(2)}.${fileExt}`;
+    const filePath = `posts/${type}s/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("storage")
+      .upload(filePath, file);
+
+    if (uploadError) {
+      throw uploadError;
+    }
+
+    const { data } = supabase.storage.from("storage").getPublicUrl(filePath);
+
+    return data.publicUrl;
+  };
+
+  const handleFileUpload = async (files: FileList, type: "image" | "video") => {
+    // Check authentication before uploading
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      alert("You must be logged in to upload files");
+      return;
+    }
+
+    const fileArray = Array.from(files);
+
+    for (const file of fileArray) {
+      if (!validateFile(file, type)) continue;
+
+      try {
+        console.log(`Starting upload of ${file.name} (${(file.size / (1024 * 1024)).toFixed(2)}MB)`);
+        const publicUrl = await uploadFileToSupabase(file, type);
+        console.log(`Upload successful for ${file.name}`);
+
+        if (type === "image") {
+          if (formData.images.length < 4) {
+            setFormData((prev) => ({
+              ...prev,
+              images: [...prev.images, publicUrl],
+            }));
+          } else {
+            alert("Maximum 4 images allowed");
+          }
+        } else {
+          setFormData((prev) => ({
+            ...prev,
+            videos: [...(prev.videos || []), publicUrl],
+          }));
+        }
+      } catch (error) {
+        console.error("Upload error:", error);
+        alert(`Failed to upload ${file.name}. Please try again or contact support if the issue persists.`);
+      }
+    }
+
+    // Clear file input after successful upload to allow uploading again
+    const fileInput = document.getElementById(
+      type === "image" ? "image-upload" : "video-upload"
+    ) as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = "";
     }
   };
 
@@ -266,35 +382,47 @@ const CreatePostContent: React.FC = () => {
     setLoading(true);
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Not authenticated');
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
 
-      const { error } = await supabase
-        .from('posts')
-        .insert({
-          user_id: user.id,
-          title: formData.title,
-          content: formData.content,
-          image_url: formData.images.length > 0 ? JSON.stringify(formData.images) : null,
-          video_url: formData.video_url || null,
-          tags: formData.tags,
-          category: formData.category
-        });
+      console.log("Submitting post with data:", {
+        title: formData.title,
+        content: formData.content,
+        images: formData.images,
+        videos: formData.videos,
+        tags: formData.tags,
+        category: formData.category,
+      });
+
+      const { error } = await supabase.from("posts").insert({
+        user_id: user.id,
+        title: formData.title,
+        content: formData.content,
+        image_url:
+          formData.images.length > 0 ? JSON.stringify(formData.images) : null,
+        video_url: formData.videos.length > 0 ? JSON.stringify(formData.videos) : null,
+        tags: formData.tags,
+        category: formData.category,
+      });
 
       if (error) throw error;
 
-      alert('Post created successfully!');
+      alert("Post created successfully!");
       setFormData({
-        title: '',
-        content: '',
+        title: "",
+        content: "",
         images: [],
-        video_url: '',
+        videos: [],
         tags: [],
-        category: ''
+        category: "",
       });
+      setImageUrlInput("");
+      setVideoUrlInput("");
     } catch (error) {
-      console.error('Error creating post:', error);
-      alert('Failed to create post');
+      console.error("Error creating post:", error);
+      alert("Failed to create post");
     } finally {
       setLoading(false);
     }
@@ -344,12 +472,16 @@ const CreatePostContent: React.FC = () => {
                 id="category"
                 name="category"
                 value={formData.category}
-                onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, category: e.target.value }))
+                }
                 required
                 className="form-input"
               >
                 <option value="">Select a category</option>
-                <option value="architectural design">Architectural Design</option>
+                <option value="architectural design">
+                  Architectural Design
+                </option>
                 <option value="construction">Construction</option>
                 <option value="interior design">Interior Design</option>
               </select>
@@ -364,7 +496,9 @@ const CreatePostContent: React.FC = () => {
                   onChange={(e) => setTagInput(e.target.value)}
                   placeholder="Add a tag..."
                   className="form-input"
-                  onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
+                  onKeyDown={(e) =>
+                    e.key === "Enter" && (e.preventDefault(), addTag())
+                  }
                 />
                 <button type="button" onClick={addTag} className="add-tag-btn">
                   <Plus size={16} />
@@ -376,7 +510,11 @@ const CreatePostContent: React.FC = () => {
                   <span key={index} className="tag">
                     <Tag size={12} />
                     {tag}
-                    <button type="button" onClick={() => removeTag(tag)} className="remove-tag">
+                    <button
+                      type="button"
+                      onClick={() => removeTag(tag)}
+                      className="remove-tag"
+                    >
                       <X size={12} />
                     </button>
                   </span>
@@ -387,14 +525,15 @@ const CreatePostContent: React.FC = () => {
 
           <div className="form-section">
             <div className="form-group">
-              <label>Media URLs</label>
+              <label>Media Upload</label>
 
               <div className="media-upload-section">
                 <div className="upload-group">
                   <label className="upload-label">
                     <Image size={20} />
-                    Image URLs ({formData.images.length}/4)
+                    Images ({formData.images.length}/4)
                   </label>
+
                   <div className="url-input-group">
                     <input
                       type="url"
@@ -402,12 +541,55 @@ const CreatePostContent: React.FC = () => {
                       onChange={(e) => setImageUrlInput(e.target.value)}
                       placeholder="Enter image URL..."
                       className="form-input"
-                      onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addImageUrl())}
+                      onKeyDown={(e) =>
+                        e.key === "Enter" && (e.preventDefault(), addImageUrl())
+                      }
                     />
-                    <button type="button" onClick={addImageUrl} className="add-url-btn">
+                    <button
+                      type="button"
+                      onClick={addImageUrl}
+                      className="add-url-btn"
+                    >
                       Add Image
                     </button>
                   </div>
+
+                  <div className="url-input-group">
+                    <label
+                      htmlFor="image-upload"
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.5rem",
+                        cursor: "pointer",
+                        width: "100%",
+                      }}
+                    >
+                      <Upload size={16} />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={(e) =>
+                          e.target.files &&
+                          handleFileUpload(e.target.files, "image")
+                        }
+                        className="form-input"
+                        id="image-upload"
+                        style={{ padding: "0.5rem", flex: 1 }}
+                      />
+                    </label>
+                    <span
+                      style={{
+                        fontSize: "0.875rem",
+                        color: "#666",
+                        marginTop: "0.25rem",
+                      }}
+                    >
+                      Max 4 images, 5MB each
+                    </span>
+                  </div>
+
                   {formData.images.map((image: string, index: number) => (
                     <div key={index} className="media-preview">
                       <img
@@ -415,23 +597,37 @@ const CreatePostContent: React.FC = () => {
                         alt={`Preview ${index + 1}`}
                         className="preview-image"
                         onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                          e.currentTarget.nextElementSibling?.classList.add('error');
+                          e.currentTarget.style.display = "none";
+                          e.currentTarget.nextElementSibling?.classList.add(
+                            "error"
+                          );
                         }}
                         onLoad={(e) => {
-                          e.currentTarget.style.display = 'block';
+                          e.currentTarget.style.display = "block";
                         }}
                       />
-                      <div className="image-error" style={{ display: 'none' }}>
+                      <div className="image-error" style={{ display: "none" }}>
                         Failed to load image
                       </div>
                       <button
                         type="button"
-                        onClick={() => setFormData(prev => ({
-                          ...prev,
-                          images: prev.images.filter((_: string, i: number) => i !== index)
-                        }))}
+                        onClick={() => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            images: prev.images.filter(
+                              (_: string, i: number) => i !== index
+                            ),
+                          }));
+                          // Reset file input to allow uploading the same file again
+                          const fileInput = document.getElementById(
+                            "image-upload"
+                          ) as HTMLInputElement;
+                          if (fileInput) {
+                            fileInput.value = "";
+                          }
+                        }}
                         className="remove-media"
+                        title="Remove image"
                       >
                         <X size={16} />
                       </button>
@@ -442,8 +638,9 @@ const CreatePostContent: React.FC = () => {
                 <div className="upload-group">
                   <label className="upload-label">
                     <Video size={20} />
-                    Video URL
+                    Video
                   </label>
+
                   <div className="url-input-group">
                     <input
                       type="url"
@@ -451,24 +648,83 @@ const CreatePostContent: React.FC = () => {
                       onChange={(e) => setVideoUrlInput(e.target.value)}
                       placeholder="Enter video URL..."
                       className="form-input"
-                      onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addVideoUrl())}
+                      onKeyDown={(e) =>
+                        e.key === "Enter" && (e.preventDefault(), addVideoUrl())
+                      }
                     />
-                    <button type="button" onClick={addVideoUrl} className="add-url-btn">
+                    <button
+                      type="button"
+                      onClick={addVideoUrl}
+                      className="add-url-btn"
+                    >
                       Add Video
                     </button>
                   </div>
-                  {formData.video_url && (
-                    <div className="media-preview">
-                      <video src={formData.video_url} className="preview-video" controls />
+
+                  <div className="url-input-group">
+                    <label
+                      htmlFor="video-upload"
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.5rem",
+                        cursor: "pointer",
+                        width: "100%",
+                      }}
+                    >
+                      <Upload size={16} />
+                      <input
+                        type="file"
+                        accept="video/*"
+                        onChange={(e) =>
+                          e.target.files &&
+                          handleFileUpload(e.target.files, "video")
+                        }
+                        className="form-input"
+                        id="video-upload"
+                        style={{ padding: "0.5rem", flex: 1 }}
+                      />
+                    </label>
+                    <span
+                      style={{
+                        fontSize: "0.875rem",
+                        color: "#666",
+                        marginTop: "0.25rem",
+                      }}
+                    >
+                      Max 100MB
+                    </span>
+                  </div>
+
+                  {formData.videos && formData.videos.length > 0 && formData.videos.map((video: string, index: number) => (
+                    <div key={index} className="media-preview">
+                      <video
+                        src={video}
+                        className="preview-video"
+                        controls
+                      />
                       <button
                         type="button"
-                        onClick={() => setFormData(prev => ({ ...prev, video_url: '' }))}
+                        onClick={() => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            videos: prev.videos.filter((_: string, i: number) => i !== index),
+                          }));
+                          // Reset file input to allow uploading the same file again
+                          const fileInput = document.getElementById(
+                            "video-upload"
+                          ) as HTMLInputElement;
+                          if (fileInput) {
+                            fileInput.value = "";
+                          }
+                        }}
                         className="remove-media"
+                        title="Remove video"
                       >
                         <X size={16} />
                       </button>
                     </div>
-                  )}
+                  ))}
                 </div>
               </div>
             </div>
@@ -504,7 +760,7 @@ const DashboardContent: React.FC = () => {
     totalLikes: 0,
     totalComments: 0,
     recentUsers: [],
-    recentPosts: []
+    recentPosts: [],
   });
   const [loading, setLoading] = useState(true);
 
@@ -519,15 +775,26 @@ const DashboardContent: React.FC = () => {
           totalLikesResult,
           totalCommentsResult,
           recentUsersResult,
-          recentPostsResult
+          recentPostsResult,
         ] = await Promise.all([
-          supabase.from('profiles').select('*', { count: 'exact', head: true }),
-          supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'admin'),
-          supabase.from('posts').select('*', { count: 'exact', head: true }),
-          supabase.from('likes').select('*', { count: 'exact', head: true }),
-          supabase.from('comments').select('*', { count: 'exact', head: true }),
-          supabase.from('profiles').select('username, created_at').order('created_at', { ascending: false }).limit(5),
-          supabase.from('posts').select('title, created_at, user_id').order('created_at', { ascending: false }).limit(5)
+          supabase.from("profiles").select("*", { count: "exact", head: true }),
+          supabase
+            .from("profiles")
+            .select("*", { count: "exact", head: true })
+            .eq("role", "admin"),
+          supabase.from("posts").select("*", { count: "exact", head: true }),
+          supabase.from("likes").select("*", { count: "exact", head: true }),
+          supabase.from("comments").select("*", { count: "exact", head: true }),
+          supabase
+            .from("profiles")
+            .select("username, created_at")
+            .order("created_at", { ascending: false })
+            .limit(5),
+          supabase
+            .from("posts")
+            .select("title, created_at, user_id")
+            .order("created_at", { ascending: false })
+            .limit(5),
         ]);
 
         setStats({
@@ -537,10 +804,10 @@ const DashboardContent: React.FC = () => {
           totalLikes: totalLikesResult.count || 0,
           totalComments: totalCommentsResult.count || 0,
           recentUsers: recentUsersResult.data || [],
-          recentPosts: recentPostsResult.data || []
+          recentPosts: recentPostsResult.data || [],
         });
       } catch (error) {
-        console.error('Error fetching stats:', error);
+        console.error("Error fetching stats:", error);
       } finally {
         setLoading(false);
       }
@@ -660,7 +927,7 @@ const DashboardContent: React.FC = () => {
 const UserManagement: React.FC = () => {
   const [users, setUsers] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   useEffect(() => {
@@ -670,68 +937,70 @@ const UserManagement: React.FC = () => {
   const fetchUsers = async () => {
     try {
       const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .from("profiles")
+        .select("*")
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
       setUsers(data || []);
     } catch (error) {
-      console.error('Error fetching users:', error);
+      console.error("Error fetching users:", error);
     } finally {
       setLoading(false);
     }
   };
 
-
   const updateUserRole = async (userId: string, newRole: string) => {
     try {
       const { error } = await supabase
-        .from('profiles')
+        .from("profiles")
         .update({ role: newRole })
-        .eq('id', userId);
+        .eq("id", userId);
 
       if (error) throw error;
       fetchUsers(); // Refresh the list
     } catch (error) {
-      console.error('Error updating user role:', error);
-      alert('Failed to update user role');
+      console.error("Error updating user role:", error);
+      alert("Failed to update user role");
     }
   };
 
   const banUser = async (userId: string, ban: boolean) => {
-    const action = ban ? 'ban' : 'unban';
-    const confirmed = window.confirm(`Are you sure you want to ${action} this user?`);
+    const action = ban ? "ban" : "unban";
+    const confirmed = window.confirm(
+      `Are you sure you want to ${action} this user?`
+    );
     if (!confirmed) {
       return;
     }
 
     try {
       const { error } = await supabase
-        .from('profiles')
+        .from("profiles")
         .update({
           is_banned: ban,
           banned_at: ban ? new Date().toISOString() : null,
-          ban_reason: ban ? 'Banned by admin' : null
+          ban_reason: ban ? "Banned by admin" : null,
         })
-        .eq('id', userId);
+        .eq("id", userId);
 
       if (error) throw error;
 
       alert(`User ${action}ned successfully`);
       fetchUsers(); // Refresh the list
       // Force re-render by updating state
-      setUsers(prev => [...prev]);
+      setUsers((prev) => [...prev]);
     } catch (error) {
       console.error(`Error ${action}ning user:`, error);
       alert(`Failed to ${action} user`);
     }
   };
 
-  const filteredUsers = users.filter(user =>
-    user.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.full_name?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredUsers = users.filter(
+    (user) =>
+      user.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.full_name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (loading) {
@@ -764,12 +1033,12 @@ const UserManagement: React.FC = () => {
             placeholder="Search users by name, username, or email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className={`search-input ${isSearchExpanded ? 'expanded' : ''}`}
+            className={`search-input ${isSearchExpanded ? "expanded" : ""}`}
           />
           {searchTerm && (
             <button
               className="clear-search-btn"
-              onClick={() => setSearchTerm('')}
+              onClick={() => setSearchTerm("")}
               aria-label="Clear search"
             >
               <X size={16} />
@@ -778,7 +1047,7 @@ const UserManagement: React.FC = () => {
         </div>
         <div className="stats-summary">
           <span>Total Users: {users.length}</span>
-          <span>Admins: {users.filter(u => u.role === 'admin').length}</span>
+          <span>Admins: {users.filter((u) => u.role === "admin").length}</span>
         </div>
       </div>
 
@@ -799,11 +1068,11 @@ const UserManagement: React.FC = () => {
             {filteredUsers.map((user) => (
               <tr key={user.id}>
                 <td>{user.username}</td>
-                <td>{user.full_name || 'N/A'}</td>
-                <td>{user.email || 'N/A'}</td>
+                <td>{user.full_name || "N/A"}</td>
+                <td>{user.email || "N/A"}</td>
                 <td>
                   <select
-                    value={user.role || 'user'}
+                    value={user.role || "user"}
                     onChange={(e) => updateUserRole(user.id, e.target.value)}
                     className="role-select"
                   >
@@ -814,11 +1083,11 @@ const UserManagement: React.FC = () => {
                 <td>{new Date(user.created_at).toLocaleDateString()}</td>
                 <td>
                   <button
-                    className={`action-btn ${user.is_banned ? 'unban' : 'ban'}`}
+                    className={`action-btn ${user.is_banned ? "unban" : "ban"}`}
                     onClick={() => banUser(user.id, !user.is_banned)}
-                    disabled={user.role === 'admin'} // Prevent banning other admins
+                    disabled={user.role === "admin"} // Prevent banning other admins
                   >
-                    {user.is_banned ? 'Unban' : 'Ban'}
+                    {user.is_banned ? "Unban" : "Ban"}
                   </button>
                 </td>
               </tr>
@@ -841,10 +1110,12 @@ const UserManagement: React.FC = () => {
               </div>
               <div className="user-card-info">
                 <h3 className="user-card-username">{user.username}</h3>
-                <p className="user-card-name">{user.full_name || 'No full name'}</p>
+                <p className="user-card-name">
+                  {user.full_name || "No full name"}
+                </p>
                 <div className="user-role-badge">
-                  <span className={`role-badge ${user.role || 'user'}`}>
-                    {user.role === 'admin' ? 'Administrator' : 'User'}
+                  <span className={`role-badge ${user.role || "user"}`}>
+                    {user.role === "admin" ? "Administrator" : "User"}
                   </span>
                 </div>
               </div>
@@ -853,21 +1124,31 @@ const UserManagement: React.FC = () => {
             <div className="user-card-details">
               <div className="detail-item">
                 <span className="detail-label">Email:</span>
-                <span className="detail-value">{user.email || 'Not provided'}</span>
+                <span className="detail-value">
+                  {user.email || "Not provided"}
+                </span>
               </div>
               <div className="detail-item">
                 <span className="detail-label">Joined:</span>
-                <span className="detail-value">{new Date(user.created_at).toLocaleDateString()}</span>
+                <span className="detail-value">
+                  {new Date(user.created_at).toLocaleDateString()}
+                </span>
               </div>
               <div className="detail-item">
                 <span className="detail-label">Status:</span>
-                <span className={`detail-value ${user.is_banned ? 'banned' : 'active'}`}>
-                  {user.is_banned ? 'Banned' : 'Active'}
+                <span
+                  className={`detail-value ${
+                    user.is_banned ? "banned" : "active"
+                  }`}
+                >
+                  {user.is_banned ? "Banned" : "Active"}
                 </span>
               </div>
               <div className="detail-item">
                 <span className="detail-label">Bio:</span>
-                <span className="detail-value">{user.bio || 'No bio available'}</span>
+                <span className="detail-value">
+                  {user.bio || "No bio available"}
+                </span>
               </div>
             </div>
 
@@ -875,7 +1156,7 @@ const UserManagement: React.FC = () => {
               <div className="role-selector-mobile">
                 <label>Role:</label>
                 <select
-                  value={user.role || 'user'}
+                  value={user.role || "user"}
                   onChange={(e) => updateUserRole(user.id, e.target.value)}
                   className="role-select-mobile"
                 >
@@ -884,11 +1165,13 @@ const UserManagement: React.FC = () => {
                 </select>
               </div>
               <button
-                className={`action-btn ${user.is_banned ? 'unban-mobile' : 'ban-mobile'}`}
+                className={`action-btn ${
+                  user.is_banned ? "unban-mobile" : "ban-mobile"
+                }`}
                 onClick={() => banUser(user.id, !user.is_banned)}
-                disabled={user.role === 'admin'}
+                disabled={user.role === "admin"}
               >
-                {user.is_banned ? 'Unban User' : 'Ban User'}
+                {user.is_banned ? "Unban User" : "Ban User"}
               </button>
             </div>
           </div>
@@ -902,7 +1185,7 @@ const UserManagement: React.FC = () => {
 const PostManagement: React.FC = () => {
   const [posts, setPosts] = useState<PostWithProfile[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [editingPost, setEditingPost] = useState<PostWithProfile | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -946,12 +1229,14 @@ const PostManagement: React.FC = () => {
   const fetchPosts = async () => {
     try {
       const { data, error } = await supabase
-        .from('posts')
-        .select(`
+        .from("posts")
+        .select(
+          `
           *,
           profiles: user_id (username, full_name)
-        `)
-        .order('created_at', { ascending: false })
+        `
+        )
+        .order("created_at", { ascending: false })
         .limit(50); // Limit to 50 posts for admin view
 
       if (error) throw error;
@@ -961,47 +1246,48 @@ const PostManagement: React.FC = () => {
         (data || []).map(async (post) => {
           const [likesResult, commentsResult] = await Promise.all([
             supabase
-              .from('likes')
-              .select('*', { count: 'exact', head: true })
-              .eq('post_id', post.id),
+              .from("likes")
+              .select("*", { count: "exact", head: true })
+              .eq("post_id", post.id),
             supabase
-              .from('comments')
-              .select('*', { count: 'exact', head: true })
-              .eq('post_id', post.id)
+              .from("comments")
+              .select("*", { count: "exact", head: true })
+              .eq("post_id", post.id),
           ]);
 
           return {
             ...post,
             likes: likesResult.count || 0,
-            comments: commentsResult.count || 0
+            comments: commentsResult.count || 0,
           };
         })
       );
 
       setPosts(postsWithCounts);
     } catch (error) {
-      console.error('Error fetching posts:', error);
+      console.error("Error fetching posts:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const deletePost = async (postId: string) => {
-    if (!confirm('Are you sure you want to delete this post? This action cannot be undone.')) {
+    if (
+      !confirm(
+        "Are you sure you want to delete this post? This action cannot be undone."
+      )
+    ) {
       return;
     }
 
     try {
-      const { error } = await supabase
-        .from('posts')
-        .delete()
-        .eq('id', postId);
+      const { error } = await supabase.from("posts").delete().eq("id", postId);
 
       if (error) throw error;
       fetchPosts(); // Refresh the list
     } catch (error) {
-      console.error('Error deleting post:', error);
-      alert('Failed to delete post');
+      console.error("Error deleting post:", error);
+      alert("Failed to delete post");
     }
   };
 
@@ -1013,7 +1299,7 @@ const PostManagement: React.FC = () => {
   const handleSaveEdit = async (updatedPost: PostWithProfile) => {
     try {
       const { error } = await supabase
-        .from('posts')
+        .from("posts")
         .update({
           title: updatedPost.title,
           content: updatedPost.content,
@@ -1021,19 +1307,19 @@ const PostManagement: React.FC = () => {
           video_url: updatedPost.video_url,
           tags: updatedPost.tags,
           category: updatedPost.category,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
-        .eq('id', updatedPost.id);
+        .eq("id", updatedPost.id);
 
       if (error) throw error;
 
       setShowEditModal(false);
       setEditingPost(null);
       fetchPosts(); // Refresh the list
-      alert('Post updated successfully!');
+      alert("Post updated successfully!");
     } catch (error) {
-      console.error('Error updating post:', error);
-      alert('Failed to update post');
+      console.error("Error updating post:", error);
+      alert("Failed to update post");
     }
   };
 
@@ -1045,39 +1331,43 @@ const PostManagement: React.FC = () => {
   const handleShowLikes = async (post: PostWithProfile) => {
     try {
       const { data, error } = await supabase
-        .from('likes')
-        .select(`
+        .from("likes")
+        .select(
+          `
           user_id,
           profiles: user_id (username, full_name, avatar_url)
-        `)
-        .eq('post_id', post.id);
+        `
+        )
+        .eq("post_id", post.id);
 
       if (error) throw error;
       setLikesUsers((data || []) as unknown as LikeWithProfile[]);
       setModalPost(post);
       setShowLikesModal(true);
     } catch (error) {
-      console.error('Error fetching likes:', error);
+      console.error("Error fetching likes:", error);
     }
   };
 
   const handleShowComments = async (post: PostWithProfile) => {
     try {
       const { data, error } = await supabase
-        .from('comments')
-        .select(`
+        .from("comments")
+        .select(
+          `
           *,
           profiles: user_id (username, full_name, avatar_url)
-        `)
-        .eq('post_id', post.id)
-        .order('created_at', { ascending: false });
+        `
+        )
+        .eq("post_id", post.id)
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
       setCommentsData((data || []) as unknown as CommentWithProfile[]);
       setModalPost(post);
       setShowCommentsModal(true);
     } catch (error) {
-      console.error('Error fetching comments:', error);
+      console.error("Error fetching comments:", error);
     }
   };
 
@@ -1089,9 +1379,10 @@ const PostManagement: React.FC = () => {
     setCommentsData([]);
   };
 
-  const filteredPosts = posts.filter(post =>
-    post.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    post.profiles?.username?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredPosts = posts.filter(
+    (post) =>
+      post.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      post.profiles?.username?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (loading) {
@@ -1124,12 +1415,12 @@ const PostManagement: React.FC = () => {
             placeholder="Search posts by title or author..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className={`search-input ${isSearchExpanded ? 'expanded' : ''}`}
+            className={`search-input ${isSearchExpanded ? "expanded" : ""}`}
           />
           {searchTerm && (
             <button
               className="clear-search-btn"
-              onClick={() => setSearchTerm('')}
+              onClick={() => setSearchTerm("")}
               aria-label="Clear search"
             >
               <X size={16} />
@@ -1160,9 +1451,12 @@ const PostManagement: React.FC = () => {
               <tr key={post.id}>
                 <td>{post.title}</td>
                 <td className="post-description">
-                  {post.content ? post.content.substring(0, 50) + (post.content.length > 50 ? '...' : '') : 'No description'}
+                  {post.content
+                    ? post.content.substring(0, 50) +
+                      (post.content.length > 50 ? "..." : "")
+                    : "No description"}
                 </td>
-                <td>{post.profiles?.username || 'Unknown'}</td>
+                <td>{post.profiles?.username || "Unknown"}</td>
                 <td>{new Date(post.created_at).toLocaleDateString()}</td>
                 <td>
                   <button
@@ -1207,14 +1501,21 @@ const PostManagement: React.FC = () => {
             <div className="post-card-header">
               <h3 className="post-card-title">{post.title}</h3>
               <div className="post-card-meta">
-                <span className="post-author">{post.profiles?.username || 'Unknown'}</span>
-                <span className="post-date">{new Date(post.created_at).toLocaleDateString()}</span>
+                <span className="post-author">
+                  {post.profiles?.username || "Unknown"}
+                </span>
+                <span className="post-date">
+                  {new Date(post.created_at).toLocaleDateString()}
+                </span>
               </div>
             </div>
 
             <div className="post-card-content">
               <p className="post-description">
-                {post.content ? post.content.substring(0, 100) + (post.content.length > 100 ? '...' : '') : 'No description'}
+                {post.content
+                  ? post.content.substring(0, 100) +
+                    (post.content.length > 100 ? "..." : "")
+                  : "No description"}
               </p>
             </div>
 
@@ -1269,10 +1570,15 @@ const PostManagement: React.FC = () => {
       {/* Likes Modal */}
       {showLikesModal && modalPost && (
         <div className="modal-overlay" onClick={closeModals}>
-          <div className="modal-content likes-modal" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="modal-content likes-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="modal-header">
               <h2>Likes for "{modalPost.title}"</h2>
-              <button className="close-btn" onClick={closeModals}>×</button>
+              <button className="close-btn" onClick={closeModals}>
+                ×
+              </button>
             </div>
             <div className="modal-body">
               {likesUsers.length === 0 ? (
@@ -1283,14 +1589,19 @@ const PostManagement: React.FC = () => {
                     <div key={index} className="like-item">
                       <div className="user-avatar">
                         {like.profiles?.avatar_url ? (
-                          <img src={like.profiles.avatar_url} alt={like.profiles.username} />
+                          <img
+                            src={like.profiles.avatar_url}
+                            alt={like.profiles.username}
+                          />
                         ) : (
                           <div className="default-avatar">👤</div>
                         )}
                       </div>
                       <div className="user-info">
                         <span className="username">
-                          {like.profiles?.full_name || like.profiles?.username || 'Anonymous'}
+                          {like.profiles?.full_name ||
+                            like.profiles?.username ||
+                            "Anonymous"}
                         </span>
                       </div>
                     </div>
@@ -1305,10 +1616,15 @@ const PostManagement: React.FC = () => {
       {/* Comments Modal */}
       {showCommentsModal && modalPost && (
         <div className="modal-overlay" onClick={closeModals}>
-          <div className="modal-content comments-modal" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="modal-content comments-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="modal-header">
               <h2>Comments for "{modalPost.title}"</h2>
-              <button className="close-btn" onClick={closeModals}>×</button>
+              <button className="close-btn" onClick={closeModals}>
+                ×
+              </button>
             </div>
             <div className="modal-body">
               {commentsData.length === 0 ? (
@@ -1319,7 +1635,10 @@ const PostManagement: React.FC = () => {
                     <div key={comment.id} className="comment-item">
                       <div className="user-avatar">
                         {comment.profiles?.avatar_url ? (
-                          <img src={comment.profiles.avatar_url} alt={comment.profiles.username} />
+                          <img
+                            src={comment.profiles.avatar_url}
+                            alt={comment.profiles.username}
+                          />
                         ) : (
                           <div className="default-avatar">👤</div>
                         )}
@@ -1327,7 +1646,9 @@ const PostManagement: React.FC = () => {
                       <div className="comment-content">
                         <div className="comment-header">
                           <span className="username">
-                            {comment.profiles?.full_name || comment.profiles?.username || 'Anonymous'}
+                            {comment.profiles?.full_name ||
+                              comment.profiles?.username ||
+                              "Anonymous"}
                           </span>
                           <span className="comment-date">
                             {new Date(comment.created_at).toLocaleDateString()}
@@ -1354,59 +1675,181 @@ const EditPostModal: React.FC<{
   onCancel: () => void;
 }> = ({ post, onSave, onCancel }) => {
   const [formData, setFormData] = useState({
-    title: post.title || '',
+    title: post.title || "",
     content: post.content,
     images: post.image_url ? JSON.parse(post.image_url) : [],
-    video_url: post.video_url || '',
+    videos: post.video_url ? JSON.parse(post.video_url) : [],
     tags: post.tags || [],
-    category: post.category || ''
+    category: post.category || "",
   });
-  const [tagInput, setTagInput] = useState('');
-  const [imageUrlInput, setImageUrlInput] = useState('');
-  const [videoUrlInput, setVideoUrlInput] = useState('');
+  const [tagInput, setTagInput] = useState("");
+  const [imageUrlInput, setImageUrlInput] = useState("");
+  const [videoUrlInput, setVideoUrlInput] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const addTag = () => {
     if (tagInput.trim() && !formData.tags.includes(tagInput.trim())) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        tags: [...prev.tags, tagInput.trim()]
+        tags: [...prev.tags, tagInput.trim()],
       }));
-      setTagInput('');
+      setTagInput("");
     }
   };
 
   const removeTag = (tagToRemove: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      tags: prev.tags.filter(tag => tag !== tagToRemove)
+      tags: prev.tags.filter((tag) => tag !== tagToRemove),
     }));
   };
 
+  const validateFile = (file: File, type: "image" | "video"): boolean => {
+    const allowedTypes =
+      type === "image"
+        ? ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"]
+        : ["video/mp4", "video/avi", "video/mov", "video/wmv", "video/webm", "video/3gp", "video/flv", "video/m4v"];
+
+    if (!allowedTypes.includes(file.type)) {
+      alert(`Please select a valid ${type} file (${allowedTypes.join(", ")})`);
+      return false;
+    }
+
+    // Check file size - Supabase has a 50MB limit per file for direct uploads
+    const maxSize = type === "image" ? 5 * 1024 * 1024 : 50 * 1024 * 1024; // 5MB for images, 50MB for videos (Supabase limit)
+    if (file.size > maxSize) {
+      const maxSizeText = type === "image" ? "5MB" : "50MB";
+      alert(`File size exceeds the maximum limit of ${maxSizeText} (Supabase platform limit). For larger files, please use external hosting and provide the URL instead.`);
+      return false;
+    }
+
+    return true;
+  };
+
+  const uploadFileToSupabase = async (
+    file: File,
+    type: "image" | "video"
+  ): Promise<string> => {
+    // Check authentication before uploading
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      throw new Error("You must be logged in to upload files");
+    }
+
+    const fileExt = file.name.split(".").pop();
+    const fileName = `${Date.now()}-${Math.random()
+      .toString(36)
+      .substring(2)}.${fileExt}`;
+    const filePath = `posts/${type}s/${fileName}`;
+
+    // Use regular upload for all files (Supabase has 50MB limit)
+    const { error: uploadError } = await supabase.storage
+      .from("storage")
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+
+    if (uploadError) {
+      throw uploadError;
+    }
+
+    const { data } = supabase.storage.from("storage").getPublicUrl(filePath);
+
+    return data.publicUrl;
+  };
+
+  const handleFileUpload = async (files: FileList, type: "image" | "video") => {
+    // Check authentication before uploading
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      alert("You must be logged in to upload files");
+      return;
+    }
+
+    const fileArray = Array.from(files);
+    console.log(`Starting upload of ${fileArray.length} ${type} files`);
+
+    for (const file of fileArray) {
+      console.log(`Processing file: ${file.name}, size: ${file.size}, type: ${file.type}`);
+
+      if (!validateFile(file, type)) {
+        console.log(`File validation failed for ${file.name}`);
+        continue;
+      }
+
+      try {
+        console.log(`Uploading ${file.name} to Supabase storage...`);
+        const publicUrl = await uploadFileToSupabase(file, type);
+        console.log(`Upload successful! Public URL: ${publicUrl}`);
+
+        if (type === "image") {
+          if (formData.images.length < 4) {
+            console.log(`Adding image URL to formData.images array`);
+            setFormData((prev) => ({
+              ...prev,
+              images: [...prev.images, publicUrl],
+            }));
+          } else {
+            alert("Maximum 4 images allowed");
+          }
+        } else {
+          console.log(`Adding video URL to formData.videos array`);
+          setFormData((prev) => ({
+            ...prev,
+            videos: [...(prev.videos || []), publicUrl],
+          }));
+        }
+      } catch (error) {
+        console.error("Upload error:", error);
+        alert(`Failed to upload ${file.name}`);
+      }
+    }
+
+    // Clear file input after successful upload to allow uploading again
+    const fileInput = document.getElementById(
+      type === "image" ? "image-upload" : "video-upload"
+    ) as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = "";
+    }
+
+    console.log(`Upload process complete. Current formData:`, {
+      images: formData.images,
+      videos: formData.videos
+    });
+  };
+
   const addImageUrl = () => {
-    if (imageUrlInput.trim() && formData.images.length < 4) {
-      setFormData(prev => ({
+    if (imageUrlInput.trim()) {
+      setFormData((prev) => ({
         ...prev,
-        images: [...prev.images, imageUrlInput.trim()]
+        images: [...prev.images, imageUrlInput.trim()],
       }));
-      setImageUrlInput('');
-    } else if (formData.images.length >= 4) {
-      alert('Maximum 4 images allowed');
+      setImageUrlInput("");
     }
   };
 
   const addVideoUrl = () => {
     if (videoUrlInput.trim()) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        video_url: videoUrlInput.trim()
+        videos: [...(prev.videos || []), videoUrlInput.trim()],
       }));
-      setVideoUrlInput('');
+      setVideoUrlInput("");
     }
   };
 
@@ -1419,16 +1862,19 @@ const EditPostModal: React.FC<{
         ...post,
         title: formData.title,
         content: formData.content,
-        image_url: formData.images.length > 0 ? JSON.stringify(formData.images) : undefined,
-        video_url: formData.video_url || undefined,
+        image_url:
+          formData.images.length > 0
+            ? JSON.stringify(formData.images)
+            : undefined,
+        video_url: formData.videos.length > 0 ? JSON.stringify(formData.videos) : undefined,
         tags: formData.tags,
-        category: formData.category
+        category: formData.category,
       };
 
       onSave(updatedPost);
     } catch (error) {
-      console.error('Error preparing post update:', error);
-      alert('Failed to prepare post update');
+      console.error("Error preparing post update:", error);
+      alert("Failed to prepare post update");
     } finally {
       setLoading(false);
     }
@@ -1439,7 +1885,9 @@ const EditPostModal: React.FC<{
       <div className="modal-content edit-post-modal">
         <div className="modal-header">
           <h2>Edit Post</h2>
-          <button className="close-btn" onClick={onCancel}>×</button>
+          <button className="close-btn" onClick={onCancel}>
+            ×
+          </button>
         </div>
 
         <form onSubmit={handleSubmit} className="edit-post-form">
@@ -1484,7 +1932,9 @@ const EditPostModal: React.FC<{
                   className="form-input"
                 >
                   <option value="">Select a category</option>
-                  <option value="architectural design">Architectural Design</option>
+                  <option value="architectural design">
+                    Architectural Design
+                  </option>
                   <option value="construction">Construction</option>
                   <option value="interior design">Interior Design</option>
                 </select>
@@ -1499,9 +1949,15 @@ const EditPostModal: React.FC<{
                     onChange={(e) => setTagInput(e.target.value)}
                     placeholder="Add a tag..."
                     className="form-input"
-                    onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
+                    onKeyDown={(e) =>
+                      e.key === "Enter" && (e.preventDefault(), addTag())
+                    }
                   />
-                  <button type="button" onClick={addTag} className="add-tag-btn">
+                  <button
+                    type="button"
+                    onClick={addTag}
+                    className="add-tag-btn"
+                  >
                     <Plus size={16} />
                     Add
                   </button>
@@ -1511,7 +1967,11 @@ const EditPostModal: React.FC<{
                     <span key={index} className="tag">
                       <Tag size={12} />
                       {tag}
-                      <button type="button" onClick={() => removeTag(tag)} className="remove-tag">
+                      <button
+                        type="button"
+                        onClick={() => removeTag(tag)}
+                        className="remove-tag"
+                      >
                         <X size={12} />
                       </button>
                     </span>
@@ -1528,8 +1988,9 @@ const EditPostModal: React.FC<{
                   <div className="upload-group">
                     <label className="upload-label">
                       <Image size={20} />
-                      Image URLs ({formData.images.length}/4)
+                      Images ({formData.images.length}/4)
                     </label>
+
                     <div className="url-input-group">
                       <input
                         type="url"
@@ -1537,11 +1998,54 @@ const EditPostModal: React.FC<{
                         onChange={(e) => setImageUrlInput(e.target.value)}
                         placeholder="Enter image URL..."
                         className="form-input"
-                        onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addImageUrl())}
+                        onKeyDown={(e) =>
+                          e.key === "Enter" &&
+                          (e.preventDefault(), addImageUrl())
+                        }
                       />
-                      <button type="button" onClick={addImageUrl} className="add-url-btn">
+                      <button
+                        type="button"
+                        onClick={addImageUrl}
+                        className="add-url-btn"
+                      >
                         Add Image
                       </button>
+                    </div>
+
+                    <div className="url-input-group">
+                      <label
+                        htmlFor="image-upload"
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "0.5rem",
+                          cursor: "pointer",
+                          width: "100%",
+                        }}
+                      >
+                        <Upload size={16} />
+                        <input
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          onChange={(e) =>
+                            e.target.files &&
+                            handleFileUpload(e.target.files, "image")
+                          }
+                          className="form-input"
+                          id="image-upload"
+                          style={{ padding: "0.5rem", flex: 1 }}
+                        />
+                      </label>
+                      <span
+                        style={{
+                          fontSize: "0.875rem",
+                          color: "#666",
+                          marginTop: "0.25rem",
+                        }}
+                      >
+                        Max 4 images, 5MB each
+                      </span>
                     </div>
                     {formData.images.map((image: string, index: number) => (
                       <div key={index} className="media-preview">
@@ -1550,23 +2054,40 @@ const EditPostModal: React.FC<{
                           alt={`Preview ${index + 1}`}
                           className="preview-image"
                           onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                            e.currentTarget.nextElementSibling?.classList.add('error');
+                            e.currentTarget.style.display = "none";
+                            e.currentTarget.nextElementSibling?.classList.add(
+                              "error"
+                            );
                           }}
                           onLoad={(e) => {
-                            e.currentTarget.style.display = 'block';
+                            e.currentTarget.style.display = "block";
                           }}
                         />
-                        <div className="image-error" style={{ display: 'none' }}>
+                        <div
+                          className="image-error"
+                          style={{ display: "none" }}
+                        >
                           Failed to load image
                         </div>
                         <button
                           type="button"
-                          onClick={() => setFormData(prev => ({
-                            ...prev,
-                            images: prev.images.filter((_: string, i: number) => i !== index)
-                          }))}
+                          onClick={() => {
+                            setFormData((prev) => ({
+                              ...prev,
+                              images: prev.images.filter(
+                                (_: string, i: number) => i !== index
+                              ),
+                            }));
+                            // Reset file input to allow uploading the same file again
+                            const fileInput = document.getElementById(
+                              "image-upload"
+                            ) as HTMLInputElement;
+                            if (fileInput) {
+                              fileInput.value = "";
+                            }
+                          }}
                           className="remove-media"
+                          title="Remove image"
                         >
                           <X size={16} />
                         </button>
@@ -1577,8 +2098,9 @@ const EditPostModal: React.FC<{
                   <div className="upload-group">
                     <label className="upload-label">
                       <Video size={20} />
-                      Video URL
+                      Video
                     </label>
+
                     <div className="url-input-group">
                       <input
                         type="url"
@@ -1586,24 +2108,83 @@ const EditPostModal: React.FC<{
                         onChange={(e) => setVideoUrlInput(e.target.value)}
                         placeholder="Enter video URL..."
                         className="form-input"
-                        onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addVideoUrl())}
+                        onKeyDown={(e) =>
+                          e.key === "Enter" &&
+                          (e.preventDefault(), addVideoUrl())
+                        }
                       />
-                      <button type="button" onClick={addVideoUrl} className="add-url-btn">
+                      <button
+                        type="button"
+                        onClick={addVideoUrl}
+                        className="add-url-btn"
+                      >
                         Add Video
                       </button>
                     </div>
-                    {formData.video_url && (
-                      <div className="media-preview">
-                        <video src={formData.video_url} className="preview-video" controls />
+
+                    <div className="url-input-group">
+                      <label
+                        htmlFor="video-upload"
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "0.5rem",
+                          cursor: "pointer",
+                          width: "100%",
+                        }}
+                      >
+                        <Upload size={16} />
+                        <input
+                          type="file"
+                          accept="video/*"
+                          onChange={(e) =>
+                            e.target.files &&
+                            handleFileUpload(e.target.files, "video")
+                          }
+                          className="form-input"
+                          id="video-upload"
+                          style={{ padding: "0.5rem", flex: 1 }}
+                        />
+                      </label>
+                      <span
+                        style={{
+                          fontSize: "0.875rem",
+                          color: "#666",
+                          marginTop: "0.25rem",
+                        }}
+                      >
+                        Max 50MB (Supabase limit)
+                      </span>
+                    </div>
+                    {formData.videos && formData.videos.length > 0 && formData.videos.map((video: string, index: number) => (
+                      <div key={index} className="media-preview">
+                        <video
+                          src={video}
+                          className="preview-video"
+                          controls
+                        />
                         <button
                           type="button"
-                          onClick={() => setFormData(prev => ({ ...prev, video_url: '' }))}
+                          onClick={() => {
+                            setFormData((prev) => ({
+                              ...prev,
+                              videos: prev.videos.filter((_: string, i: number) => i !== index),
+                            }));
+                            // Reset file input to allow uploading the same file again
+                            const fileInput = document.getElementById(
+                              "video-upload"
+                            ) as HTMLInputElement;
+                            if (fileInput) {
+                              fileInput.value = "";
+                            }
+                          }}
                           className="remove-media"
+                          title="Remove video"
                         >
                           <X size={16} />
                         </button>
                       </div>
-                    )}
+                    ))}
                   </div>
                 </div>
               </div>
@@ -1634,18 +2215,19 @@ const EditPostModal: React.FC<{
   );
 };
 
-
 // Contact Messages Management Component
 const ContactMessagesManagement: React.FC = () => {
   const [messages, setMessages] = useState<ContactMessage[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [showReplyModal, setShowReplyModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
-  const [selectedMessage, setSelectedMessage] = useState<ContactMessage | null>(null);
-  const [replyMessage, setReplyMessage] = useState('');
-  const [replySubject, setReplySubject] = useState('');
+  const [selectedMessage, setSelectedMessage] = useState<ContactMessage | null>(
+    null
+  );
+  const [replyMessage, setReplyMessage] = useState("");
+  const [replySubject, setReplySubject] = useState("");
   const [replying, setReplying] = useState(false);
 
   useEffect(() => {
@@ -1655,14 +2237,14 @@ const ContactMessagesManagement: React.FC = () => {
   const fetchMessages = async () => {
     try {
       const { data, error } = await supabase
-        .from('contact_messages')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .from("contact_messages")
+        .select("*")
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
       setMessages(data || []);
     } catch (error) {
-      console.error('Error fetching contact messages:', error);
+      console.error("Error fetching contact messages:", error);
     } finally {
       setLoading(false);
     }
@@ -1671,15 +2253,15 @@ const ContactMessagesManagement: React.FC = () => {
   const updateMessageStatus = async (messageId: string, status: string) => {
     try {
       const { error } = await supabase
-        .from('contact_messages')
+        .from("contact_messages")
         .update({ status, updated_at: new Date().toISOString() })
-        .eq('id', messageId);
+        .eq("id", messageId);
 
       if (error) throw error;
       fetchMessages(); // Refresh the list
     } catch (error) {
-      console.error('Error updating message status:', error);
-      alert('Failed to update message status');
+      console.error("Error updating message status:", error);
+      alert("Failed to update message status");
     }
   };
 
@@ -1689,28 +2271,25 @@ const ContactMessagesManagement: React.FC = () => {
 
     setReplying(true);
     try {
-      const { error } = await supabase.functions.invoke('send-contact-reply', {
+      const { error } = await supabase.functions.invoke("send-contact-reply", {
         body: {
           contactMessageId: selectedMessage.id,
           replyMessage: replyMessage.trim(),
-          replySubject: replySubject.trim() || undefined
+          replySubject: replySubject.trim() || undefined,
         },
-        headers: {
-          'Content-Type': 'application/json'
-        }
       });
 
       if (error) throw error;
 
-      alert('Reply sent successfully!');
+      alert("Reply sent successfully!");
       setShowReplyModal(false);
-      setReplyMessage('');
-      setReplySubject('');
+      setReplyMessage("");
+      setReplySubject("");
       setSelectedMessage(null);
       fetchMessages(); // Refresh to show updated status
     } catch (error) {
-      console.error('Error sending reply:', error);
-      alert('Failed to send reply');
+      console.error("Error sending reply:", error);
+      alert("Failed to send reply");
     } finally {
       setReplying(false);
     }
@@ -1718,7 +2297,7 @@ const ContactMessagesManagement: React.FC = () => {
 
   const openReplyModal = (message: ContactMessage) => {
     setSelectedMessage(message);
-    setReplySubject(`Re: ${message.subject || 'Your Contact Message'}`);
+    setReplySubject(`Re: ${message.subject || "Your Contact Message"}`);
     setShowReplyModal(true);
   };
 
@@ -1731,24 +2310,27 @@ const ContactMessagesManagement: React.FC = () => {
     setShowReplyModal(false);
     setShowDetailsModal(false);
     setSelectedMessage(null);
-    setReplyMessage('');
-    setReplySubject('');
+    setReplyMessage("");
+    setReplySubject("");
   };
 
-  const filteredMessages = messages.filter(message =>
-    message.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    message.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    message.subject?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    message.message?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredMessages = messages.filter(
+    (message) =>
+      message.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      message.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      message.subject?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      message.message?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const getStatusBadge = (status: string) => {
     const statusClasses = {
-      pending: 'status-pending',
-      read: 'status-read',
-      replied: 'status-replied'
+      pending: "status-pending",
+      read: "status-read",
+      replied: "status-replied",
     };
-    return statusClasses[status as keyof typeof statusClasses] || 'status-pending';
+    return (
+      statusClasses[status as keyof typeof statusClasses] || "status-pending"
+    );
   };
 
   if (loading) {
@@ -1781,12 +2363,12 @@ const ContactMessagesManagement: React.FC = () => {
             placeholder="Search messages by name, email, subject, or content..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className={`search-input ${isSearchExpanded ? 'expanded' : ''}`}
+            className={`search-input ${isSearchExpanded ? "expanded" : ""}`}
           />
           {searchTerm && (
             <button
               className="clear-search-btn"
-              onClick={() => setSearchTerm('')}
+              onClick={() => setSearchTerm("")}
               aria-label="Clear search"
             >
               <X size={16} />
@@ -1795,8 +2377,12 @@ const ContactMessagesManagement: React.FC = () => {
         </div>
         <div className="stats-summary">
           <span>Total Messages: {messages.length}</span>
-          <span>Pending: {messages.filter(m => m.status === 'pending').length}</span>
-          <span>Replied: {messages.filter(m => m.status === 'replied').length}</span>
+          <span>
+            Pending: {messages.filter((m) => m.status === "pending").length}
+          </span>
+          <span>
+            Replied: {messages.filter((m) => m.status === "replied").length}
+          </span>
         </div>
       </div>
 
@@ -1818,9 +2404,11 @@ const ContactMessagesManagement: React.FC = () => {
               <tr key={message.id}>
                 <td>{message.name}</td>
                 <td>{message.email}</td>
-                <td>{message.subject || 'No subject'}</td>
+                <td>{message.subject || "No subject"}</td>
                 <td>
-                  <span className={`status-badge ${getStatusBadge(message.status)}`}>
+                  <span
+                    className={`status-badge ${getStatusBadge(message.status)}`}
+                  >
                     {message.status}
                   </span>
                 </td>
@@ -1832,11 +2420,11 @@ const ContactMessagesManagement: React.FC = () => {
                   >
                     View
                   </button>
-                  {message.status !== 'replied' && (
+                  {message.status !== "replied" && (
                     <>
                       <button
                         className="action-btn mark-read"
-                        onClick={() => updateMessageStatus(message.id, 'read')}
+                        onClick={() => updateMessageStatus(message.id, "read")}
                       >
                         Mark Read
                       </button>
@@ -1864,18 +2452,26 @@ const ContactMessagesManagement: React.FC = () => {
                 <h3 className="message-name">{message.name}</h3>
                 <p className="message-email">{message.email}</p>
                 <div className="message-status">
-                  <span className={`status-badge ${getStatusBadge(message.status)}`}>
+                  <span
+                    className={`status-badge ${getStatusBadge(message.status)}`}
+                  >
                     {message.status}
                   </span>
                 </div>
               </div>
-              <span className="message-date">{new Date(message.created_at).toLocaleDateString()}</span>
+              <span className="message-date">
+                {new Date(message.created_at).toLocaleDateString()}
+              </span>
             </div>
 
             <div className="message-card-content">
-              <h4 className="message-subject">{message.subject || 'No subject'}</h4>
+              <h4 className="message-subject">
+                {message.subject || "No subject"}
+              </h4>
               <p className="message-preview">
-                {message.message.length > 100 ? message.message.substring(0, 100) + '...' : message.message}
+                {message.message.length > 100
+                  ? message.message.substring(0, 100) + "..."
+                  : message.message}
               </p>
             </div>
 
@@ -1886,11 +2482,11 @@ const ContactMessagesManagement: React.FC = () => {
               >
                 View Details
               </button>
-              {message.status !== 'replied' && (
+              {message.status !== "replied" && (
                 <>
                   <button
                     className="action-btn mark-read"
-                    onClick={() => updateMessageStatus(message.id, 'read')}
+                    onClick={() => updateMessageStatus(message.id, "read")}
                   >
                     Mark Read
                   </button>
@@ -1910,10 +2506,15 @@ const ContactMessagesManagement: React.FC = () => {
       {/* Reply Modal */}
       {showReplyModal && selectedMessage && (
         <div className="modal-overlay" onClick={closeModals}>
-          <div className="modal-content reply-modal" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="modal-content reply-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="modal-header">
               <h2>Reply to {selectedMessage.name}</h2>
-              <button className="close-btn" onClick={closeModals}>×</button>
+              <button className="close-btn" onClick={closeModals}>
+                ×
+              </button>
             </div>
             <form onSubmit={handleReply} className="reply-form">
               <div className="form-group">
@@ -1942,16 +2543,29 @@ const ContactMessagesManagement: React.FC = () => {
               <div className="original-message">
                 <h4>Original Message:</h4>
                 <div className="original-content">
-                  <p><strong>Subject:</strong> {selectedMessage.subject || 'No subject'}</p>
-                  <p><strong>Message:</strong></p>
+                  <p>
+                    <strong>Subject:</strong>{" "}
+                    {selectedMessage.subject || "No subject"}
+                  </p>
+                  <p>
+                    <strong>Message:</strong>
+                  </p>
                   <div className="original-text">{selectedMessage.message}</div>
                 </div>
               </div>
               <div className="form-actions">
-                <button type="button" className="cancel-btn" onClick={closeModals}>
+                <button
+                  type="button"
+                  className="cancel-btn"
+                  onClick={closeModals}
+                >
                   Cancel
                 </button>
-                <button type="submit" className="submit-btn" disabled={replying}>
+                <button
+                  type="submit"
+                  className="submit-btn"
+                  disabled={replying}
+                >
                   {replying ? (
                     <>
                       <div className="loading-spinner small"></div>
@@ -1973,10 +2587,15 @@ const ContactMessagesManagement: React.FC = () => {
       {/* Details Modal */}
       {showDetailsModal && selectedMessage && (
         <div className="modal-overlay" onClick={closeModals}>
-          <div className="modal-content details-modal" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="modal-content details-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="modal-header">
               <h2>Message Details</h2>
-              <button className="close-btn" onClick={closeModals}>×</button>
+              <button className="close-btn" onClick={closeModals}>
+                ×
+              </button>
             </div>
             <div className="modal-body">
               <div className="message-details">
@@ -1990,11 +2609,15 @@ const ContactMessagesManagement: React.FC = () => {
                 </div>
                 <div className="detail-row">
                   <span className="detail-label">Subject:</span>
-                  <span className="detail-value">{selectedMessage.subject || 'No subject'}</span>
+                  <span className="detail-value">
+                    {selectedMessage.subject || "No subject"}
+                  </span>
                 </div>
                 <div className="detail-row">
                   <span className="detail-label">Status:</span>
-                  <span className={`detail-value status-${selectedMessage.status}`}>
+                  <span
+                    className={`detail-value status-${selectedMessage.status}`}
+                  >
                     {selectedMessage.status}
                   </span>
                 </div>
@@ -2006,15 +2629,17 @@ const ContactMessagesManagement: React.FC = () => {
                 </div>
                 <div className="detail-row message-content">
                   <span className="detail-label">Message:</span>
-                  <div className="detail-value message-text">{selectedMessage.message}</div>
+                  <div className="detail-value message-text">
+                    {selectedMessage.message}
+                  </div>
                 </div>
               </div>
-              {selectedMessage.status !== 'replied' && (
+              {selectedMessage.status !== "replied" && (
                 <div className="modal-actions">
                   <button
                     className="action-btn mark-read"
                     onClick={() => {
-                      updateMessageStatus(selectedMessage.id, 'read');
+                      updateMessageStatus(selectedMessage.id, "read");
                       closeModals();
                     }}
                   >
@@ -2039,12 +2664,11 @@ const ContactMessagesManagement: React.FC = () => {
   );
 };
 
-
 // Send Newsletter Component
 const SendNewsletterContent: React.FC = () => {
   const [formData, setFormData] = useState({
-    subject: '',
-    content: ''
+    subject: "",
+    content: "",
   });
   const [loading, setLoading] = useState(false);
   const [sendingProgress, setSendingProgress] = useState<{
@@ -2056,17 +2680,17 @@ const SendNewsletterContent: React.FC = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleContentChange = (value?: string) => {
-    setFormData(prev => ({ ...prev, content: value || '' }));
+    setFormData((prev) => ({ ...prev, content: value || "" }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.subject.trim() || !formData.content.trim()) {
-      alert('Please fill in both subject and content');
+      alert("Please fill in both subject and content");
       return;
     }
 
@@ -2075,15 +2699,15 @@ const SendNewsletterContent: React.FC = () => {
       isSending: true,
       current: 0,
       total: 0,
-      message: 'Preparing newsletter...'
+      message: "Preparing newsletter...",
     });
 
     try {
       // Get active subscribers count first
       const { data: subscribers, error: countError } = await supabase
-        .from('email_subscriptions')
-        .select('email', { count: 'exact', head: true })
-        .eq('is_active', true);
+        .from("email_subscriptions")
+        .select("email", { count: "exact", head: true })
+        .eq("is_active", true);
 
       if (countError) throw countError;
 
@@ -2093,18 +2717,15 @@ const SendNewsletterContent: React.FC = () => {
         isSending: true,
         current: 0,
         total: totalSubscribers,
-        message: `Sending to ${totalSubscribers} subscribers...`
+        message: `Sending to ${totalSubscribers} subscribers...`,
       });
 
       // Send newsletter
-      const { error } = await supabase.functions.invoke('send-newsletter', {
+      const { error } = await supabase.functions.invoke("send-newsletter", {
         body: {
           subject: formData.subject.trim(),
-          content: formData.content.trim()
+          content: formData.content.trim(),
         },
-        headers: {
-          'Content-Type': 'application/json'
-        }
       });
 
       if (error) throw error;
@@ -2113,22 +2734,21 @@ const SendNewsletterContent: React.FC = () => {
         isSending: false,
         current: totalSubscribers,
         total: totalSubscribers,
-        message: `Newsletter sent successfully to ${totalSubscribers} subscribers!`
+        message: `Newsletter sent successfully to ${totalSubscribers} subscribers!`,
       });
 
       // Reset form after successful send
       setTimeout(() => {
-        setFormData({ subject: '', content: '' });
+        setFormData({ subject: "", content: "" });
         setSendingProgress(null);
       }, 3000);
-
     } catch (error) {
-      console.error('Error sending newsletter:', error);
+      console.error("Error sending newsletter:", error);
       setSendingProgress({
         isSending: false,
         current: 0,
         total: 0,
-        message: 'Failed to send newsletter. Please try again.'
+        message: "Failed to send newsletter. Please try again.",
       });
     } finally {
       setLoading(false);
@@ -2169,8 +2789,8 @@ const SendNewsletterContent: React.FC = () => {
                   preview="edit"
                   hideToolbar={false}
                   textareaProps={{
-                    placeholder: 'Write your newsletter content here...',
-                    disabled: loading
+                    placeholder: "Write your newsletter content here...",
+                    disabled: loading,
                   }}
                 />
               </div>
@@ -2184,9 +2804,13 @@ const SendNewsletterContent: React.FC = () => {
               <div
                 className="progress-fill"
                 style={{
-                  width: sendingProgress.total > 0
-                    ? `${(sendingProgress.current / sendingProgress.total) * 100}%`
-                    : '0%'
+                  width:
+                    sendingProgress.total > 0
+                      ? `${
+                          (sendingProgress.current / sendingProgress.total) *
+                          100
+                        }%`
+                      : "0%",
                 }}
               />
             </div>
@@ -2201,7 +2825,9 @@ const SendNewsletterContent: React.FC = () => {
           <button
             type="submit"
             className="submit-btn"
-            disabled={loading || !formData.subject.trim() || !formData.content.trim()}
+            disabled={
+              loading || !formData.subject.trim() || !formData.content.trim()
+            }
           >
             {loading ? (
               <>
@@ -2225,7 +2851,7 @@ const SendNewsletterContent: React.FC = () => {
 const EmailSubscriptionsManagement: React.FC = () => {
   const [subscriptions, setSubscriptions] = useState<EmailSubscription[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   useEffect(() => {
@@ -2235,54 +2861,61 @@ const EmailSubscriptionsManagement: React.FC = () => {
   const fetchSubscriptions = async () => {
     try {
       const { data, error } = await supabase
-        .from('email_subscriptions')
-        .select('*')
-        .order('subscribed_at', { ascending: false });
+        .from("email_subscriptions")
+        .select("*")
+        .order("subscribed_at", { ascending: false });
 
       if (error) throw error;
       setSubscriptions(data || []);
     } catch (error) {
-      console.error('Error fetching email subscriptions:', error);
+      console.error("Error fetching email subscriptions:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const toggleSubscriptionStatus = async (subscriptionId: string, currentStatus: boolean) => {
+  const toggleSubscriptionStatus = async (
+    subscriptionId: string,
+    currentStatus: boolean
+  ) => {
     try {
       const { error } = await supabase
-        .from('email_subscriptions')
+        .from("email_subscriptions")
         .update({ is_active: !currentStatus })
-        .eq('id', subscriptionId);
+        .eq("id", subscriptionId);
 
       if (error) throw error;
       fetchSubscriptions(); // Refresh the list
     } catch (error) {
-      console.error('Error updating subscription status:', error);
-      alert('Failed to update subscription status');
+      console.error("Error updating subscription status:", error);
+      alert("Failed to update subscription status");
     }
   };
 
   const deleteSubscription = async (subscriptionId: string) => {
-    if (!confirm('Are you sure you want to delete this email subscription? This action cannot be undone.')) {
+    if (
+      !confirm(
+        "Are you sure you want to delete this email subscription? This action cannot be undone."
+      )
+    ) {
       return;
     }
 
     try {
       const { error } = await supabase
-        .from('email_subscriptions')
+        .from("email_subscriptions")
         .delete()
-        .eq('id', subscriptionId);
+        .eq("id", subscriptionId);
 
       if (error) throw error;
       fetchSubscriptions(); // Refresh the list
     } catch (error) {
-      console.error('Error deleting subscription:', error);
-      alert('Failed to delete subscription');
+      console.error("Error deleting subscription:", error);
+      alert("Failed to delete subscription");
     }
   };
 
-  const filteredSubscriptions = subscriptions.filter(subscription =>
+  const filteredSubscriptions = subscriptions.filter((subscription) =>
     subscription.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -2316,12 +2949,12 @@ const EmailSubscriptionsManagement: React.FC = () => {
             placeholder="Search subscriptions by email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className={`search-input ${isSearchExpanded ? 'expanded' : ''}`}
+            className={`search-input ${isSearchExpanded ? "expanded" : ""}`}
           />
           {searchTerm && (
             <button
               className="clear-search-btn"
-              onClick={() => setSearchTerm('')}
+              onClick={() => setSearchTerm("")}
               aria-label="Clear search"
             >
               <X size={16} />
@@ -2330,7 +2963,7 @@ const EmailSubscriptionsManagement: React.FC = () => {
         </div>
         <div className="stats-summary">
           <span>Total Subscriptions: {subscriptions.length}</span>
-          <span>Active: {subscriptions.filter(s => s.is_active).length}</span>
+          <span>Active: {subscriptions.filter((s) => s.is_active).length}</span>
         </div>
       </div>
 
@@ -2349,18 +2982,31 @@ const EmailSubscriptionsManagement: React.FC = () => {
             {filteredSubscriptions.map((subscription) => (
               <tr key={subscription.id}>
                 <td>{subscription.email}</td>
-                <td>{new Date(subscription.subscribed_at).toLocaleDateString()}</td>
                 <td>
-                  <span className={`status-badge ${subscription.is_active ? 'active' : 'inactive'}`}>
-                    {subscription.is_active ? 'Active' : 'Inactive'}
+                  {new Date(subscription.subscribed_at).toLocaleDateString()}
+                </td>
+                <td>
+                  <span
+                    className={`status-badge ${
+                      subscription.is_active ? "active" : "inactive"
+                    }`}
+                  >
+                    {subscription.is_active ? "Active" : "Inactive"}
                   </span>
                 </td>
                 <td>
                   <button
-                    className={`action-btn ${subscription.is_active ? 'deactivate' : 'activate'}`}
-                    onClick={() => toggleSubscriptionStatus(subscription.id, subscription.is_active)}
+                    className={`action-btn ${
+                      subscription.is_active ? "deactivate" : "activate"
+                    }`}
+                    onClick={() =>
+                      toggleSubscriptionStatus(
+                        subscription.id,
+                        subscription.is_active
+                      )
+                    }
                   >
-                    {subscription.is_active ? 'Deactivate' : 'Activate'}
+                    {subscription.is_active ? "Deactivate" : "Activate"}
                   </button>
                   <button
                     className="action-btn delete"
@@ -2383,20 +3029,35 @@ const EmailSubscriptionsManagement: React.FC = () => {
               <div className="subscription-info">
                 <h3 className="subscription-email">{subscription.email}</h3>
                 <div className="subscription-status">
-                  <span className={`status-badge ${subscription.is_active ? 'active' : 'inactive'}`}>
-                    {subscription.is_active ? 'Active' : 'Inactive'}
+                  <span
+                    className={`status-badge ${
+                      subscription.is_active ? "active" : "inactive"
+                    }`}
+                  >
+                    {subscription.is_active ? "Active" : "Inactive"}
                   </span>
                 </div>
               </div>
-              <span className="subscription-date">{new Date(subscription.subscribed_at).toLocaleDateString()}</span>
+              <span className="subscription-date">
+                {new Date(subscription.subscribed_at).toLocaleDateString()}
+              </span>
             </div>
 
             <div className="subscription-card-actions">
               <button
-                className={`action-btn ${subscription.is_active ? 'deactivate-mobile' : 'activate-mobile'}`}
-                onClick={() => toggleSubscriptionStatus(subscription.id, subscription.is_active)}
+                className={`action-btn ${
+                  subscription.is_active
+                    ? "deactivate-mobile"
+                    : "activate-mobile"
+                }`}
+                onClick={() =>
+                  toggleSubscriptionStatus(
+                    subscription.id,
+                    subscription.is_active
+                  )
+                }
               >
-                {subscription.is_active ? 'Deactivate' : 'Activate'}
+                {subscription.is_active ? "Deactivate" : "Activate"}
               </button>
               <button
                 className="action-btn delete"
