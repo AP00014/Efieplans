@@ -158,21 +158,19 @@
 .service-icon {
   width: 4rem;
   height: 4rem;
-  border-radius: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 2rem;
-  color: white;
-  background: linear-gradient(135deg, var(--color-primary), #e55a00);
-  box-shadow: 0 8px 16px -4px rgba(255, 140, 0, 0.3);
+  color: var(--color-primary);
+ border: none;
   transition: all 0.3s ease;
   margin-bottom: 1.5rem;
 }
 
 .service-card:hover .service-icon {
   transform: scale(1.1) rotate(5deg);
-  box-shadow: 0 12px 24px -4px rgba(255, 140, 0, 0.4);
+ 
 }
 
 /* Service Title */

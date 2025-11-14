@@ -19,7 +19,6 @@ const ServicesSection = () => {
       features: [
         'Custom home design',
         'Commercial building design',
-        'Renovation planning',
         '3D visualization',
         'Permit assistance'
       ],

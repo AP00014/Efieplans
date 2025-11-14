@@ -8,13 +8,13 @@ const PortfolioSection = () => {
     <section className="showcase">
   <div className="section-header">
     <h2>Our Showcase</h2>
-    <p className='cp'>Where Vision Meets Precision Engineering</p>
+    <p className='cp'>Excellence in Architectural Design & Engineering Solutions</p>
   </div>
 
   <div className="showcase_grid">
     <div className="imagesleft">
       <div className="showcas_img_1">
-        <img src='https://res.cloudinary.com/dpzndrhse/image/upload/v1750667823/795d537546404a15a5edb74793570ebe_lvhdqb.jpg' alt="Elizabeth project showcase" className='img_1' loading="lazy" />
+        <img src='https://res.cloudinary.com/dpzndrhse/image/upload/v1762906510/IMG-20241102-WA0002_d9lqiw.jpg' alt="Elizabeth project showcase" className='img_1' loading="lazy" />
         <div className="image-overlay">
           <h3>Elizabeth</h3>
           <p>Advanced modern Apartments</p>

@@ -255,32 +255,57 @@ WHERE p.id IS NULL;
 -- Function to notify admin of new contact messages
 -- Note: This function requires the pg_net extension to be enabled
 -- You can enable it by running: CREATE EXTENSION IF NOT EXISTS pg_net;
--- For now, we'll disable the trigger to prevent errors
 CREATE OR REPLACE FUNCTION notify_contact_message()
 RETURNS trigger AS $$
 BEGIN
-  -- Temporarily disabled to prevent schema errors
-  -- Uncomment the following block once pg_net extension is enabled
-  /*
+  -- Check if pg_net extension is available and send notification
   IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_net') THEN
     PERFORM
       net.http_post(
         url := 'https://wroqkppgfeqixyspxkmo.supabase.co/functions/v1/send-contact-notification',
         headers := jsonb_build_object(
           'Content-Type', 'application/json',
-          'Authorization', 'Bearer ' || 'your-service-role-key'
+          'Authorization', 'Bearer ' || current_setting('app.service_role_key', true)
         ),
-        body := jsonb_build_object('record', NEW)
+        body := jsonb_build_object('record', row_to_json(NEW)::jsonb)
       );
   END IF;
-  */
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 -- Trigger to automatically send notification email on new contact message
--- Temporarily disabled to prevent schema errors
--- DROP TRIGGER IF EXISTS contact_message_notification ON contact_messages;
--- CREATE TRIGGER contact_message_notification
---   AFTER INSERT ON contact_messages
---   FOR EACH ROW EXECUTE FUNCTION notify_contact_message();
+DROP TRIGGER IF EXISTS contact_message_notification ON contact_messages;
+CREATE TRIGGER contact_message_notification
+  AFTER INSERT ON contact_messages
+  FOR EACH ROW EXECUTE FUNCTION notify_contact_message();
+
+-- Function to log newsletter sends
+CREATE OR REPLACE FUNCTION log_newsletter_send()
+RETURNS trigger AS $$
+BEGIN
+  -- Log newsletter send activity
+  INSERT INTO newsletter_sends (subject, content, sent_at, recipient_count)
+  VALUES (NEW.subject, NEW.content, NEW.sent_at, NEW.recipient_count);
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Function to update contact message status on reply
+CREATE OR REPLACE FUNCTION update_contact_status_on_reply()
+RETURNS trigger AS $$
+BEGIN
+  -- Update status when reply is added
+  IF NEW.reply IS NOT NULL AND OLD.reply IS NULL THEN
+    NEW.status := 'replied';
+    NEW.reply_sent_at := NOW();
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger to automatically update contact status when reply is added
+DROP TRIGGER IF EXISTS contact_reply_status_update ON contact_messages;
+CREATE TRIGGER contact_reply_status_update
+  BEFORE UPDATE ON contact_messages
+  FOR EACH ROW EXECUTE FUNCTION update_contact_status_on_reply();

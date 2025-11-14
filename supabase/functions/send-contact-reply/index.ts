@@ -11,12 +11,25 @@ function escapeHtml(text: string): string {
     .replace(/'/g, '&#x27;');
 }
 
+function logError(context: string, error: unknown, additionalData?: Record<string, unknown>) {
+  console.error(`[${context}] Error:`, {
+    message: error instanceof Error ? error.message : 'Unknown error',
+    stack: error instanceof Error ? error.stack : undefined,
+    additionalData,
+    timestamp: new Date().toISOString()
+  });
+}
+
+function logInfo(context: string, message: string, data?: Record<string, unknown>) {
+  console.log(`[${context}] ${message}`, data ? { data, timestamp: new Date().toISOString() } : { timestamp: new Date().toISOString() });
+}
+
 // @ts-expect-error: Deno types not available in this environment
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
 // @ts-expect-error: Deno types not available in this environment
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 // @ts-expect-error: Deno types not available in this environment
-const NEWSLETTER_FROM_EMAIL = Deno.env.get('NEWSLETTER_FROM_EMAIL') || 'no-reply@example.com';
+const NEWSLETTER_FROM_EMAIL = Deno.env.get('NEWSLETTER_FROM_EMAIL') || 'no-reply@efieplans.com';
 
 if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
   console.error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
@@ -28,7 +41,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
   }
 });
 
-console.info('contact-reply function initialized');
+logInfo('CONTACT_REPLY', 'Function initialized');
 
 async function sendMail(to: string, subject: string, html: string) {
   // Use Supabase's built-in mailer (requires service role key)
@@ -55,7 +68,7 @@ async function sendMail(to: string, subject: string, html: string) {
 
   if (!res.ok) {
     const text = await res.text();
-    console.error('Mail send failed', res.status, text);
+    logError('CONTACT_REPLY', new Error(`Mail send failed: ${res.status}`), { responseText: text });
     throw new Error(`Mail send failed: ${res.status}`);
   }
 
@@ -63,8 +76,12 @@ async function sendMail(to: string, subject: string, html: string) {
 }
 
 serve(async (req: Request) => {
+  const requestId = crypto.randomUUID();
+  logInfo('CONTACT_REPLY', `Request started - ID: ${requestId}`, { method: req.method, url: req.url });
+
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
+    logInfo('CONTACT_REPLY', 'CORS preflight handled', { requestId });
     return new Response(null, {
       headers: {
         'Access-Control-Allow-Origin': '*',
@@ -107,7 +124,7 @@ serve(async (req: Request) => {
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
 
     if (authError || !user) {
-      console.error('Authentication error:', authError);
+      logError('CONTACT_REPLY', authError || new Error('Invalid token'), { requestId });
       return new Response(JSON.stringify({
         error: 'Unauthorized - Invalid token'
       }), {
@@ -127,7 +144,7 @@ serve(async (req: Request) => {
       .single();
 
     if (profileError || !profile || profile.role !== 'admin') {
-      console.error('Authorization error - not admin:', profileError);
+      logError('CONTACT_REPLY', profileError || new Error('Not admin'), { requestId, userId: user.id });
       return new Response(JSON.stringify({
         error: 'Forbidden - Admin access required'
       }), {
@@ -153,6 +170,8 @@ serve(async (req: Request) => {
       });
     }
 
+    logInfo('CONTACT_REPLY', 'Processing reply request', { requestId, contactMessageId: body.contactMessageId });
+
     // 1. Fetch contact message with ownership check
     const { data: contactMessage, error: fetchErr } = await supabase
       .from('contact_messages')
@@ -161,7 +180,7 @@ serve(async (req: Request) => {
       .maybeSingle();
 
     if (fetchErr) {
-      console.error('Error fetching contact message', fetchErr);
+      logError('CONTACT_REPLY', fetchErr, { requestId, contactMessageId: body.contactMessageId });
       return new Response(JSON.stringify({
         error: 'Failed to fetch contact message'
       }), {
@@ -198,7 +217,7 @@ serve(async (req: Request) => {
       .eq('id', body.contactMessageId);
 
     if (updateErr) {
-      console.error('Error updating contact message', updateErr);
+      logError('CONTACT_REPLY', updateErr, { requestId, contactMessageId: body.contactMessageId });
       return new Response(JSON.stringify({
         error: 'Failed to update contact message'
       }), {
@@ -209,6 +228,8 @@ serve(async (req: Request) => {
         }
       });
     }
+
+    logInfo('CONTACT_REPLY', 'Contact message updated successfully', { requestId, contactMessageId: body.contactMessageId });
 
     // 3. Send reply email
     const subject = body.replySubject || `Re: ${contactMessage.subject || 'Your Contact Message'}`;
@@ -235,8 +256,9 @@ serve(async (req: Request) => {
 
     try {
       await sendMail(contactMessage.email, subject, replyHtml);
+      logInfo('CONTACT_REPLY', 'Reply email sent successfully', { requestId, to: contactMessage.email });
     } catch (e) {
-      console.error('Failed to send reply email', e);
+      logError('CONTACT_REPLY', e, { requestId, to: contactMessage.email });
       return new Response(JSON.stringify({
         error: 'Failed to send email'
       }), {
@@ -250,7 +272,8 @@ serve(async (req: Request) => {
 
     return new Response(JSON.stringify({
       success: true,
-      message: 'Reply sent successfully'
+      message: 'Reply sent successfully',
+      requestId
     }), {
       status: 200,
       headers: {
@@ -260,9 +283,11 @@ serve(async (req: Request) => {
     });
 
   } catch (err) {
-    console.error('Unexpected error', err);
+    logError('CONTACT_REPLY', err, { requestId });
     return new Response(JSON.stringify({
-      error: 'Internal server error'
+      error: 'Internal server error',
+      requestId,
+      timestamp: new Date().toISOString()
     }), {
       status: 500,
       headers: {

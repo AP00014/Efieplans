@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { FaSun, FaMoon, FaChevronDown } from "react-icons/fa";
+import { FaSun, FaMoon } from "react-icons/fa";
 import { useTheme } from "../../hooks/useTheme";
 import "../../styles/components/Navbar.css";
 
@@ -27,9 +27,6 @@ const Navbar = () => {
   const { isDarkMode, toggleTheme } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isServicesDropdownOpen, setIsServicesDropdownOpen] = useState(false);
-  const [isMobileServicesDropdownOpen, setIsMobileServicesDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Handle scroll effect
   useEffect(() => {
@@ -47,33 +44,12 @@ const Navbar = () => {
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
-    // Close mobile services dropdown when mobile menu is closed
-    if (isMobileMenuOpen) {
-      setIsMobileServicesDropdownOpen(false);
-    }
   };
-
-  const toggleServicesDropdown = () => {
-    setIsServicesDropdownOpen(!isServicesDropdownOpen);
-  };
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsServicesDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   // Close mobile menu when clicking outside
   const handleMobileMenuClick = (event: React.MouseEvent) => {
     if (event.target === event.currentTarget) {
       setIsMobileMenuOpen(false);
-      setIsMobileServicesDropdownOpen(false);
     }
   };
 
@@ -109,51 +85,9 @@ const Navbar = () => {
             Blog
           </Link>
 
-          <div className="navbar-dropdown" ref={dropdownRef}>
-            <button
-              className="navbar-link navbar-dropdown-toggle"
-              onClick={toggleServicesDropdown}
-              aria-expanded={isServicesDropdownOpen}
-              aria-haspopup="true"
-            >
-              Services
-              <FaChevronDown
-                className={`dropdown-icon ${isServicesDropdownOpen ? 'rotated' : ''}`}
-                size={12}
-              />
-            </button>
-            {isServicesDropdownOpen && (
-              <div className="navbar-dropdown-menu">
-                <Link
-                  to="/architectural-design"
-                  className="navbar-dropdown-item"
-                  onClick={() => {
-                    setIsServicesDropdownOpen(false);
-                  }}
-                >
-                  Architectural Design
-                </Link>
-                <Link
-                  to="/interior-design"
-                  className="navbar-dropdown-item"
-                  onClick={() => {
-                    setIsServicesDropdownOpen(false);
-                  }}
-                >
-                  Interior Design
-                </Link>
-                <Link
-                  to="/construction"
-                  className="navbar-dropdown-item"
-                  onClick={() => {
-                    setIsServicesDropdownOpen(false);
-                  }}
-                >
-                  Construction
-                </Link>
-              </div>
-            )}
-          </div>
+          <Link to="/#services" className="navbar-link">
+            Services
+          </Link>
           <Link to="/#contact" className="navbar-link">
             Contact
           </Link>
@@ -225,54 +159,13 @@ const Navbar = () => {
                 Blog
               </Link>
 
-              <div className="fast-menu-dropdown">
-                <button
-                  className="fast-menu-link fast-dropdown-toggle"
-                  onClick={() => setIsMobileServicesDropdownOpen(!isMobileServicesDropdownOpen)}
-                  aria-expanded={isMobileServicesDropdownOpen}
-                  aria-haspopup="true"
-                >
-                  Services
-                  <FaChevronDown
-                    className={`fast-dropdown-icon ${isMobileServicesDropdownOpen ? 'rotated' : ''}`}
-                    size={12}
-                  />
-                </button>
-                {isMobileServicesDropdownOpen && (
-                  <div className="fast-dropdown-menu">
-                    <Link
-                      to="/architectural-design"
-                      className="fast-dropdown-item"
-                      onClick={() => {
-                        setIsMobileServicesDropdownOpen(false);
-                        setIsMobileMenuOpen(false);
-                      }}
-                    >
-                      Architectural Design
-                    </Link>
-                    <Link
-                      to="/interior-design"
-                      className="fast-dropdown-item"
-                      onClick={() => {
-                        setIsMobileServicesDropdownOpen(false);
-                        setIsMobileMenuOpen(false);
-                      }}
-                    >
-                      Interior Design
-                    </Link>
-                    <Link
-                      to="/construction"
-                      className="fast-dropdown-item"
-                      onClick={() => {
-                        setIsMobileServicesDropdownOpen(false);
-                        setIsMobileMenuOpen(false);
-                      }}
-                    >
-                      Construction
-                    </Link>
-                  </div>
-                )}
-              </div>
+              <Link
+                to="/#services"
+                className="fast-menu-link"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Services
+              </Link>
 
               <Link
                 to="/#contact"

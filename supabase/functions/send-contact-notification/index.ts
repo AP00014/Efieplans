@@ -2,6 +2,7 @@
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts"
 // @ts-expect-error: Resend types not available in Deno environment
 import { Resend } from "npm:resend@3.2.0"
+import { createClient } from "@supabase/supabase-js"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -31,9 +32,26 @@ function isValidEmail(email: string): boolean {
   return emailRegex.test(email);
 }
 
+function logError(context: string, error: unknown, additionalData?: Record<string, unknown>) {
+  console.error(`[${context}] Error:`, {
+    message: error instanceof Error ? error.message : 'Unknown error',
+    stack: error instanceof Error ? error.stack : undefined,
+    additionalData,
+    timestamp: new Date().toISOString()
+  });
+}
+
+function logInfo(context: string, message: string, data?: Record<string, unknown>) {
+  console.log(`[${context}] ${message}`, data ? { data, timestamp: new Date().toISOString() } : { timestamp: new Date().toISOString() });
+}
+
 serve(async (req: Request) => {
+  const requestId = crypto.randomUUID();
+  logInfo('CONTACT_NOTIFICATION', `Request started - ID: ${requestId}`, { method: req.method, url: req.url });
+
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
+    logInfo('CONTACT_NOTIFICATION', 'CORS preflight handled', { requestId });
     return new Response(null, {
       headers: corsHeaders,
       status: 200
@@ -41,6 +59,22 @@ serve(async (req: Request) => {
   }
 
   try {
+    // Initialize Supabase client for database operations
+    // @ts-expect-error: Deno types not available in this environment
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    // @ts-expect-error: Deno types not available in this environment
+    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+
+    if (!supabaseUrl || !serviceRoleKey) {
+      throw new Error('Missing required environment variables: SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
+    }
+
+    const supabase = createClient(supabaseUrl, serviceRoleKey, {
+      auth: {
+        persistSession: false
+      }
+    });
+
     // Initialize Resend
     // @ts-expect-error: Deno types not available in this environment
     const resend = new Resend(Deno.env.get('RESEND_API_KEY'))
@@ -70,7 +104,31 @@ serve(async (req: Request) => {
     const sanitizedSubject = escapeHtml(subject)
     const sanitizedMessage = escapeHtml(message)
 
+    logInfo('CONTACT_NOTIFICATION', 'Validation passed, storing contact message', { requestId, email: sanitizedEmail });
+
+    // Store contact message in database
+    const { data: contactData, error: dbError } = await supabase
+      .from('contact_messages')
+      .insert({
+        name: sanitizedName,
+        email: sanitizedEmail,
+        subject: sanitizedSubject,
+        message: sanitizedMessage,
+        status: 'pending'
+      })
+      .select()
+      .single();
+
+    if (dbError) {
+      logError('CONTACT_NOTIFICATION', dbError, { requestId, email: sanitizedEmail });
+      throw new Error(`Failed to store contact message: ${dbError.message}`);
+    }
+
+    logInfo('CONTACT_NOTIFICATION', 'Contact message stored successfully', { requestId, contactId: contactData.id });
+
     // Send notification email to admin
+    logInfo('CONTACT_NOTIFICATION', 'Sending admin notification email', { requestId });
+
     const { data, error } = await resend.emails.send({
       from: 'Efie Plans <noreply@efieplans.com>',
       // @ts-expect-error: Deno types not available in this environment
@@ -96,21 +154,33 @@ serve(async (req: Request) => {
     })
 
     if (error) {
+      logError('CONTACT_NOTIFICATION', error, { requestId });
       throw error
     }
 
+    logInfo('CONTACT_NOTIFICATION', 'Admin notification sent successfully', { requestId, emailId: data?.id });
+
     return new Response(
-      JSON.stringify({ success: true, emailId: data?.id }),
+      JSON.stringify({
+        success: true,
+        emailId: data?.id,
+        contactId: contactData.id,
+        requestId
+      }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
       },
     )
   } catch (error) {
-    console.error('Error sending contact notification:', error)
+    logError('CONTACT_NOTIFICATION', error, { requestId });
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
     return new Response(
-      JSON.stringify({ error: errorMessage }),
+      JSON.stringify({
+        error: errorMessage,
+        requestId,
+        timestamp: new Date().toISOString()
+      }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 500,

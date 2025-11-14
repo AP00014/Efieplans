@@ -125,7 +125,7 @@ const HeroSection = () => {
           className="hero-buttons"
         >
           <Link to="/#contact" className="btn btn-primary">
-            Get a Free Quote
+            Get in Touch
           </Link>
           <Link
             to="/projects"
