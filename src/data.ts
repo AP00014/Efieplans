@@ -7,7 +7,7 @@ import type { Post } from './types/index';
 export const allProjects: ProjectItem[] = [
   {
     id: 1,
-    category: 'constructions',
+    category: 'commercial',
     title: 'The Metropol',
     description: 'Contemporary 6-bedroom smart home with sustainable design',
     status: 'ongoing',
@@ -20,11 +20,11 @@ export const allProjects: ProjectItem[] = [
         area: '150,000 sq ft',
         completion: '2022'
       },
-    
+
       timeline: '2018-2025',
       materials: ['Reinforced Concrete', 'Glass Facade', 'Steel Framework'],
       imageGallery: ['https://res.cloudinary.com/dpzndrhse/image/upload/v1750667945/img3_xmxexn.jpg',
-         'https://res.cloudinary.com/dpzndrhse/image/upload/v1750667956/img4_trud1s.jpg', 
+         'https://res.cloudinary.com/dpzndrhse/image/upload/v1750667956/img4_trud1s.jpg',
         'https://res.cloudinary.com/dpzndrhse/image/upload/v1750667958/interor_rk9rms.jpg'],
       videos: [
         {
@@ -39,7 +39,7 @@ export const allProjects: ProjectItem[] = [
   },
   {
     id: 2,
-    category: 'constructions',
+    category: 'residential',
     title: 'Elizabeth ',
     description: '12-story mixed-use technology campus',
     status: 'ongoing',
@@ -52,14 +52,14 @@ export const allProjects: ProjectItem[] = [
         area: '85,000 sq ft',
         completion: '2024'
       },
-     
+
       timeline: '2021-2024',
       materials: ['Smart Glass', 'Carbon Composite'],
       imageGallery: ['https://res.cloudinary.com/dpzndrhse/image/upload/v1750667823/795d537546404a15a5edb74793570ebe_lvhdqb.jpg',
          'https://res.cloudinary.com/dpzndrhse/image/upload/v1750667823/795d537546404a15a5edb74793570ebe_lvhdqb.jpg'],
       videos: [
-        { 
-          url: '/videos/techhub-overview.mp4', 
+        {
+          url: '/videos/techhub-overview.mp4',
           type: 'local',
           thumbnail: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750667823/795d537546404a15a5edb74793570ebe_lvhdqb.jpg'
         }
@@ -69,6 +69,7 @@ export const allProjects: ProjectItem[] = [
   },
   {
     id: 3,
+    category: 'residential',
     title: 'Jonas Estate ',
     description: 'Private beachfront estate with wellness center',
     status: 'ongoing',
@@ -85,11 +86,11 @@ export const allProjects: ProjectItem[] = [
         'Infinity pool',
         'Spa & wellness center'
       ],
-      imageGallery: ['https://res.cloudinary.com/dpzndrhse/image/upload/v1750631800/GV-6_iacnvz.jpg', 
+      imageGallery: ['https://res.cloudinary.com/dpzndrhse/image/upload/v1750631800/GV-6_iacnvz.jpg',
         'https://res.cloudinary.com/dpzndrhse/image/upload/v1750631800/GV-6_iacnvz.jpg'],
       videos: [
-        { 
-          url: '/videos/coastal-retreat.mp4', 
+        {
+          url: '/videos/coastal-retreat.mp4',
           type: 'local',
           thumbnail: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750631800/GV-6_iacnvz.jpg'
         }
@@ -99,6 +100,7 @@ export const allProjects: ProjectItem[] = [
   },
   {
     id: 4,
+    category: 'town-houses',
     title: 'The Gleam',
     description: 'Green-certified high-rise community',
     status: 'ongoing',
@@ -118,8 +120,8 @@ export const allProjects: ProjectItem[] = [
       imageGallery: ['https://res.cloudinary.com/dpzndrhse/image/upload/v1750631402/Francess.final-1_n8dmoa.jpg',
          'https://res.cloudinary.com/dpzndrhse/image/upload/v1750631402/Francess.final-1_n8dmoa.jpg'],
       videos: [
-        { 
-          url: 'https://youtube.com/embed/ecovillage', 
+        {
+          url: 'https://youtube.com/embed/ecovillage',
           type: 'external',
           thumbnail: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750631402/Francess.final-1_n8dmoa.jpg'
         }
@@ -136,7 +138,7 @@ export const allProjects: ProjectItem[] = [
 
   {
     id: 5,
-    category: 'architectural',
+    category: 'group-dualling',
     title: 'Abode',
     status: 'completed',
     image: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750628589/Afari_s_final_lrcjvr.jpg',
@@ -193,7 +195,7 @@ export const allProjects: ProjectItem[] = [
   
 {
     id: 7,
-    category: 'architectural',
+    category: 'town-houses',
     title: 'Golden Village',
     description: 'Contemporary 6-bedroom smart home with sustainable design',
     status: 'completed',
@@ -231,48 +233,48 @@ export const allProjects: ProjectItem[] = [
   } ,
    
 {
-    id: 8,
-    category: 'architectural',
-    title: 'Belles Fleur',
-    description: 'Contemporary 6-bedroom smart home with sustainable design',
-    status: 'completed',
-    image: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750629085/c2_z8gijk.jpg',
-    location: 'Accra,Ghana',
-    details: {
-      specifications: {
-        height: '300m',
-        floors: '80',
-        area: '150,000 sq ft',
-        completion: '2022'
-      },
-    
-      timeline: '2018-2025',
-      materials: ['Reinforced Concrete', 'Glass Facade', 'Steel Framework'],
-      imageGallery: ['https://res.cloudinary.com/dpzndrhse/image/upload/v1750629303/c1_lmfemt.jpg',
-        'https://res.cloudinary.com/dpzndrhse/image/upload/v1750629085/c3_tpoxa7.jpg',
-        'https://res.cloudinary.com/dpzndrhse/image/upload/v1750629091/C4_cygb7d.jpg',
-        'https://res.cloudinary.com/dpzndrhse/image/upload/v1750629093/c5_mkzxgs.jpg',
+  id: 8,
+  category: 'residential',
+  title: 'Belles Fleur',
+  description: 'Contemporary 6-bedroom smart home with sustainable design',
+  status: 'completed',
+  image: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750629085/c2_z8gijk.jpg',
+  location: 'Accra,Ghana',
+  details: {
+    specifications: {
+      height: '300m',
+      floors: '80',
+      area: '150,000 sq ft',
+      completion: '2022'
+    },
 
-         'https://res.cloudinary.com/dpzndrhse/image/upload/v1750629105/family_nntzit.jpg',
-         'https://res.cloudinary.com/dpzndrhse/image/upload/v1750629107/master_bed_qsgqid.jpg'
-         
-      ],
-      videos: [
-        {
-          url: '/videos/02673085c141fa1529b528534962bf26.mp4',
-          type: 'local',
-          thumbnail: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750629093/c5_mkzxgs.jpg',
-        }
-      ],
-      blueprints: ['/downloads/skyscraper-structural.pdf'],
-      virtualTour: 'https://3dtour.com/skyscraper'
-    }
-  },
+    timeline: '2018-2025',
+    materials: ['Reinforced Concrete', 'Glass Facade', 'Steel Framework'],
+    imageGallery: ['https://res.cloudinary.com/dpzndrhse/image/upload/v1750629303/c1_lmfemt.jpg',
+      'https://res.cloudinary.com/dpzndrhse/image/upload/v1750629085/c3_tpoxa7.jpg',
+      'https://res.cloudinary.com/dpzndrhse/image/upload/v1750629091/C4_cygb7d.jpg',
+      'https://res.cloudinary.com/dpzndrhse/image/upload/v1750629093/c5_mkzxgs.jpg',
+
+       'https://res.cloudinary.com/dpzndrhse/image/upload/v1750629105/family_nntzit.jpg',
+       'https://res.cloudinary.com/dpzndrhse/image/upload/v1750629107/master_bed_qsgqid.jpg'
+
+    ],
+    videos: [
+      {
+        url: '/videos/02673085c141fa1529b528534962bf26.mp4',
+        type: 'local',
+        thumbnail: 'https://res.cloudinary.com/dpzndrhse/image/upload/v1750629093/c5_mkzxgs.jpg',
+      }
+    ],
+    blueprints: ['/downloads/skyscraper-structural.pdf'],
+    virtualTour: 'https://3dtour.com/skyscraper'
+  }
+},
 
 
   {
     id: 9,
-    category: 'architectural',
+    category: 'commercial',
     title: 'Gecko Lodge',
     description: 'Contemporary 6-bedroom smart home with sustainable design',
     status: 'completed',
@@ -285,7 +287,7 @@ export const allProjects: ProjectItem[] = [
         area: '150,000 sq ft',
         completion: '2022'
       },
-    
+
       timeline: '2018-2025',
       materials: ['Reinforced Concrete', 'Glass Facade', 'Steel Framework'],
       imageGallery: ['https://res.cloudinary.com/dpzndrhse/image/upload/v1750631123/d1_rj3tse.jpg',

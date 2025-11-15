@@ -99,4 +99,4 @@ CREATE TRIGGER update_comments_updated_at BEFORE UPDATE ON comments FOR EACH ROW
 
 
 
-residential ,commercial , town houses,gruop dualling,   
+residential ,commercial , town houses,gruop dualling 

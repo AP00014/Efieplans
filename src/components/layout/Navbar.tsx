@@ -159,13 +159,13 @@ const Navbar = () => {
                 Blog
               </Link>
 
-              <Link
+              {/* <Link
                 to="/#services"
                 className="fast-menu-link"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Services
-              </Link>
+              </Link> */}
 
               <Link
                 to="/#contact"

@@ -1,11 +1,215 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
-import { FaPlay, FaArrowLeft } from 'react-icons/fa';
+import { FaPlay, FaPause, FaArrowLeft, FaImages, FaVideo } from 'react-icons/fa';
 import ImageGallery from 'react-image-gallery';
 import 'react-image-gallery/styles/css/image-gallery.css';
 import '../styles/pages/ProjectDetail.css';
 import { allProjects } from '../data';
 import type { MediaItem, ProjectItem, VideoSource } from '../types';
+
+// Import FacebookStyleVideoPlayer from BlogPage
+const FacebookStyleVideoPlayer: React.FC<{
+  videoUrl: string;
+  poster?: string;
+}> = ({ videoUrl, poster }) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [showControls, setShowControls] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
+  const [duration, setDuration] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const handleLoadedMetadata = () => setDuration(video.duration);
+    const handleTimeUpdate = () => setCurrentTime(video.currentTime);
+    const handleEnded = () => {
+      setIsPlaying(false);
+      setShowControls(true);
+    };
+
+    video.addEventListener('loadedmetadata', handleLoadedMetadata);
+    video.addEventListener('timeupdate', handleTimeUpdate);
+    video.addEventListener('ended', handleEnded);
+
+    return () => {
+      video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      video.removeEventListener('timeupdate', handleTimeUpdate);
+      video.removeEventListener('ended', handleEnded);
+    };
+  }, []);
+
+  const togglePlay = async () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    try {
+      if (isPlaying) {
+        video.pause();
+        setIsPlaying(false);
+      } else {
+        // Try to play with user interaction
+        await video.play();
+        setIsPlaying(true);
+        setShowControls(true);
+
+        // Auto-hide controls after 3 seconds when playing
+        if (controlsTimeoutRef.current) {
+          clearTimeout(controlsTimeoutRef.current);
+        }
+        controlsTimeoutRef.current = setTimeout(() => {
+          setShowControls(false);
+        }, 3000);
+      }
+    } catch (error) {
+      console.error('Video play failed:', error);
+      // If autoplay fails, try with muted
+      if (!isMuted) {
+        video.muted = true;
+        setIsMuted(true);
+        try {
+          await video.play();
+          setIsPlaying(true);
+          setShowControls(true);
+        } catch (retryError) {
+          console.error('Video play retry failed:', retryError);
+        }
+      }
+    }
+  };
+
+  const toggleMute = () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.muted = !video.muted;
+    setIsMuted(video.muted);
+  };
+
+  const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const percentage = clickX / rect.width;
+    const newTime = percentage * duration;
+
+    video.currentTime = newTime;
+    setCurrentTime(newTime);
+  };
+
+  const toggleFullscreen = () => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    if (!isFullscreen) {
+      if (container.requestFullscreen) {
+        container.requestFullscreen();
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+    }
+    setIsFullscreen(!isFullscreen);
+  };
+
+  const formatTime = (time: number): string => {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  return (
+    <div
+      ref={containerRef}
+      className="facebook-video-player"
+      onMouseEnter={() => setShowControls(true)}
+      onMouseLeave={() => {
+        if (isPlaying && controlsTimeoutRef.current) {
+          clearTimeout(controlsTimeoutRef.current);
+        }
+        if (!isPlaying) {
+          setShowControls(false);
+        }
+      }}
+      onClick={(e) => {
+        // Only show controls if clicking on the video area, not on controls
+        if (e.target === e.currentTarget || e.target === videoRef.current) {
+          setShowControls(true);
+        }
+      }}
+    >
+      <video
+        ref={videoRef}
+        src={videoUrl}
+        poster={poster}
+        preload="metadata"
+        playsInline
+        muted={isMuted}
+        crossOrigin="anonymous"
+        className="facebook-video-element"
+        onError={(e) => {
+          console.error('Video load error:', videoUrl, e);
+          // Try to reload with different CORS settings
+          const video = e.currentTarget;
+          if (video.src !== videoUrl) {
+            video.src = videoUrl;
+            video.load();
+          }
+        }}
+      />
+
+      {/* Play Button Overlay */}
+      {!isPlaying && (
+        <div className="video-play-overlay" onClick={togglePlay}>
+          <div className="play-button">
+            <FaPlay size={60} fill="white" stroke="white" strokeWidth={1} />
+          </div>
+        </div>
+      )}
+
+      {/* Video Controls */}
+      <div className={`video-controls ${showControls ? 'visible' : ''}`}>
+        {/* Progress Bar */}
+        <div className="progress-container" onClick={handleProgressClick}>
+          <div
+            className="progress-bar"
+            style={{ width: duration > 0 ? `${(currentTime / duration) * 100}%` : '0%' }}
+          />
+          <div className="progress-background" />
+        </div>
+
+        {/* Control Buttons */}
+        <div className="control-buttons">
+          <button className="control-btn play-pause" onClick={togglePlay}>
+            {isPlaying ? <FaPause size={24} /> : <FaPlay size={24} />}
+          </button>
+
+          <div className="time-display">
+            <span className="current-time">{formatTime(currentTime)}</span>
+            <span className="time-separator">/</span>
+            <span className="duration">{formatTime(duration)}</span>
+          </div>
+
+          <button className="control-btn volume" onClick={toggleMute}>
+            {isMuted ? <FaVideo size={24} /> : <FaVideo size={24} />}
+          </button>
+
+          <button className="control-btn fullscreen" onClick={toggleFullscreen}>
+            <FaImages size={24} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const MediaGrid = ({ items, mediaType }: { items: (MediaItem | VideoSource)[], mediaType: 'image' | 'video' }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -40,7 +244,7 @@ const MediaGrid = ({ items, mediaType }: { items: (MediaItem | VideoSource)[], m
           <button className="close-button" onClick={() => setShowModal(false)}>
             &times;
           </button>
-          
+
           {mediaType === 'image' ? (
             <ImageGallery
               items={(items as MediaItem[]).map(item => ({
@@ -55,12 +259,9 @@ const MediaGrid = ({ items, mediaType }: { items: (MediaItem | VideoSource)[], m
           ) : (
             items[selectedIndex] && 'type' in items[selectedIndex] && (
               (items[selectedIndex] as VideoSource).type === 'local' ? (
-                <video
-                  controls
-                  autoPlay
-                  className="video-player"
-                  src={items[selectedIndex].url}
-                  key={items[selectedIndex].url}
+                <FacebookStyleVideoPlayer
+                  videoUrl={items[selectedIndex].url}
+                  poster={items[selectedIndex].thumbnail}
                 />
               ) : (
                 <iframe
@@ -80,9 +281,26 @@ const MediaGrid = ({ items, mediaType }: { items: (MediaItem | VideoSource)[], m
 };
 
 const ProjectDetail = () => {
-  const { id } = useParams<{ id: string }>();
-  const location = useLocation();
-  const preloadedData = location.state?.projectData as ProjectItem | undefined;
+   const { id } = useParams<{ id: string }>();
+   const location = useLocation();
+   const preloadedData = location.state?.projectData as ProjectItem | undefined;
+   const [activeTab, setActiveTab] = useState<'images' | 'videos'>('images');
+   const [isSticky, setIsSticky] = useState(false);
+   const mediaSectionRef = useRef<HTMLElement>(null);
+
+   // Handle sticky tabs when scrolling
+   useEffect(() => {
+      const handleScroll = () => {
+         if (mediaSectionRef.current) {
+            const rect = mediaSectionRef.current.getBoundingClientRect();
+            const navbarHeight = 80; // Default navbar height
+            setIsSticky(rect.top <= navbarHeight);
+         }
+      };
+
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+   }, []);
 
   // Find project by ID
   const item = preloadedData || allProjects.find(p => p.id === Number(id));
@@ -99,7 +317,7 @@ const ProjectDetail = () => {
   }
 
   // Normalize media data
-  const normalizeMedia = (urls?: string[]): MediaItem[] => 
+  const normalizeMedia = (urls?: string[]): MediaItem[] =>
     (urls || []).map(url => ({ url, thumbnail: url }));
 
   const imageGallery = normalizeMedia(item.details.imageGallery);
@@ -107,33 +325,41 @@ const ProjectDetail = () => {
 
   return (
     <div className="project-detail">
-      <header className="project-header">
-        <Link to="/projects" className="back-button">
-          <FaArrowLeft /> All Projects
-        </Link>
-        <h1>{item.title}</h1>
-        <div className="meta-info">
-          {item.category && <span className="category">{item.category}</span>}
-          <span className={`status ${item.status}`}>{item.status.toUpperCase()}</span>
+      {/* Hero Section with Background Image */}
+      <section
+        className="project-hero"
+        style={{
+          backgroundImage: `url(${item.image})`,
+          backgroundSize: 'auto 100%',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
+        <div className="hero-overlay">
+          <div className="hero-content-wrapper">
+            <div className="hero-text-content">
+              <h1 className="hero-title">{item.title}</h1>
+              <div className="meta-info">
+                {item.category && <span className="category">{item.category}</span>}
+                <span className={`status ${item.status}`}>{item.status.toUpperCase()}</span>
+              </div>
+            </div>
+          </div>
         </div>
-      </header>
+      </section>
 
       <main className="project-content">
-        <img 
-          src={item.image} 
-          alt={item.title} 
-          className="hero-image"
-          loading="lazy"
-        />
 
         <section className="content-section">
           <h2>Project Overview</h2>
-          <p>{item.description}</p>
+          <div className="project-description">
+            <p>{item.description}</p>
+          </div>
 
           <div className="specs-grid">
             <div className="spec-item">
               <span className="label">Location</span>
-              <span className="value">📍 {item.location}</span>
+              <span className="value">{item.location}</span>
             </div>
             {item.details.features && (
               <div className="spec-item">
@@ -157,17 +383,39 @@ const ProjectDetail = () => {
 
        
 
-        {imageGallery.length > 0 && (
-          <section className="media-section">
+        {(imageGallery.length > 0 || videos.length > 0) && (
+          <section className="media-section" ref={mediaSectionRef}>
             <h2>Project Gallery</h2>
-            <MediaGrid items={imageGallery} mediaType="image" />
-          </section>
-        )}
 
-        {videos.length > 0 && (
-          <section className="media-section">
-            <h2>Video Content</h2>
-            <MediaGrid items={videos} mediaType="video" />
+            {/* Tab Navigation */}
+            <div className={`media-tabs ${isSticky ? 'sticky' : ''}`}>
+              <button
+                className={`media-tab ${activeTab === 'images' ? 'active' : ''}`}
+                onClick={() => setActiveTab('images')}
+                disabled={imageGallery.length === 0}
+              >
+                <FaImages className="tab-icon" />
+                Images ({imageGallery.length})
+              </button>
+              <button
+                className={`media-tab ${activeTab === 'videos' ? 'active' : ''}`}
+                onClick={() => setActiveTab('videos')}
+                disabled={videos.length === 0}
+              >
+                <FaVideo className="tab-icon" />
+                Videos ({videos.length})
+              </button>
+            </div>
+
+            {/* Tab Content */}
+            <div className="media-tab-content">
+              {activeTab === 'images' && imageGallery.length > 0 && (
+                <MediaGrid items={imageGallery} mediaType="image" />
+              )}
+              {activeTab === 'videos' && videos.length > 0 && (
+                <MediaGrid items={videos} mediaType="video" />
+              )}
+            </div>
           </section>
         )}
 

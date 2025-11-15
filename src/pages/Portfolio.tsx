@@ -1,7 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
-import { FiArrowLeft, FiArrowRight } from 'react-icons/fi';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useSearchParams, Link } from 'react-router-dom';
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 import '../styles/pages/Portfolio.css';
 import { allProjects } from '../data';
 
@@ -10,132 +12,118 @@ const ProjectGrid = ({ selectedCategory }: { selectedCategory: string }) => {
     ? allProjects
     : allProjects.filter(project => project.category === selectedCategory);
 
-  const completedProjects = filteredProjects.filter(p => p.status === 'completed');
-  const ongoingProjects = filteredProjects.filter(p => p.status === 'ongoing');
-
   return (
     <motion.div
-      className="split-layout"
+      className="projects-grid"
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
       viewport={{ once: true, margin: "-100px" }}
     >
-      <motion.div
-        className="completed-column"
-        initial={{ opacity: 0, x: -50 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-        viewport={{ once: true, margin: "-50px" }}
-      >
-        <motion.h3
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          viewport={{ once: true }}
-        >
-          Completed Projects ({completedProjects.length})
-        </motion.h3>
-        <div className="projects-container">
-          {completedProjects.map((project, index) => (
-            <motion.div
-              key={project.id}
-              className="project-card"
-              initial={{ opacity: 0, y: 30, scale: 0.9 }}
-              whileInView={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{
-                duration: 0.5,
-                delay: index * 0.1,
-                ease: "easeOut"
-              }}
-              viewport={{ once: true, margin: "-50px" }}
-              whileHover={{
-                y: -10,
-                transition: { duration: 0.3 }
-              }}
-            >
-              <img src={project.image} alt={project.title} className="project-image" loading="lazy" />
-              <div className="project-info">
-                <h4>{project.title}</h4>
-                <p className="project-location">📍 {project.location}</p>
-                <Link
-                  to={`/projects/${project.id}`}
-                  className="project-view-more"
-                  state={{ projectData: project }}
-                >
-                  Explore
-                </Link>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
-
-      <motion.div
-        className="ongoing-column"
-        initial={{ opacity: 0, x: 50 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.6, delay: 0.4 }}
-        viewport={{ once: true, margin: "-50px" }}
-      >
-        <motion.h3
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.5 }}
-          viewport={{ once: true }}
-        >
-          Ongoing Projects ({ongoingProjects.length})
-        </motion.h3>
-        <div className="projects-container">
-          {ongoingProjects.map((project, index) => (
-            <motion.div
-              key={project.id}
-              className="project-card"
-              initial={{ opacity: 0, y: 30, scale: 0.9 }}
-              whileInView={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{
-                duration: 0.5,
-                delay: index * 0.1 + 0.6,
-                ease: "easeOut"
-              }}
-              viewport={{ once: true, margin: "-50px" }}
-              whileHover={{
-                y: -10,
-                transition: { duration: 0.3 }
-              }}
-            >
-              <img src={project.image} alt={project.title} className="project-image" loading="lazy" />
-              <div className="project-info">
-                <h4>{project.title}</h4>
-                <p className="project-location">📍 {project.location}</p>
-                <Link
-                  to={`/projects/${project.id}`}
-                  className="project-view-more"
-                  state={{ projectData: project }}
-                >
-                  Explore
-                </Link>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
+      <div className="projects-container">
+        {filteredProjects.map((project, index) => (
+          <motion.div
+            key={project.id}
+            className="project-card"
+            initial={{ opacity: 0, y: 30, scale: 0.9 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{
+              duration: 0.5,
+              delay: index * 0.1,
+              ease: "easeOut"
+            }}
+            viewport={{ once: true, margin: "-50px" }}
+            whileHover={{
+              y: -10,
+              transition: { duration: 0.3 }
+            }}
+          >
+            <img src={project.image} alt={project.title} className="project-image" loading="lazy" />
+            <div className="project-info">
+              <h4>{project.title}</h4>
+              <p className="project-location">📍 {project.location}</p>
+              <Link
+                to={`/projects/${project.id}`}
+                className="project-view-more"
+                state={{ projectData: project }}
+              >
+                Explore
+              </Link>
+            </div>
+          </motion.div>
+        ))}
+      </div>
     </motion.div>
   );
 };
+
+const categories = [
+  { id: 'all', label: 'All Projects' },
+  { id: 'residential', label: 'Residential' },
+  { id: 'commercial', label: 'Commercial' },
+  { id: 'town-houses', label: 'Town Houses' },
+  { id: 'group-dualling', label: 'Group Dualling' }
+];
 
 const CategoryFilter = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedCategory = searchParams.get('category') || 'all';
 
-  const categories = [
-    { id: 'all', label: 'All Projects' },
-    { id: 'architectural', label: 'Architectural Design' },
-    { id: 'constructions', label: 'Constructions' }
-  ];
-
   const handleCategoryChange = (categoryId: string) => {
     setSearchParams(categoryId === 'all' ? {} : { category: categoryId });
+  };
+
+  const getSlidesToShow = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      if (window.innerWidth <= 480) return Math.min(categories.length, 3);
+      if (window.innerWidth <= 768) return Math.min(categories.length, 3);
+      if (window.innerWidth <= 1024) return Math.min(categories.length, 3);
+      return Math.min(categories.length, 4);
+    }
+    return Math.min(categories.length, 4);
+  }, []);
+
+  const [slidesToShow, setSlidesToShow] = useState(getSlidesToShow());
+
+  useEffect(() => {
+    const handleResize = () => {
+      setSlidesToShow(getSlidesToShow());
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [getSlidesToShow]);
+
+  const sliderSettings = {
+    dots: false,
+    infinite: false,
+    speed: 500,
+    slidesToShow: slidesToShow,
+    slidesToScroll: 1,
+    arrows: true,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: Math.min(categories.length, 3),
+          arrows: true,
+        }
+      },
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: Math.min(categories.length, 3),
+          arrows: true,
+        }
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: Math.min(categories.length, 3),
+          arrows: true,
+        }
+      }
+    ]
   };
 
   return (
@@ -153,31 +141,52 @@ const CategoryFilter = () => {
         transition={{ duration: 0.5, delay: 0.2 }}
         viewport={{ once: true }}
       >
-        {categories.map((category, index) => (
-          <motion.button
-            key={category.id}
-            className={`filter-tab ${selectedCategory === category.id ? 'active' : ''}`}
-            onClick={() => handleCategoryChange(category.id)}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.4,
-              delay: index * 0.1 + 0.3,
-              ease: "easeOut"
-            }}
-            viewport={{ once: true }}
-            whileHover={{
-              scale: 1.05,
-              transition: { duration: 0.2 }
-            }}
-            whileTap={{
-              scale: 0.95,
-              transition: { duration: 0.1 }
-            }}
-          >
-            {category.label}
-          </motion.button>
-        ))}
+        <Slider {...sliderSettings}>
+          {categories.map((category, index) => (
+            <motion.div
+              key={category.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.4,
+                delay: index * 0.1 + 0.3,
+                ease: "easeOut"
+              }}
+              viewport={{ once: true }}
+            >
+              <button
+                className={`filter-tab ${selectedCategory === category.id ? 'active' : ''}`}
+                onClick={() => handleCategoryChange(category.id)}
+                style={{
+                  width: '100%',
+                  margin: '0 5px',
+                  padding: '10px 20px',
+                  border: 'none',
+                  borderRadius: '25px',
+                  backgroundColor: selectedCategory === category.id ? '#007bff' : '#f8f9fa',
+                  color: selectedCategory === category.id ? '#fff' : '#333',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  transition: 'all 0.3s ease',
+                  whiteSpace: 'nowrap'
+                }}
+                onMouseEnter={(e) => {
+                  if (selectedCategory !== category.id) {
+                    e.currentTarget.style.backgroundColor = '#e9ecef';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (selectedCategory !== category.id) {
+                    e.currentTarget.style.backgroundColor = '#f8f9fa';
+                  }
+                }}
+              >
+                {category.label}
+              </button>
+            </motion.div>
+          ))}
+        </Slider>
       </motion.div>
       <ProjectGrid selectedCategory={selectedCategory} />
     </motion.div>
@@ -185,30 +194,6 @@ const CategoryFilter = () => {
 };
 
 const Projects = () => {
-  const [activeSlide, setActiveSlide] = useState(0);
-  const [slideDirection, setSlideDirection] = useState<'next' | 'prev'>('next');
-  const [isPaused, setIsPaused] = useState(false);
-
-  // Get featured projects (first 4)
-  const featuredProjects = allProjects.slice(0, 4);
-
-  const handleNavigation = useCallback((direction: 'next' | 'prev') => {
-    setSlideDirection(direction);
-    setActiveSlide(prev =>
-      direction === 'next'
-        ? (prev + 1) % featuredProjects.length
-        : (prev - 1 + featuredProjects.length) % featuredProjects.length
-    );
-  }, [featuredProjects.length]);
-
-  useEffect(() => {
-    if (!isPaused) {
-      const timer = setInterval(() => {
-        handleNavigation('next');
-      }, 7000);
-      return () => clearInterval(timer);
-    }
-  }, [isPaused, handleNavigation]);
 
   return (
     <motion.div
@@ -217,7 +202,7 @@ const Projects = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <motion.section
+      {/* <motion.section
         className="headerSliderContainer"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
@@ -367,7 +352,7 @@ const Projects = () => {
             />
           ))}
         </motion.div>
-      </motion.section>
+      </motion.section> */}
       <CategoryFilter />
     </motion.div>
   );
