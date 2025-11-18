@@ -10,7 +10,7 @@ export interface MediaItem {
 }
 
 export interface ProjectItem {
-  id: number;
+  id: string | number; // Supports both UUID strings and numeric IDs for backward compatibility
   title: string;
   description: string;
   status: 'completed' | 'ongoing';

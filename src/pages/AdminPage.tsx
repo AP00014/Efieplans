@@ -8,6 +8,7 @@ import type {
   SupabaseComment,
   ContactMessage,
   EmailSubscription,
+  Project,
 } from "../types/index";
 import {
   LayoutDashboard,
@@ -28,6 +29,19 @@ import {
   Sun,
   Moon,
   Send,
+  Building2,
+  FolderKanban,
+  Edit,
+  Trash2,
+  MapPin,
+  Calendar,
+  Eye,
+  Ruler,
+  Wrench,
+  Star,
+  Images,
+  File,
+  CheckCircle,
 } from "lucide-react";
 import MDEditor from "@uiw/react-md-editor";
 import "./AdminPage.css";
@@ -98,6 +112,8 @@ const AdminPage: React.FC = () => {
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
     { id: "create-post", label: "Create Post", icon: FileText },
     { id: "posts", label: "Post Management", icon: FileText },
+    { id: "create-project", label: "Create Project", icon: Building2 },
+    { id: "manage-projects", label: "Manage Projects", icon: FolderKanban },
     { id: "users", label: "User Management", icon: Users },
     { id: "contact-messages", label: "Contacts", icon: FileText },
     { id: "email-subscriptions", label: "Subscriptions", icon: Users },
@@ -114,6 +130,10 @@ const AdminPage: React.FC = () => {
         return <CreatePostContent />;
       case "posts":
         return <PostManagement />;
+      case "create-project":
+        return <CreateProjectContent />;
+      case "manage-projects":
+        return <ManageProjectsContent />;
       case "users":
         return <UserManagement />;
       case "contact-messages":
@@ -343,7 +363,12 @@ const CreatePostContent: React.FC = () => {
       if (!validateFile(file, type)) continue;
 
       try {
-        console.log(`Starting upload of ${file.name} (${(file.size / (1024 * 1024)).toFixed(2)}MB)`);
+        console.log(
+          `Starting upload of ${file.name} (${(
+            file.size /
+            (1024 * 1024)
+          ).toFixed(2)}MB)`
+        );
         const publicUrl = await uploadFileToSupabase(file, type);
         console.log(`Upload successful for ${file.name}`);
 
@@ -364,7 +389,9 @@ const CreatePostContent: React.FC = () => {
         }
       } catch (error) {
         console.error("Upload error:", error);
-        alert(`Failed to upload ${file.name}. Please try again or contact support if the issue persists.`);
+        alert(
+          `Failed to upload ${file.name}. Please try again or contact support if the issue persists.`
+        );
       }
     }
 
@@ -402,7 +429,8 @@ const CreatePostContent: React.FC = () => {
         content: formData.content,
         image_url:
           formData.images.length > 0 ? JSON.stringify(formData.images) : null,
-        video_url: formData.videos.length > 0 ? JSON.stringify(formData.videos) : null,
+        video_url:
+          formData.videos.length > 0 ? JSON.stringify(formData.videos) : null,
         tags: formData.tags,
         category: formData.category,
       });
@@ -586,7 +614,7 @@ const CreatePostContent: React.FC = () => {
                         marginTop: "0.25rem",
                       }}
                     >
-                      Max 4 images, 5MB each
+                      Max 4 images, unlimited file size
                     </span>
                   </div>
 
@@ -692,39 +720,39 @@ const CreatePostContent: React.FC = () => {
                         marginTop: "0.25rem",
                       }}
                     >
-                      Max 100MB
+                      Unlimited file size
                     </span>
                   </div>
 
-                  {formData.videos && formData.videos.length > 0 && formData.videos.map((video: string, index: number) => (
-                    <div key={index} className="media-preview">
-                      <video
-                        src={video}
-                        className="preview-video"
-                        controls
-                      />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setFormData((prev) => ({
-                            ...prev,
-                            videos: prev.videos.filter((_: string, i: number) => i !== index),
-                          }));
-                          // Reset file input to allow uploading the same file again
-                          const fileInput = document.getElementById(
-                            "video-upload"
-                          ) as HTMLInputElement;
-                          if (fileInput) {
-                            fileInput.value = "";
-                          }
-                        }}
-                        className="remove-media"
-                        title="Remove video"
-                      >
-                        <X size={16} />
-                      </button>
-                    </div>
-                  ))}
+                  {formData.videos &&
+                    formData.videos.length > 0 &&
+                    formData.videos.map((video: string, index: number) => (
+                      <div key={index} className="media-preview">
+                        <video src={video} className="preview-video" controls />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFormData((prev) => ({
+                              ...prev,
+                              videos: prev.videos.filter(
+                                (_: string, i: number) => i !== index
+                              ),
+                            }));
+                            // Reset file input to allow uploading the same file again
+                            const fileInput = document.getElementById(
+                              "video-upload"
+                            ) as HTMLInputElement;
+                            if (fileInput) {
+                              fileInput.value = "";
+                            }
+                          }}
+                          className="remove-media"
+                          title="Remove video"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                    ))}
                 </div>
               </div>
             </div>
@@ -1717,7 +1745,16 @@ const EditPostModal: React.FC<{
     const allowedTypes =
       type === "image"
         ? ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"]
-        : ["video/mp4", "video/avi", "video/mov", "video/wmv", "video/webm", "video/3gp", "video/flv", "video/m4v"];
+        : [
+            "video/mp4",
+            "video/avi",
+            "video/mov",
+            "video/wmv",
+            "video/webm",
+            "video/3gp",
+            "video/flv",
+            "video/m4v",
+          ];
 
     if (!allowedTypes.includes(file.type)) {
       alert(`Please select a valid ${type} file (${allowedTypes.join(", ")})`);
@@ -1728,7 +1765,9 @@ const EditPostModal: React.FC<{
     const maxSize = type === "image" ? 5 * 1024 * 1024 : 50 * 1024 * 1024; // 5MB for images, 50MB for videos (Supabase limit)
     if (file.size > maxSize) {
       const maxSizeText = type === "image" ? "5MB" : "50MB";
-      alert(`File size exceeds the maximum limit of ${maxSizeText} (Supabase platform limit). For larger files, please use external hosting and provide the URL instead.`);
+      alert(
+        `File size exceeds the maximum limit of ${maxSizeText} (Supabase platform limit). For larger files, please use external hosting and provide the URL instead.`
+      );
       return false;
     }
 
@@ -1757,8 +1796,8 @@ const EditPostModal: React.FC<{
     const { error: uploadError } = await supabase.storage
       .from("storage")
       .upload(filePath, file, {
-        cacheControl: '3600',
-        upsert: false
+        cacheControl: "3600",
+        upsert: false,
       });
 
     if (uploadError) {
@@ -1784,7 +1823,9 @@ const EditPostModal: React.FC<{
     console.log(`Starting upload of ${fileArray.length} ${type} files`);
 
     for (const file of fileArray) {
-      console.log(`Processing file: ${file.name}, size: ${file.size}, type: ${file.type}`);
+      console.log(
+        `Processing file: ${file.name}, size: ${file.size}, type: ${file.type}`
+      );
 
       if (!validateFile(file, type)) {
         console.log(`File validation failed for ${file.name}`);
@@ -1829,7 +1870,7 @@ const EditPostModal: React.FC<{
 
     console.log(`Upload process complete. Current formData:`, {
       images: formData.images,
-      videos: formData.videos
+      videos: formData.videos,
     });
   };
 
@@ -1866,7 +1907,10 @@ const EditPostModal: React.FC<{
           formData.images.length > 0
             ? JSON.stringify(formData.images)
             : undefined,
-        video_url: formData.videos.length > 0 ? JSON.stringify(formData.videos) : undefined,
+        video_url:
+          formData.videos.length > 0
+            ? JSON.stringify(formData.videos)
+            : undefined,
         tags: formData.tags,
         category: formData.category,
       };
@@ -2044,7 +2088,7 @@ const EditPostModal: React.FC<{
                           marginTop: "0.25rem",
                         }}
                       >
-                        Max 4 images, 5MB each
+                        Max 4 images, unlimited file size
                       </span>
                     </div>
                     {formData.images.map((image: string, index: number) => (
@@ -2153,38 +2197,42 @@ const EditPostModal: React.FC<{
                           marginTop: "0.25rem",
                         }}
                       >
-                        Max 50MB (Supabase limit)
+                        Unlimited file size
                       </span>
                     </div>
-                    {formData.videos && formData.videos.length > 0 && formData.videos.map((video: string, index: number) => (
-                      <div key={index} className="media-preview">
-                        <video
-                          src={video}
-                          className="preview-video"
-                          controls
-                        />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setFormData((prev) => ({
-                              ...prev,
-                              videos: prev.videos.filter((_: string, i: number) => i !== index),
-                            }));
-                            // Reset file input to allow uploading the same file again
-                            const fileInput = document.getElementById(
-                              "video-upload"
-                            ) as HTMLInputElement;
-                            if (fileInput) {
-                              fileInput.value = "";
-                            }
-                          }}
-                          className="remove-media"
-                          title="Remove video"
-                        >
-                          <X size={16} />
-                        </button>
-                      </div>
-                    ))}
+                    {formData.videos &&
+                      formData.videos.length > 0 &&
+                      formData.videos.map((video: string, index: number) => (
+                        <div key={index} className="media-preview">
+                          <video
+                            src={video}
+                            className="preview-video"
+                            controls
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setFormData((prev) => ({
+                                ...prev,
+                                videos: prev.videos.filter(
+                                  (_: string, i: number) => i !== index
+                                ),
+                              }));
+                              // Reset file input to allow uploading the same file again
+                              const fileInput = document.getElementById(
+                                "video-upload"
+                              ) as HTMLInputElement;
+                              if (fileInput) {
+                                fileInput.value = "";
+                              }
+                            }}
+                            className="remove-media"
+                            title="Remove video"
+                          >
+                            <X size={16} />
+                          </button>
+                        </div>
+                      ))}
                   </div>
                 </div>
               </div>
@@ -3069,6 +3117,2453 @@ const EmailSubscriptionsManagement: React.FC = () => {
           </div>
         ))}
       </div>
+    </div>
+  );
+};
+
+// Enhanced Create Project Component with Modern UI
+const CreateProjectContent: React.FC = () => {
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    status: "ongoing" as "completed" | "ongoing",
+    image: "",
+    location: "",
+    category: "" as string,
+    // Common specifications with dedicated fields
+    height: "",
+    floors: "",
+    area: "",
+    completion: "",
+    units: "",
+    bedrooms: "",
+    length: "",
+    lanes: "",
+    // Dynamic specifications for custom fields
+    specifications: {} as Record<string, string>,
+    timeline: "",
+    materials: [] as string[],
+    features: [] as string[],
+    imageGallery: [] as string[],
+    blueprints: [] as string[],
+    videos: [] as Array<{
+      url: string;
+      type: "local" | "external";
+      thumbnail: string;
+    }>,
+    virtualTour: "",
+  });
+
+  const [specKey, setSpecKey] = useState("");
+  const [specValue, setSpecValue] = useState("");
+  const [materialInput, setMaterialInput] = useState("");
+  const [featureInput, setFeatureInput] = useState("");
+  const [imageUrlInput, setImageUrlInput] = useState("");
+  const [blueprintUrlInput, setBlueprintUrlInput] = useState("");
+  const [videoUrlInput, setVideoUrlInput] = useState("");
+  const [videoThumbnailInput, setVideoThumbnailInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [uploadingMainImage, setUploadingMainImage] = useState(false);
+
+  // Validation states
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+  };
+
+  const addSpecification = () => {
+    if (specKey.trim() && specValue.trim()) {
+      setFormData((prev) => ({
+        ...prev,
+        specifications: {
+          ...prev.specifications,
+          [specKey.trim()]: specValue.trim(),
+        },
+      }));
+      setSpecKey("");
+      setSpecValue("");
+    }
+  };
+
+  const removeSpecification = (key: string) => {
+    const newSpecs = { ...formData.specifications };
+    delete newSpecs[key];
+    setFormData((prev) => ({ ...prev, specifications: newSpecs }));
+  };
+
+  const addMaterial = () => {
+    if (
+      materialInput.trim() &&
+      !formData.materials.includes(materialInput.trim())
+    ) {
+      setFormData((prev) => ({
+        ...prev,
+        materials: [...prev.materials, materialInput.trim()],
+      }));
+      setMaterialInput("");
+    }
+  };
+
+  const removeMaterial = (material: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      materials: prev.materials.filter((m) => m !== material),
+    }));
+  };
+
+  const addFeature = () => {
+    if (
+      featureInput.trim() &&
+      !formData.features.includes(featureInput.trim())
+    ) {
+      setFormData((prev) => ({
+        ...prev,
+        features: [...prev.features, featureInput.trim()],
+      }));
+      setFeatureInput("");
+    }
+  };
+
+  const removeFeature = (feature: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      features: prev.features.filter((f) => f !== feature),
+    }));
+  };
+
+  const addImageToGallery = () => {
+    if (
+      imageUrlInput.trim() &&
+      !formData.imageGallery.includes(imageUrlInput.trim())
+    ) {
+      setFormData((prev) => ({
+        ...prev,
+        imageGallery: [...prev.imageGallery, imageUrlInput.trim()],
+      }));
+      setImageUrlInput("");
+    }
+  };
+
+  const removeImageFromGallery = (url: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      imageGallery: prev.imageGallery.filter((img) => img !== url),
+    }));
+  };
+
+  const addBlueprint = () => {
+    if (
+      blueprintUrlInput.trim() &&
+      !formData.blueprints.includes(blueprintUrlInput.trim())
+    ) {
+      setFormData((prev) => ({
+        ...prev,
+        blueprints: [...prev.blueprints, blueprintUrlInput.trim()],
+      }));
+      setBlueprintUrlInput("");
+    }
+  };
+
+  const removeBlueprint = (url: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      blueprints: prev.blueprints.filter((bp) => bp !== url),
+    }));
+  };
+
+  const addVideo = () => {
+    if (videoUrlInput.trim() && videoThumbnailInput.trim()) {
+      const newVideo = {
+        url: videoUrlInput.trim(),
+        type: "external" as const,
+        thumbnail: videoThumbnailInput.trim(),
+      };
+      setFormData((prev) => ({
+        ...prev,
+        videos: [...prev.videos, newVideo],
+      }));
+      setVideoUrlInput("");
+      setVideoThumbnailInput("");
+    }
+  };
+
+  const removeVideo = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      videos: prev.videos.filter((_, i) => i !== index),
+    }));
+  };
+
+  // File upload functions for projects
+  const validateFile = (file: File, type: "image" | "video"): boolean => {
+    // Allow any image or video type
+    const isValidType = type === "image" ? file.type.startsWith("image/") : file.type.startsWith("video/");
+
+    if (!isValidType) {
+      alert(`Please select a valid ${type} file. Any ${type} type is supported.`);
+      return false;
+    }
+
+    // No file size limits - unlimited upload size
+    return true;
+  };
+
+  const uploadProjectFileToSupabase = async (
+    file: File,
+    type: "image" | "video" | "thumbnail" | "blueprint",
+    projectId: string
+  ): Promise<string> => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      throw new Error("You must be logged in to upload files");
+    }
+
+    const fileExt = file.name.split(".").pop();
+    const fileName = `${Date.now()}-${Math.random()
+      .toString(36)
+      .substring(2)}.${fileExt}`;
+
+    // Determine folder based on type
+    let folder = "images";
+    if (type === "video") folder = "videos";
+    if (type === "thumbnail") folder = "thumbnails";
+    if (type === "blueprint") folder = "blueprints";
+
+    // Include "projects/" prefix to match SQL bucket structure
+    const filePath = `projects/${projectId}/${folder}/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("portfolio")
+      .upload(filePath, file, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+
+    if (uploadError) {
+      throw uploadError;
+    }
+
+    const { data } = supabase.storage.from("portfolio").getPublicUrl(filePath);
+    return data.publicUrl;
+  };
+
+  const handleMainImageFileSelect = async (file: File | null) => {
+    if (!file) return;
+
+    if (!validateFile(file, "image")) return;
+
+    setUploadingMainImage(true);
+  try {
+    // Upload immediately
+    const publicUrl = await uploadProjectFileToSupabase(file, "thumbnail", "temp"); // Use temp folder since no projectId yet
+    setFormData((prev) => ({
+      ...prev,
+      image: publicUrl,
+    }));
+  } catch (error: unknown) {
+      console.error("Upload error:", error);
+      const message = error instanceof Error ? error.message : "Unknown error";
+      alert(`Failed to upload main image: ${message}`);
+    } finally {
+      setUploadingMainImage(false);
+    }
+  };
+
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (
+      !formData.title ||
+      !formData.description ||
+      !formData.image ||
+      !formData.location
+    ) {
+      alert("Please fill in all required fields");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+
+      // Combine common specifications with dynamic specifications
+      const combinedSpecifications = { ...formData.specifications };
+      if (formData.height) combinedSpecifications.height = formData.height;
+      if (formData.floors) combinedSpecifications.floors = formData.floors;
+      if (formData.area) combinedSpecifications.area = formData.area;
+      if (formData.completion) combinedSpecifications.completion = formData.completion;
+      if (formData.units) combinedSpecifications.units = formData.units;
+      if (formData.bedrooms) combinedSpecifications.bedrooms = formData.bedrooms;
+      if (formData.length) combinedSpecifications.length = formData.length;
+      if (formData.lanes) combinedSpecifications.lanes = formData.lanes;
+
+      const details = {
+        specifications: Object.keys(combinedSpecifications).length > 0 ? combinedSpecifications : undefined,
+        timeline: formData.timeline || undefined,
+        materials:
+          formData.materials.length > 0 ? formData.materials : undefined,
+        features: formData.features.length > 0 ? formData.features : undefined,
+        imageGallery:
+          formData.imageGallery.length > 0 ? formData.imageGallery : undefined,
+        blueprints:
+          formData.blueprints.length > 0 ? formData.blueprints : undefined,
+        videos: formData.videos.length > 0 ? formData.videos : undefined,
+        virtualTour: formData.virtualTour || undefined,
+      };
+
+      const { error } = await supabase
+        .from("projects")
+        .insert({
+          title: formData.title,
+          description: formData.description,
+          status: formData.status,
+          image: formData.image,
+          location: formData.location,
+          category: formData.category || null,
+          details: details,
+          created_by: user.id,
+        });
+
+      if (error) throw error;
+
+      alert(
+        "Project created successfully! All images have been uploaded and saved."
+      );
+
+      // Reset form
+      setFormData({
+        title: "",
+        description: "",
+        status: "ongoing",
+        image: "",
+        location: "",
+        category: "",
+        // Reset common specifications
+        height: "",
+        floors: "",
+        area: "",
+        completion: "",
+        units: "",
+        bedrooms: "",
+        length: "",
+        lanes: "",
+        // Reset dynamic specifications
+        specifications: {},
+        timeline: "",
+        materials: [],
+        features: [],
+        imageGallery: [],
+        blueprints: [],
+        videos: [],
+        virtualTour: "",
+      });
+    } catch (error: unknown) {
+      console.error("Error creating project:", error);
+      const message = error instanceof Error ? error.message : "Unknown error";
+      alert("Failed to create project: " + message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="content-section">
+      <div className="section-header">
+        <h1>Create New Project</h1>
+        <p>Add a new project to the portfolio</p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="project-form">
+        <div className="form-group project-title-group">
+          <label htmlFor="title" className="project-title-label">
+            <Building2 size={20} className="title-icon" />
+            Project Title 
+          </label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            value={formData.title}
+            onChange={handleInputChange}
+            required
+            placeholder="e.g., The Metropol"
+            className="form-input project-title-input"
+          />
+        </div>
+
+        <div className="form-group description-group">
+          <label htmlFor="description" className="description-label">
+            <FileText size={20} className="description-icon" />
+            Description 
+          </label>
+          <textarea
+            id="description"
+            name="description"
+            value={formData.description}
+            onChange={handleInputChange}
+            required
+            rows={4}
+            placeholder="Project description..."
+            className="form-textarea description-textarea"
+          />
+        </div>
+
+        <div className="form-row">
+          <div className="form-group status-group">
+            <label htmlFor="status" className="status-label">
+              <CheckCircle size={20} className="status-icon" />
+              Status 
+            </label>
+            <select
+              id="status"
+              name="status"
+              value={formData.status}
+              onChange={handleInputChange}
+              required
+              className="form-input status-select"
+            >
+              <option value="ongoing">Ongoing</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+
+          <div className="form-group category-group">
+            <label htmlFor="category" className="category-label">
+              <Tag size={20} className="category-icon" />
+              Category
+            </label>
+            <select
+              id="category"
+              name="category"
+              value={formData.category}
+              onChange={handleInputChange}
+              className="form-input category-select"
+            >
+              <option value="">Select Category</option>
+              <option value="residential">Residential</option>
+              <option value="commercial">Commercial</option>
+              <option value="town-houses">Town Houses</option>
+              <option value="group-dualling">Group Dualling</option>
+              <option value="architectural">Architectural</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="form-group image-group">
+          <label htmlFor="image" className="image-label">
+            <Image size={20} className="image-icon" />
+            Main Image (Thumbnail) *
+          </label>
+          <div className="input-with-button" style={{ marginBottom: "10px" }}>
+            <input
+              type="url"
+              id="image"
+              name="image"
+              value={formData.image}
+              onChange={handleInputChange}
+              required
+              placeholder="Image URL or upload file below"
+              className="form-input image-url-input"
+            />
+          </div>
+          <div className="upload-group">
+           
+            
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0] || null;
+                handleMainImageFileSelect(file);
+                e.target.value = ""; // Reset input
+              }}
+              style={{ display: "none" }}
+              id="main-image-upload"
+            />
+            <label htmlFor="main-image-upload" className="upload-btn">
+              <Upload size={16} />
+              Upload Main Image
+            </label>
+            {uploadingMainImage && (
+              <span style={{ marginLeft: "10px" }}>Uploading...</span>
+            )}
+          </div>
+          {formData.image && (
+            <div style={{ marginTop: "10px" }}>
+              <img
+                src={formData.image}
+                alt="Main image preview"
+                style={{
+                  maxWidth: "200px",
+                  maxHeight: "200px",
+                  objectFit: "cover",
+                  borderRadius: "4px",
+                }}
+              />
+            </div>
+          )}
+          <p style={{ fontSize: "0.85rem", color: "#666", marginTop: "5px" }}>
+            Upload a main thumbnail image or provide a URL. This image will be
+            displayed on the Projects page.
+          </p>
+        </div>
+
+        <div className="form-group location-group">
+          <label htmlFor="location" className="location-label">
+            <MapPin size={20} className="location-icon" />
+            Location *
+          </label>
+          <input
+            type="text"
+            id="location"
+            name="location"
+            value={formData.location}
+            onChange={handleInputChange}
+            required
+            placeholder="e.g., Accra, Ghana"
+            className="form-input location-input"
+          />
+        </div>
+
+        <div className="form-group timeline-group">
+          <label htmlFor="timeline" className="timeline-label">
+            <Calendar size={20} className="timeline-icon" />
+            Timeline
+          </label>
+          <input
+            type="text"
+            id="timeline"
+            name="timeline"
+            value={formData.timeline}
+            onChange={handleInputChange}
+            placeholder="e.g., 2018-2025"
+            className="form-input timeline-input"
+          />
+        </div>
+
+        <div className="form-group virtual-tour-group">
+          <label htmlFor="virtualTour" className="virtual-tour-label">
+            <Eye size={20} className="virtual-tour-icon" />
+            Virtual Tour URL
+          </label>
+          <input
+            type="url"
+            id="virtualTour"
+            name="virtualTour"
+            value={formData.virtualTour}
+            onChange={handleInputChange}
+            placeholder="https://..."
+            className="form-input virtual-tour-input"
+          />
+        </div>
+
+        {/* Specifications */}
+        <div className="form-group specifications-group">
+          <label className="specifications-label">
+            <Ruler size={20} className="specifications-icon" />
+            Specifications
+          </label>
+
+          {/* Common Specifications */}
+          <div className="common-specs-grid">
+            <div className="spec-field">
+              <label htmlFor="height">Height</label>
+              <input
+                type="text"
+                id="height"
+                name="height"
+                value={formData.height}
+                onChange={handleInputChange}
+                placeholder="e.g., 300m"
+              />
+            </div>
+            <div className="spec-field">
+              <label htmlFor="floors">Floors</label>
+              <input
+                type="text"
+                id="floors"
+                name="floors"
+                value={formData.floors}
+                onChange={handleInputChange}
+                placeholder="e.g., 80"
+              />
+            </div>
+            <div className="spec-field">
+              <label htmlFor="area">Area</label>
+              <input
+                type="text"
+                id="area"
+                name="area"
+                value={formData.area}
+                onChange={handleInputChange}
+                placeholder="e.g., 150,000 sq ft"
+              />
+            </div>
+            <div className="spec-field">
+              <label htmlFor="completion">Completion</label>
+              <input
+                type="text"
+                id="completion"
+                name="completion"
+                value={formData.completion}
+                onChange={handleInputChange}
+                placeholder="e.g., 2022"
+              />
+            </div>
+            <div className="spec-field">
+              <label htmlFor="units">Units</label>
+              <input
+                type="text"
+                id="units"
+                name="units"
+                value={formData.units}
+                onChange={handleInputChange}
+                placeholder="e.g., 120"
+              />
+            </div>
+            <div className="spec-field">
+              <label htmlFor="bedrooms">Bedrooms</label>
+              <input
+                type="text"
+                id="bedrooms"
+                name="bedrooms"
+                value={formData.bedrooms}
+                onChange={handleInputChange}
+                placeholder="e.g., 8"
+              />
+            </div>
+            <div className="spec-field">
+              <label htmlFor="length">Length</label>
+              <input
+                type="text"
+                id="length"
+                name="length"
+                value={formData.length}
+                onChange={handleInputChange}
+                placeholder="e.g., 2.5km"
+              />
+            </div>
+            <div className="spec-field">
+              <label htmlFor="lanes">Lanes</label>
+              <input
+                type="text"
+                id="lanes"
+                name="lanes"
+                value={formData.lanes}
+                onChange={handleInputChange}
+                placeholder="e.g., 6"
+              />
+            </div>
+          </div>
+
+          {/* Dynamic Specifications */}
+          <div className="dynamic-specs-section">
+            <h4>Additional Specifications</h4>
+            <div className="spec-input-group">
+              <input
+                type="text"
+                placeholder="Key (e.g., parking spaces)"
+                value={specKey}
+                onChange={(e) => setSpecKey(e.target.value)}
+                className="spec-input"
+              />
+              <input
+                type="text"
+                placeholder="Value (e.g., 500)"
+                value={specValue}
+                onChange={(e) => setSpecValue(e.target.value)}
+                className="spec-input"
+              />
+              <button
+                type="button"
+                onClick={addSpecification}
+                className="add-btn"
+              >
+                <Plus size={16} /> Add
+              </button>
+            </div>
+            <div className="tags-list">
+              {Object.entries(formData.specifications).map(([key, value]) => (
+                <span key={key} className="tag">
+                  {key}: {value}
+                  <button
+                    type="button"
+                    onClick={() => removeSpecification(key)}
+                    className="tag-remove"
+                  >
+                    <X size={12} />
+                  </button>
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Materials */}
+        <div className="form-group materials-group">
+          <label className="materials-label">
+            <Wrench size={20} className="materials-icon" />
+            Materials
+          </label>
+          <div className="input-with-button">
+            <input
+              type="text"
+              placeholder="Add material"
+              value={materialInput}
+              onChange={(e) => setMaterialInput(e.target.value)}
+              onKeyDown={(e) =>
+                e.key === "Enter" && (e.preventDefault(), addMaterial())
+              }
+              className="material-input"
+            />
+            <button type="button" onClick={addMaterial} className="add-btn">
+              <Plus size={16} />
+            </button>
+          </div>
+          <div className="tags-list">
+            {formData.materials.map((material, index) => (
+              <span key={index} className="tag">
+                {material}
+                <button
+                  type="button"
+                  onClick={() => removeMaterial(material)}
+                  className="tag-remove"
+                >
+                  <X size={12} />
+                </button>
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Features */}
+        <div className="form-group features-group">
+          <label className="features-label">
+            <Star size={20} className="features-icon" />
+            Features
+          </label>
+          <div className="input-with-button">
+            <input
+              type="text"
+              placeholder="Add feature"
+              value={featureInput}
+              onChange={(e) => setFeatureInput(e.target.value)}
+              onKeyDown={(e) =>
+                e.key === "Enter" && (e.preventDefault(), addFeature())
+              }
+              className="feature-input"
+            />
+            <button type="button" onClick={addFeature} className="add-btn">
+              <Plus size={16} />
+            </button>
+          </div>
+          <div className="tags-list">
+            {formData.features.map((feature, index) => (
+              <span key={index} className="tag">
+                {feature}
+                <button
+                  type="button"
+                  onClick={() => removeFeature(feature)}
+                  className="tag-remove"
+                >
+                  <X size={12} />
+                </button>
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Image Gallery */}
+        <div className="form-group image-gallery-group">
+          <label className="image-gallery-label">
+            <Images size={20} className="image-gallery-icon" />
+            Image Gallery (Unlimited Images)
+          </label>
+          <div className="input-with-button">
+            <input
+              type="url"
+              placeholder="Image URL (or upload files below)"
+              value={imageUrlInput}
+              onChange={(e) => setImageUrlInput(e.target.value)}
+              className="gallery-url-input"
+            />
+            <button
+              type="button"
+              onClick={addImageToGallery}
+              className="add-btn"
+            >
+              <Plus size={16} />
+            </button>
+          </div>
+          <div className="upload-group" style={{ marginTop: "10px" }}>
+            <label
+              className="upload-label"
+              style={{ display: "block", marginBottom: "8px" }}
+            >
+              Upload Images (Multiple files supported)
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={async (e) => {
+                if (e.target.files) {
+                  const fileArray = Array.from(e.target.files);
+                  const uploadedUrls: string[] = [];
+
+                  for (const file of fileArray) {
+                    if (validateFile(file, "image")) {
+                      try {
+                        // Upload immediately to temp folder
+                        const publicUrl = await uploadProjectFileToSupabase(file, "image", "temp");
+                        uploadedUrls.push(publicUrl);
+                      } catch (error) {
+                        console.error("Gallery upload error:", error);
+                        alert(`Failed to upload ${file.name}`);
+                      }
+                    }
+                  }
+
+                  // Add uploaded URLs to form data
+                  setFormData((prev) => ({
+                    ...prev,
+                    imageGallery: [...prev.imageGallery, ...uploadedUrls],
+                  }));
+                }
+                // Reset input
+                e.target.value = "";
+              }}
+              style={{ display: "none" }}
+              id="image-file-upload"
+            />
+            <label htmlFor="image-file-upload" className="upload-btn">
+              <Upload size={16} />
+              Select Images (Multiple)
+            </label>
+          </div>
+          <div className="tags-list" style={{ marginTop: "10px" }}>
+            {formData.imageGallery.map((url, index) => (
+              <span key={index} className="tag">
+                <Image size={12} /> Image {index + 1}
+                <button
+                  type="button"
+                  onClick={() => removeImageFromGallery(url)}
+                  className="tag-remove"
+                >
+                  <X size={12} />
+                </button>
+              </span>
+            ))}
+          </div>
+          <p style={{ fontSize: "0.85rem", color: "#666", marginTop: "5px" }}>
+            Tip: You can add unlimited images via URL or file upload. For file
+            uploads, create the project first, then use the edit form to upload
+            files.
+          </p>
+        </div>
+
+        {/* Videos */}
+        <div className="form-group videos-group">
+          <label className="videos-label">
+            <Video size={20} className="videos-icon" />
+            Videos (Unlimited Videos)
+          </label>
+          <div className="video-input-group">
+            <input
+              type="url"
+              placeholder="Video URL (YouTube, Vimeo, or direct link)"
+              value={videoUrlInput}
+              onChange={(e) => setVideoUrlInput(e.target.value)}
+              className="video-url-input"
+            />
+            <input
+              type="url"
+              placeholder="Thumbnail URL (optional)"
+              value={videoThumbnailInput}
+              onChange={(e) => setVideoThumbnailInput(e.target.value)}
+              className="video-thumbnail-input"
+            />
+            <button type="button" onClick={addVideo} className="add-btn">
+              <Plus size={16} />
+            </button>
+          </div>
+          <div className="upload-group" style={{ marginTop: "10px" }}>
+            <label
+              className="upload-label"
+              style={{ display: "block", marginBottom: "8px" }}
+            >
+              Upload Videos (Multiple files supported)
+            </label>
+            <input
+              type="file"
+              accept="video/*"
+              multiple
+              onChange={async (e) => {
+                if (e.target.files) {
+                  const fileArray = Array.from(e.target.files);
+
+                  for (const file of fileArray) {
+                    if (validateFile(file, "video")) {
+                      try {
+                        // Upload video immediately to temp folder
+                        const videoUrl = await uploadProjectFileToSupabase(file, "video", "temp");
+                        // For thumbnail, use a placeholder or upload a default
+                        const thumbnailUrl = "https://via.placeholder.com/300x200?text=Video+Thumbnail"; // Placeholder
+                        const newVideo = {
+                          url: videoUrl,
+                          type: "local" as const,
+                          thumbnail: thumbnailUrl,
+                        };
+                        setFormData((prev) => ({
+                          ...prev,
+                          videos: [...prev.videos, newVideo],
+                        }));
+                      } catch (error) {
+                        console.error("Video upload error:", error);
+                        alert(`Failed to upload ${file.name}`);
+                      }
+                    }
+                  }
+                }
+                // Reset input
+                e.target.value = "";
+              }}
+              style={{ display: "none" }}
+              id="video-file-upload"
+            />
+            <label htmlFor="video-file-upload" className="upload-btn">
+              <Upload size={16} />
+              Select Videos (Multiple)
+            </label>
+          </div>
+          <div className="tags-list" style={{ marginTop: "10px" }}>
+            {formData.videos.map((video, index) => (
+              <span key={index} className="tag">
+                <Video size={12} /> {video.type} Video
+                <button
+                  type="button"
+                  onClick={() => removeVideo(index)}
+                  className="tag-remove"
+                >
+                  <X size={12} />
+                </button>
+              </span>
+            ))}
+          </div>
+          <p style={{ fontSize: "0.85rem", color: "#666", marginTop: "5px" }}>
+            Tip: You can add unlimited videos via URL or file upload. For file
+            uploads, create the project first, then use the edit form to upload
+            files.
+          </p>
+        </div>
+
+        {/* Blueprints */}
+        <div className="form-group blueprints-group">
+          <label className="blueprints-label">
+            <File size={20} className="blueprints-icon" />
+            Blueprints
+          </label>
+          <div className="input-with-button">
+            <input
+              type="url"
+              placeholder="Blueprint URL"
+              value={blueprintUrlInput}
+              onChange={(e) => setBlueprintUrlInput(e.target.value)}
+              className="blueprint-url-input"
+            />
+            <button type="button" onClick={addBlueprint} className="add-btn">
+              <Plus size={16} />
+            </button>
+          </div>
+          <div className="tags-list">
+            {formData.blueprints.map((url, index) => (
+              <span key={index} className="tag">
+                Blueprint {index + 1}
+                <button
+                  type="button"
+                  onClick={() => removeBlueprint(url)}
+                  className="tag-remove"
+                >
+                  <X size={12} />
+                </button>
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <button type="submit" className="submit-btn" disabled={loading}>
+          {loading ? (
+            <>
+              <div className="loading-spinner small"></div>
+              Creating Project...
+            </>
+          ) : (
+            <>
+              <Upload size={16} />
+              Create Project
+            </>
+          )}
+        </button>
+      </form>
+    </div>
+  );
+};
+
+// Manage Projects Component
+const ManageProjectsContent: React.FC = () => {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const fetchProjects = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("projects")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      setProjects(data || []);
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteProject = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this project? This will also delete all associated images and videos from storage.")) return;
+
+    try {
+      // First, get the project details to extract file URLs
+      const { data: project, error: fetchError } = await supabase
+        .from("projects")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      // Extract all file URLs from the project
+      const fileUrls: string[] = [];
+
+      // Main image
+      if (project.image) {
+        fileUrls.push(project.image);
+      }
+
+      // Details object
+      if (project.details) {
+        const details = project.details;
+
+        // Image gallery
+        if (details.imageGallery && Array.isArray(details.imageGallery)) {
+          fileUrls.push(...details.imageGallery);
+        }
+
+        // Videos
+        if (details.videos && Array.isArray(details.videos)) {
+          details.videos.forEach((video: { url?: string; thumbnail?: string }) => {
+            if (video.url) fileUrls.push(video.url);
+            if (video.thumbnail) fileUrls.push(video.thumbnail);
+          });
+        }
+
+        // Blueprints
+        if (details.blueprints && Array.isArray(details.blueprints)) {
+          fileUrls.push(...details.blueprints);
+        }
+      }
+
+      // Delete files from storage
+      const deletePromises = fileUrls.map(async (url) => {
+        try {
+          // Check if it's a Supabase storage URL
+          if (url.includes('supabase.co/storage/v1/object/public/portfolio/')) {
+            // Extract path from Supabase storage URL
+            // URL format: https://supabase.co/storage/v1/object/public/portfolio/{projectId}/...
+            const urlParts = url.split('/storage/v1/object/public/portfolio/');
+            if (urlParts.length === 2) {
+              const filePath = urlParts[1]; // This gives us "{projectId}/folder/filename"
+
+              try {
+                const { error } = await supabase.storage
+                  .from('portfolio')
+                  .remove([filePath]);
+
+                if (error) {
+                  console.error(`Failed to delete file ${filePath}:`, error);
+                  // If bucket_id error or bucket doesn't exist, log but continue
+                  if (error.message?.includes('bucket_id') || error.message?.includes('not found')) {
+                    console.warn(`Storage bucket issue for ${filePath}, file may not be deleted from storage`);
+                  }
+                } else {
+                  console.log(`Successfully deleted file: ${filePath}`);
+                }
+              } catch (storageError) {
+                console.error(`Storage operation failed for ${filePath}:`, storageError);
+                // Continue with other files even if one fails
+              }
+            }
+          } else {
+            // External URL - can't delete from our storage
+            console.log(`Skipping external URL: ${url}`);
+          }
+        } catch (error) {
+          console.error(`Error processing file ${url}:`, error);
+        }
+      });
+
+      // Wait for all file deletions to complete
+      await Promise.all(deletePromises);
+
+      // Now delete the project record
+      const { error } = await supabase.from("projects").delete().eq("id", id);
+      if (error) throw error;
+
+      fetchProjects();
+      alert("Project and all associated files deleted successfully");
+    } catch (error) {
+      console.error("Error deleting project:", error);
+      alert("Failed to delete project");
+    }
+  };
+
+  const [editFormData, setEditFormData] = useState({
+    title: "",
+    description: "",
+    status: "ongoing" as "completed" | "ongoing",
+    image: "",
+    location: "",
+    category: "" as string,
+    // Common specifications with dedicated fields
+    height: "",
+    floors: "",
+    area: "",
+    completion: "",
+    units: "",
+    bedrooms: "",
+    length: "",
+    lanes: "",
+    // Dynamic specifications for custom fields
+    specifications: {} as Record<string, string>,
+    timeline: "",
+    materials: [] as string[],
+    features: [] as string[],
+    imageGallery: [] as string[],
+    blueprints: [] as string[],
+    videos: [] as Array<{
+      url: string;
+      type: "local" | "external";
+      thumbnail: string;
+    }>,
+    virtualTour: "",
+  });
+
+  const [editSpecKey, setEditSpecKey] = useState("");
+  const [editSpecValue, setEditSpecValue] = useState("");
+  const [editMaterialInput, setEditMaterialInput] = useState("");
+  const [editFeatureInput, setEditFeatureInput] = useState("");
+  const [editImageUrlInput, setEditImageUrlInput] = useState("");
+  const [editBlueprintUrlInput, setEditBlueprintUrlInput] = useState("");
+  const [editVideoUrlInput, setEditVideoUrlInput] = useState("");
+  const [editVideoThumbnailInput, setEditVideoThumbnailInput] = useState("");
+  const [editLoading, setEditLoading] = useState(false);
+  const [editUploadingImages, setEditUploadingImages] = useState(false);
+  const [editUploadingVideos, setEditUploadingVideos] = useState(false);
+  const [editUploadingMainImage, setEditUploadingMainImage] = useState(false);
+
+  const openEditModal = (project: Project) => {
+    const details = project.details || {};
+    const specs = details.specifications || {};
+
+    setEditFormData({
+      title: project.title || "",
+      description: project.description || "",
+      status: project.status || "ongoing",
+      image: project.image || "",
+      location: project.location || "",
+      category: project.category || "",
+      // Extract common specifications
+      height: specs.height || "",
+      floors: specs.floors || "",
+      area: specs.area || "",
+      completion: specs.completion || "",
+      units: specs.units || "",
+      bedrooms: specs.bedrooms || "",
+      length: specs.length || "",
+      lanes: specs.lanes || "",
+      // Keep other custom specifications (exclude common ones)
+      specifications: Object.fromEntries(
+        Object.entries(specs).filter(([key]) =>
+          !['height', 'floors', 'area', 'completion', 'units', 'bedrooms', 'length', 'lanes'].includes(key)
+        )
+      ),
+      timeline: details.timeline || "",
+      materials: details.materials || [],
+      features: details.features || [],
+      imageGallery: details.imageGallery || [],
+      blueprints: details.blueprints || [],
+      videos: details.videos || [],
+      virtualTour: details.virtualTour || "",
+    });
+    setEditingProject(project);
+    setShowEditModal(true);
+  };
+
+  const closeEditModal = () => {
+    setEditingProject(null);
+    setShowEditModal(false);
+    // Reset form
+    setEditFormData({
+      title: "",
+      description: "",
+      status: "ongoing",
+      image: "",
+      location: "",
+      category: "",
+      // Reset common specifications
+      height: "",
+      floors: "",
+      area: "",
+      completion: "",
+      units: "",
+      bedrooms: "",
+      length: "",
+      lanes: "",
+      // Reset dynamic specifications
+      specifications: {},
+      timeline: "",
+      materials: [],
+      features: [],
+      imageGallery: [],
+      blueprints: [],
+      videos: [],
+      virtualTour: "",
+    });
+    // Reset input states
+    setEditSpecKey("");
+    setEditSpecValue("");
+    setEditMaterialInput("");
+    setEditFeatureInput("");
+    setEditImageUrlInput("");
+    setEditBlueprintUrlInput("");
+    setEditVideoUrlInput("");
+    setEditVideoThumbnailInput("");
+  };
+
+  const handleEditInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    setEditFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const addEditSpecification = () => {
+    if (editSpecKey.trim() && editSpecValue.trim()) {
+      setEditFormData((prev) => ({
+        ...prev,
+        specifications: {
+          ...prev.specifications,
+          [editSpecKey.trim()]: editSpecValue.trim(),
+        },
+      }));
+      setEditSpecKey("");
+      setEditSpecValue("");
+    }
+  };
+
+  const removeEditSpecification = (key: string) => {
+    const newSpecs = { ...editFormData.specifications };
+    delete newSpecs[key];
+    setEditFormData((prev) => ({ ...prev, specifications: newSpecs }));
+  };
+
+  const addEditMaterial = () => {
+    if (
+      editMaterialInput.trim() &&
+      !editFormData.materials.includes(editMaterialInput.trim())
+    ) {
+      setEditFormData((prev) => ({
+        ...prev,
+        materials: [...prev.materials, editMaterialInput.trim()],
+      }));
+      setEditMaterialInput("");
+    }
+  };
+
+  const removeEditMaterial = (material: string) => {
+    setEditFormData((prev) => ({
+      ...prev,
+      materials: prev.materials.filter((m) => m !== material),
+    }));
+  };
+
+  const addEditFeature = () => {
+    if (
+      editFeatureInput.trim() &&
+      !editFormData.features.includes(editFeatureInput.trim())
+    ) {
+      setEditFormData((prev) => ({
+        ...prev,
+        features: [...prev.features, editFeatureInput.trim()],
+      }));
+      setEditFeatureInput("");
+    }
+  };
+
+  const removeEditFeature = (feature: string) => {
+    setEditFormData((prev) => ({
+      ...prev,
+      features: prev.features.filter((f) => f !== feature),
+    }));
+  };
+
+  const addEditImageToGallery = () => {
+    if (
+      editImageUrlInput.trim() &&
+      !editFormData.imageGallery.includes(editImageUrlInput.trim())
+    ) {
+      setEditFormData((prev) => ({
+        ...prev,
+        imageGallery: [...prev.imageGallery, editImageUrlInput.trim()],
+      }));
+      setEditImageUrlInput("");
+    }
+  };
+
+  const removeEditImageFromGallery = (url: string) => {
+    setEditFormData((prev) => ({
+      ...prev,
+      imageGallery: prev.imageGallery.filter((img) => img !== url),
+    }));
+  };
+
+  const addEditBlueprint = () => {
+    if (
+      editBlueprintUrlInput.trim() &&
+      !editFormData.blueprints.includes(editBlueprintUrlInput.trim())
+    ) {
+      setEditFormData((prev) => ({
+        ...prev,
+        blueprints: [...prev.blueprints, editBlueprintUrlInput.trim()],
+      }));
+      setEditBlueprintUrlInput("");
+    }
+  };
+
+  const removeEditBlueprint = (url: string) => {
+    setEditFormData((prev) => ({
+      ...prev,
+      blueprints: prev.blueprints.filter((bp) => bp !== url),
+    }));
+  };
+
+  const addEditVideo = () => {
+    if (editVideoUrlInput.trim() && editVideoThumbnailInput.trim()) {
+      const newVideo = {
+        url: editVideoUrlInput.trim(),
+        type: "external" as const,
+        thumbnail: editVideoThumbnailInput.trim(),
+      };
+      setEditFormData((prev) => ({
+        ...prev,
+        videos: [...prev.videos, newVideo],
+      }));
+      setEditVideoUrlInput("");
+      setEditVideoThumbnailInput("");
+    }
+  };
+
+  const removeEditVideo = (index: number) => {
+    setEditFormData((prev) => ({
+      ...prev,
+      videos: prev.videos.filter((_, i) => i !== index),
+    }));
+  };
+
+  // File upload functions for edit form
+  const validateEditFile = (file: File, type: "image" | "video"): boolean => {
+    // Allow any image or video type
+    const isValidType = type === "image" ? file.type.startsWith("image/") : file.type.startsWith("video/");
+
+    if (!isValidType) {
+      alert(`Please select a valid ${type} file. Any ${type} type is supported.`);
+      return false;
+    }
+
+    // No file size limits - unlimited upload size
+    return true;
+  };
+
+  const uploadEditFileToSupabase = async (
+    file: File,
+    type: "image" | "video" | "thumbnail" | "blueprint",
+    projectId: string
+  ): Promise<string> => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      throw new Error("You must be logged in to upload files");
+    }
+
+    const fileExt = file.name.split(".").pop();
+    const fileName = `${Date.now()}-${Math.random()
+      .toString(36)
+      .substring(2)}.${fileExt}`;
+
+    let folder = "images";
+    if (type === "video") folder = "videos";
+    if (type === "thumbnail") folder = "thumbnails";
+    if (type === "blueprint") folder = "blueprints";
+
+    // Include "projects/" prefix to match SQL bucket structure
+    const filePath = `projects/${projectId}/${folder}/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("portfolio")
+      .upload(filePath, file, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+
+    if (uploadError) {
+      throw uploadError;
+    }
+
+    const { data } = supabase.storage.from("portfolio").getPublicUrl(filePath);
+    return data.publicUrl;
+  };
+
+  const handleEditImageFileUpload = async (files: FileList | null) => {
+    if (!files || files.length === 0 || !editingProject) return;
+
+    setEditUploadingImages(true);
+    const fileArray = Array.from(files);
+
+    for (const file of fileArray) {
+      if (!validateEditFile(file, "image")) continue;
+
+      try {
+        const publicUrl = await uploadEditFileToSupabase(
+          file,
+          "image",
+          editingProject.id
+        );
+        setEditFormData((prev) => ({
+          ...prev,
+          imageGallery: [...prev.imageGallery, publicUrl],
+        }));
+      } catch (error: unknown) {
+        console.error("Upload error:", error);
+        const message =
+          error instanceof Error ? error.message : "Unknown error";
+        alert(`Failed to upload ${file.name}: ${message}`);
+      }
+    }
+
+    setEditUploadingImages(false);
+  };
+
+  const handleEditVideoFileUpload = async (files: FileList | null) => {
+    if (!files || files.length === 0 || !editingProject) return;
+
+    setEditUploadingVideos(true);
+    const fileArray = Array.from(files);
+
+    for (const file of fileArray) {
+      if (!validateEditFile(file, "video")) continue;
+
+      try {
+        const videoUrl = await uploadEditFileToSupabase(
+          file,
+          "video",
+          editingProject.id
+        );
+        const thumbnailUrl = videoUrl.replace(
+          /\.(mp4|webm|avi|mov|wmv)$/i,
+          ".jpg"
+        );
+
+        const newVideo = {
+          url: videoUrl,
+          type: "local" as const,
+          thumbnail: thumbnailUrl,
+        };
+
+        setEditFormData((prev) => ({
+          ...prev,
+          videos: [...prev.videos, newVideo],
+        }));
+      } catch (error: unknown) {
+        console.error("Upload error:", error);
+        const message =
+          error instanceof Error ? error.message : "Unknown error";
+        alert(`Failed to upload ${file.name}: ${message}`);
+      }
+    }
+
+    setEditUploadingVideos(false);
+  };
+
+  const handleEditMainImageFileUpload = async (file: File | null) => {
+    if (!file || !editingProject) return;
+
+    if (!validateEditFile(file, "image")) return;
+
+    try {
+      setEditUploadingMainImage(true);
+      const publicUrl = await uploadEditFileToSupabase(
+        file,
+        "thumbnail",
+        editingProject.id
+      );
+
+      setEditFormData((prev) => ({
+        ...prev,
+        image: publicUrl,
+      }));
+    } catch (error: unknown) {
+      console.error("Upload error:", error);
+      const message = error instanceof Error ? error.message : "Unknown error";
+      alert(`Failed to upload main image: ${message}`);
+    } finally {
+      setEditUploadingMainImage(false);
+    }
+  };
+
+  const handleEditSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (
+      !editFormData.title ||
+      !editFormData.description ||
+      !editFormData.image ||
+      !editFormData.location
+    ) {
+      alert("Please fill in all required fields");
+      return;
+    }
+
+    if (!editingProject) return;
+
+    setEditLoading(true);
+    try {
+      // Combine common specifications with dynamic specifications
+      const combinedSpecifications = { ...editFormData.specifications };
+      if (editFormData.height) combinedSpecifications.height = editFormData.height;
+      if (editFormData.floors) combinedSpecifications.floors = editFormData.floors;
+      if (editFormData.area) combinedSpecifications.area = editFormData.area;
+      if (editFormData.completion) combinedSpecifications.completion = editFormData.completion;
+      if (editFormData.units) combinedSpecifications.units = editFormData.units;
+      if (editFormData.bedrooms) combinedSpecifications.bedrooms = editFormData.bedrooms;
+      if (editFormData.length) combinedSpecifications.length = editFormData.length;
+      if (editFormData.lanes) combinedSpecifications.lanes = editFormData.lanes;
+
+      const details = {
+        specifications: Object.keys(combinedSpecifications).length > 0 ? combinedSpecifications : undefined,
+        timeline: editFormData.timeline || undefined,
+        materials:
+          editFormData.materials.length > 0
+            ? editFormData.materials
+            : undefined,
+        features:
+          editFormData.features.length > 0 ? editFormData.features : undefined,
+        imageGallery:
+          editFormData.imageGallery.length > 0
+            ? editFormData.imageGallery
+            : undefined,
+        blueprints:
+          editFormData.blueprints.length > 0
+            ? editFormData.blueprints
+            : undefined,
+        videos:
+          editFormData.videos.length > 0 ? editFormData.videos : undefined,
+        virtualTour: editFormData.virtualTour || undefined,
+      };
+
+      const { error } = await supabase
+        .from("projects")
+        .update({
+          title: editFormData.title,
+          description: editFormData.description,
+          status: editFormData.status,
+          image: editFormData.image,
+          location: editFormData.location,
+          category: editFormData.category || null,
+          details: details,
+        })
+        .eq("id", editingProject.id);
+
+      if (error) throw error;
+
+      alert("Project updated successfully!");
+      closeEditModal();
+      fetchProjects();
+    } catch (error: unknown) {
+      console.error("Error updating project:", error);
+      const message = error instanceof Error ? error.message : "Unknown error";
+      alert("Failed to update project: " + message);
+    } finally {
+      setEditLoading(false);
+    }
+  };
+
+  const filteredProjects = projects.filter(
+    (project) =>
+      project.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      project.location?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      project.description?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  if (loading) {
+    return (
+      <div className="content-section">
+        <div className="loading-spinner"></div>
+        <p>Loading projects...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="content-section">
+      <div className="section-header">
+        <h1>Manage Projects</h1>
+        <p>View, edit, and delete projects</p>
+      </div>
+
+      <div className="management-controls">
+        <div className="search-container">
+          <button
+            className="search-toggle-btn"
+            onClick={() => setIsSearchExpanded(!isSearchExpanded)}
+            aria-label="Toggle search"
+          >
+            <Search size={20} />
+          </button>
+          <input
+            type="text"
+            placeholder="Search projects by title, location, or description..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className={`search-input ${isSearchExpanded ? "expanded" : ""}`}
+          />
+          {searchTerm && (
+            <button
+              className="clear-search-btn"
+              onClick={() => setSearchTerm("")}
+              aria-label="Clear search"
+            >
+              <X size={16} />
+            </button>
+          )}
+        </div>
+        <div className="stats-summary">
+          <span>Total Projects: {projects.length}</span>
+          <span>
+            Ongoing: {projects.filter((p) => p.status === "ongoing").length}
+          </span>
+          <span>
+            Completed: {projects.filter((p) => p.status === "completed").length}
+          </span>
+        </div>
+      </div>
+
+      {/* Desktop Table View */}
+      <div className="data-table-container desktop-table">
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Location</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredProjects.map((project) => (
+              <tr key={project.id}>
+                <td>
+                  <img
+                    src={project.image}
+                    alt={project.title}
+                    className="project-thumbnail"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src =
+                        "https://via.placeholder.com/100?text=No+Image";
+                    }}
+                  />
+                </td>
+                <td>{project.title}</td>
+                <td>{project.category || "N/A"}</td>
+                <td>{project.location}</td>
+                <td>
+                  <span
+                    className={`status-badge ${
+                      project.status === "completed" ? "completed" : "ongoing"
+                    }`}
+                  >
+                    {project.status}
+                  </span>
+                </td>
+                <td>{new Date(project.created_at).toLocaleDateString()}</td>
+                <td>
+                  <button
+                    className="action-btn edit"
+                    onClick={() => openEditModal(project)}
+                  >
+                    <Edit size={16} />
+                    Edit
+                  </button>
+                  <button
+                    className="action-btn delete"
+                    onClick={() => deleteProject(project.id)}
+                  >
+                    <Trash2 size={16} />
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="mobile-cards-view">
+        {filteredProjects.map((project) => (
+          <div key={project.id} className="project-card-admin">
+            <img
+              src={project.image}
+              alt={project.title}
+              className="project-card-image"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src =
+                  "https://via.placeholder.com/300?text=No+Image";
+              }}
+            />
+            <div className="project-card-content">
+              <h3>{project.title}</h3>
+              <p className="project-card-location">📍 {project.location}</p>
+              <div className="project-card-meta">
+                <span className="project-card-category">
+                  {project.category || "N/A"}
+                </span>
+                <span
+                  className={`status-badge ${
+                    project.status === "completed" ? "completed" : "ongoing"
+                  }`}
+                >
+                  {project.status}
+                </span>
+              </div>
+              <div className="project-card-actions">
+                <button
+                  className="action-btn edit"
+                  onClick={() => openEditModal(project)}
+                >
+                  <Edit size={16} />
+                  Edit
+                </button>
+                <button
+                  className="action-btn delete"
+                  onClick={() => deleteProject(project.id)}
+                >
+                  <Trash2 size={16} />
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {filteredProjects.length === 0 && (
+        <div className="empty-state">
+          <p>No projects found</p>
+        </div>
+      )}
+
+      {/* Edit Modal - Full Form */}
+      {showEditModal && editingProject && (
+        <div className="modal-overlay" onClick={closeEditModal}>
+          <div
+            className="modal-content large-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-header">
+              <h2>Edit Project</h2>
+              <button className="modal-close" onClick={closeEditModal}>
+                <X size={24} />
+              </button>
+            </div>
+            <div className="modal-body">
+              <form onSubmit={handleEditSubmit} className="project-form">
+                <div className="form-group edit-project-title-group">
+                  <label htmlFor="edit-title" className="edit-project-title-label">
+                    <Building2 size={20} className="edit-title-icon" />
+                    Project Title *
+                  </label>
+                  <input
+                    type="text"
+                    id="edit-title"
+                    name="title"
+                    value={editFormData.title}
+                    onChange={handleEditInputChange}
+                    required
+                    placeholder="e.g., The Metropol"
+                    className="form-input edit-project-title-input"
+                  />
+                </div>
+
+                <div className="form-group edit-description-group">
+                  <label htmlFor="edit-description" className="edit-description-label">
+                    <FileText size={20} className="edit-description-icon" />
+                    Description *
+                  </label>
+                  <textarea
+                    id="edit-description"
+                    name="description"
+                    value={editFormData.description}
+                    onChange={handleEditInputChange}
+                    required
+                    rows={4}
+                    placeholder="Project description..."
+                    className="form-textarea edit-description-textarea"
+                  />
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group edit-status-group">
+                    <label htmlFor="edit-status" className="edit-status-label">
+                      <CheckCircle size={20} className="edit-status-icon" />
+                      Status *
+                    </label>
+                    <select
+                      id="edit-status"
+                      name="status"
+                      value={editFormData.status}
+                      onChange={handleEditInputChange}
+                      required
+                      className="form-input edit-status-select"
+                    >
+                      <option value="ongoing">Ongoing</option>
+                      <option value="completed">Completed</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group edit-category-group">
+                    <label htmlFor="edit-category" className="edit-category-label">
+                      <Tag size={20} className="edit-category-icon" />
+                      Category
+                    </label>
+                    <select
+                      id="edit-category"
+                      name="category"
+                      value={editFormData.category}
+                      onChange={handleEditInputChange}
+                      className="form-input edit-category-select"
+                    >
+                      <option value="">Select Category</option>
+                      <option value="residential">Residential</option>
+                      <option value="commercial">Commercial</option>
+                      <option value="town-houses">Town Houses</option>
+                      <option value="group-dualling">Group Dualling</option>
+                      <option value="architectural">Architectural</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="form-group edit-image-group">
+                  <label htmlFor="edit-image" className="edit-image-label">
+                    <Image size={20} className="edit-image-icon" />
+                    Main Image (Thumbnail) *
+                  </label>
+                  <div
+                    className="input-with-button"
+                    style={{ marginBottom: "10px" }}
+                  >
+                    <input
+                      type="url"
+                      id="edit-image"
+                      name="image"
+                      value={editFormData.image}
+                      onChange={handleEditInputChange}
+                      required
+                      placeholder="Image URL or upload file below"
+                    />
+                  </div>
+                  <div className="upload-group">
+                    <label
+                      className="upload-label"
+                      style={{ display: "block", marginBottom: "8px" }}
+                    >
+                      Upload Main Image
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0] || null;
+                        handleEditMainImageFileUpload(file);
+                        e.target.value = ""; // Reset input
+                      }}
+                      style={{ display: "none" }}
+                      id="edit-main-image-upload"
+                    />
+                    <label
+                      htmlFor="edit-main-image-upload"
+                      className="upload-btn"
+                    >
+                      <Upload size={16} />
+                      Select Main Image
+                    </label>
+                    {editUploadingMainImage && (
+                      <span style={{ marginLeft: "10px" }}>Uploading...</span>
+                    )}
+                  </div>
+                  {editFormData.image && (
+                    <div style={{ marginTop: "10px" }}>
+                      <img
+                        src={editFormData.image}
+                        alt="Main image preview"
+                        style={{
+                          maxWidth: "200px",
+                          maxHeight: "200px",
+                          objectFit: "cover",
+                          borderRadius: "4px",
+                        }}
+                      />
+                    </div>
+                  )}
+                  <p
+                    style={{
+                      fontSize: "0.85rem",
+                      color: "#666",
+                      marginTop: "5px",
+                    }}
+                  >
+                    Upload a main thumbnail image or provide a URL. This image
+                    will be displayed on the Projects page.
+                  </p>
+                </div>
+
+                <div className="form-group edit-location-group">
+                  <label htmlFor="edit-location" className="edit-location-label">
+                    <MapPin size={20} className="edit-location-icon" />
+                    Location *
+                  </label>
+                  <input
+                    type="text"
+                    id="edit-location"
+                    name="location"
+                    value={editFormData.location}
+                    onChange={handleEditInputChange}
+                    required
+                    placeholder="e.g., Accra, Ghana"
+                    className="form-input edit-location-input"
+                  />
+                </div>
+
+                <div className="form-group edit-timeline-group">
+                  <label htmlFor="edit-timeline" className="edit-timeline-label">
+                    <Calendar size={20} className="edit-timeline-icon" />
+                    Timeline
+                  </label>
+                  <input
+                    type="text"
+                    id="edit-timeline"
+                    name="timeline"
+                    value={editFormData.timeline}
+                    onChange={handleEditInputChange}
+                    placeholder="e.g., 2018-2025"
+                    className="form-input edit-timeline-input"
+                  />
+                </div>
+
+                <div className="form-group edit-virtual-tour-group">
+                  <label htmlFor="edit-virtualTour" className="edit-virtual-tour-label">
+                    <Eye size={20} className="edit-virtual-tour-icon" />
+                    Virtual Tour URL
+                  </label>
+                  <input
+                    type="url"
+                    id="edit-virtualTour"
+                    name="virtualTour"
+                    value={editFormData.virtualTour}
+                    onChange={handleEditInputChange}
+                    placeholder="https://..."
+                    className="form-input edit-virtual-tour-input"
+                  />
+                </div>
+
+                {/* Specifications */}
+                <div className="form-group edit-specifications-group">
+                  <label className="edit-specifications-label">
+                    <Ruler size={20} className="edit-specifications-icon" />
+                    Specifications
+                  </label>
+
+                  {/* Common Specifications */}
+                  <div className="common-specs-grid">
+                    <div className="spec-field">
+                      <label htmlFor="edit-height">Height</label>
+                      <input
+                        type="text"
+                        id="edit-height"
+                        name="height"
+                        value={editFormData.height}
+                        onChange={handleEditInputChange}
+                        placeholder="e.g., 300m"
+                      />
+                    </div>
+                    <div className="spec-field">
+                      <label htmlFor="edit-floors">Floors</label>
+                      <input
+                        type="text"
+                        id="edit-floors"
+                        name="floors"
+                        value={editFormData.floors}
+                        onChange={handleEditInputChange}
+                        placeholder="e.g., 80"
+                      />
+                    </div>
+                    <div className="spec-field">
+                      <label htmlFor="edit-area">Area</label>
+                      <input
+                        type="text"
+                        id="edit-area"
+                        name="area"
+                        value={editFormData.area}
+                        onChange={handleEditInputChange}
+                        placeholder="e.g., 150,000 sq ft"
+                      />
+                    </div>
+                    <div className="spec-field">
+                      <label htmlFor="edit-completion">Completion</label>
+                      <input
+                        type="text"
+                        id="edit-completion"
+                        name="completion"
+                        value={editFormData.completion}
+                        onChange={handleEditInputChange}
+                        placeholder="e.g., 2022"
+                      />
+                    </div>
+                    <div className="spec-field">
+                      <label htmlFor="edit-units">Units</label>
+                      <input
+                        type="text"
+                        id="edit-units"
+                        name="units"
+                        value={editFormData.units}
+                        onChange={handleEditInputChange}
+                        placeholder="e.g., 120"
+                      />
+                    </div>
+                    <div className="spec-field">
+                      <label htmlFor="edit-bedrooms">Bedrooms</label>
+                      <input
+                        type="text"
+                        id="edit-bedrooms"
+                        name="bedrooms"
+                        value={editFormData.bedrooms}
+                        onChange={handleEditInputChange}
+                        placeholder="e.g., 8"
+                      />
+                    </div>
+                    <div className="spec-field">
+                      <label htmlFor="edit-length">Length</label>
+                      <input
+                        type="text"
+                        id="edit-length"
+                        name="length"
+                        value={editFormData.length}
+                        onChange={handleEditInputChange}
+                        placeholder="e.g., 2.5km"
+                      />
+                    </div>
+                    <div className="spec-field">
+                      <label htmlFor="edit-lanes">Lanes</label>
+                      <input
+                        type="text"
+                        id="edit-lanes"
+                        name="lanes"
+                        value={editFormData.lanes}
+                        onChange={handleEditInputChange}
+                        placeholder="e.g., 6"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Dynamic Specifications */}
+                  <div className="dynamic-specs-section">
+                    <h4>Additional Specifications</h4>
+                    <div className="spec-input-group">
+                      <input
+                        type="text"
+                        placeholder="Key (e.g., parking spaces)"
+                        value={editSpecKey}
+                        onChange={(e) => setEditSpecKey(e.target.value)}
+                      />
+                      <input
+                        type="text"
+                        placeholder="Value (e.g., 500)"
+                        value={editSpecValue}
+                        onChange={(e) => setEditSpecValue(e.target.value)}
+                      />
+                      <button
+                        type="button"
+                        onClick={addEditSpecification}
+                        className="add-btn"
+                      >
+                        <Plus size={16} /> Add
+                      </button>
+                    </div>
+                    <div className="tags-list">
+                      {Object.entries(editFormData.specifications).map(
+                        ([key, value]) => (
+                          <span key={key} className="tag">
+                            {key}: {value}
+                            <button
+                              type="button"
+                              onClick={() => removeEditSpecification(key)}
+                              className="tag-remove"
+                            >
+                              <X size={12} />
+                            </button>
+                          </span>
+                        )
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Materials */}
+                <div className="form-group edit-materials-group">
+                  <label className="edit-materials-label">
+                    <Wrench size={20} className="edit-materials-icon" />
+                    Materials
+                  </label>
+                  <div className="input-with-button">
+                    <input
+                      type="text"
+                      placeholder="Add material"
+                      value={editMaterialInput}
+                      onChange={(e) => setEditMaterialInput(e.target.value)}
+                      onKeyDown={(e) =>
+                        e.key === "Enter" &&
+                        (e.preventDefault(), addEditMaterial())
+                      }
+                      className="edit-material-input"
+                    />
+                    <button
+                      type="button"
+                      onClick={addEditMaterial}
+                      className="add-btn"
+                    >
+                      <Plus size={16} />
+                    </button>
+                  </div>
+                  <div className="tags-list">
+                    {editFormData.materials.map((material, index) => (
+                      <span key={index} className="tag">
+                        {material}
+                        <button
+                          type="button"
+                          onClick={() => removeEditMaterial(material)}
+                          className="tag-remove"
+                        >
+                          <X size={12} />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Features */}
+                <div className="form-group edit-features-group">
+                  <label className="edit-features-label">
+                    <Star size={20} className="edit-features-icon" />
+                    Features
+                  </label>
+                  <div className="input-with-button">
+                    <input
+                      type="text"
+                      placeholder="Add feature"
+                      value={editFeatureInput}
+                      onChange={(e) => setEditFeatureInput(e.target.value)}
+                      onKeyDown={(e) =>
+                        e.key === "Enter" &&
+                        (e.preventDefault(), addEditFeature())
+                      }
+                      className="edit-feature-input"
+                    />
+                    <button
+                      type="button"
+                      onClick={addEditFeature}
+                      className="add-btn"
+                    >
+                      <Plus size={16} />
+                    </button>
+                  </div>
+                  <div className="tags-list">
+                    {editFormData.features.map((feature, index) => (
+                      <span key={index} className="tag">
+                        {feature}
+                        <button
+                          type="button"
+                          onClick={() => removeEditFeature(feature)}
+                          className="tag-remove"
+                        >
+                          <X size={12} />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Image Gallery */}
+                <div className="form-group edit-image-gallery-group">
+                  <label className="edit-image-gallery-label">
+                    <Images size={20} className="edit-image-gallery-icon" />
+                    Image Gallery (Unlimited Images)
+                  </label>
+                  <div className="input-with-button">
+                    <input
+                      type="url"
+                      placeholder="Image URL (or upload files below)"
+                      value={editImageUrlInput}
+                      onChange={(e) => setEditImageUrlInput(e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      onClick={addEditImageToGallery}
+                      className="add-btn"
+                    >
+                      <Plus size={16} />
+                    </button>
+                  </div>
+                  <div className="upload-group" style={{ marginTop: "10px" }}>
+                  
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={(e) =>
+                        handleEditImageFileUpload(e.target.files)
+                      }
+                      style={{ display: "none" }}
+                      id="edit-image-file-upload"
+                    />
+                    <label
+                      htmlFor="edit-image-file-upload"
+                      className="upload-btn"
+                    >
+                      <Upload size={16} />
+                      Select Images (Multiple)
+                    </label>
+                    {editUploadingImages && (
+                      <span style={{ marginLeft: "10px" }}>Uploading...</span>
+                    )}
+                  </div>
+                  <div className="tags-list" style={{ marginTop: "10px" }}>
+                    {editFormData.imageGallery.map((url, index) => (
+                      <span key={index} className="tag">
+                        <Image size={12} /> Image {index + 1}
+                        <button
+                          type="button"
+                          onClick={() => removeEditImageFromGallery(url)}
+                          className="tag-remove"
+                        >
+                          <X size={12} />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                 
+                </div>
+
+                {/* Videos */}
+                <div className="form-group edit-videos-group">
+                  <label className="edit-videos-label">
+                    <Video size={20} className="edit-videos-icon" />
+                    Videos (Unlimited Videos)
+                  </label>
+                  <div className="video-input-group">
+                    <input
+                      type="url"
+                      placeholder="Video URL (YouTube, Vimeo, etc.)"
+                      value={editVideoUrlInput}
+                      onChange={(e) => setEditVideoUrlInput(e.target.value)}
+                      className="edit-video-url-input"
+                    />
+                    <input
+                      type="url"
+                      placeholder="Thumbnail URL"
+                      value={editVideoThumbnailInput}
+                      onChange={(e) =>
+                        setEditVideoThumbnailInput(e.target.value)
+                      }
+                      className="edit-video-thumbnail-input"
+                    />
+                    <button
+                      type="button"
+                      onClick={addEditVideo}
+                      className="add-btn"
+                    >
+                      <Plus size={16} />
+                    </button>
+                  </div>
+                  <div className="upload-group" style={{ marginTop: "10px" }}>
+                    <label
+                      className="upload-label"
+                      style={{ display: "block", marginBottom: "8px" }}
+                    >
+                      Upload Videos (Multiple files supported - Unlimited)
+                    </label>
+                    <input
+                      type="file"
+                      accept="video/*"
+                      multiple
+                      onChange={(e) =>
+                        handleEditVideoFileUpload(e.target.files)
+                      }
+                      style={{ display: "none" }}
+                      id="edit-video-file-upload"
+                    />
+                    <label
+                      htmlFor="edit-video-file-upload"
+                      className="upload-btn"
+                    >
+                      <Upload size={16} />
+                      Select Videos (Multiple)
+                    </label>
+                    {editUploadingVideos && (
+                      <span style={{ marginLeft: "10px" }}>Uploading...</span>
+                    )}
+                  </div>
+                  <div className="tags-list" style={{ marginTop: "10px" }}>
+                    {editFormData.videos.map((video, index) => (
+                      <span key={index} className="tag">
+                        <Video size={12} /> {video.type} Video
+                        <button
+                          type="button"
+                          onClick={() => removeEditVideo(index)}
+                          className="tag-remove"
+                        >
+                          <X size={12} />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                  <p
+                    style={{
+                      fontSize: "0.85rem",
+                      color: "#666",
+                      marginTop: "5px",
+                    }}
+                  >
+                    You can upload unlimited videos. Files will be stored in
+                    Supabase Storage. Max 50MB per video.
+                  </p>
+                </div>
+
+                {/* Blueprints */}
+                <div className="form-group edit-blueprints-group">
+                  <label className="edit-blueprints-label">
+                    <File size={20} className="edit-blueprints-icon" />
+                    Blueprints
+                  </label>
+                  <div className="input-with-button">
+                    <input
+                      type="url"
+                      placeholder="Blueprint URL"
+                      value={editBlueprintUrlInput}
+                      onChange={(e) => setEditBlueprintUrlInput(e.target.value)}
+                      className="edit-blueprint-url-input"
+                    />
+                    <button
+                      type="button"
+                      onClick={addEditBlueprint}
+                      className="add-btn"
+                    >
+                      <Plus size={16} />
+                    </button>
+                  </div>
+                  <div className="tags-list">
+                    {editFormData.blueprints.map((url, index) => (
+                      <span key={index} className="tag">
+                        Blueprint {index + 1}
+                        <button
+                          type="button"
+                          onClick={() => removeEditBlueprint(url)}
+                          className="tag-remove"
+                        >
+                          <X size={12} />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="modal-actions">
+                  <button
+                    type="button"
+                    onClick={closeEditModal}
+                    className="cancel-btn"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="submit-btn"
+                    disabled={editLoading}
+                  >
+                    {editLoading ? (
+                      <>
+                        <div className="loading-spinner small"></div>
+                        Updating...
+                      </>
+                    ) : (
+                      <>
+                        <Upload size={16} />
+                        Update Project
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

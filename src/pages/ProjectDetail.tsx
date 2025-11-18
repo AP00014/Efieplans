@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
-import { FaPlay, FaPause, FaArrowLeft, FaImages, FaVideo } from 'react-icons/fa';
+import { FaPlay, FaPause, FaArrowLeft, FaImages, FaVideo, FaVolumeUp, FaVolumeMute, FaExpand } from 'react-icons/fa';
 import ImageGallery from 'react-image-gallery';
 import 'react-image-gallery/styles/css/image-gallery.css';
 import '../styles/pages/ProjectDetail.css';
-import { allProjects } from '../data';
-import type { MediaItem, ProjectItem, VideoSource } from '../types';
+import { supabase } from '../lib/supabase';
+import type { MediaItem, VideoSource } from '../types';
+import type { Project } from '../types/index';
 
 // Import FacebookStyleVideoPlayer from BlogPage
 const FacebookStyleVideoPlayer: React.FC<{
@@ -199,11 +200,11 @@ const FacebookStyleVideoPlayer: React.FC<{
           </div>
 
           <button className="control-btn volume" onClick={toggleMute}>
-            {isMuted ? <FaVideo size={24} /> : <FaVideo size={24} />}
+            {isMuted ? <FaVolumeMute size={24} /> : <FaVolumeUp size={24} />}
           </button>
 
           <button className="control-btn fullscreen" onClick={toggleFullscreen}>
-            <FaImages size={24} />
+            <FaExpand size={24} />
           </button>
         </div>
       </div>
@@ -281,12 +282,16 @@ const MediaGrid = ({ items, mediaType }: { items: (MediaItem | VideoSource)[], m
 };
 
 const ProjectDetail = () => {
-   const { id } = useParams<{ id: string }>();
-   const location = useLocation();
-   const preloadedData = location.state?.projectData as ProjectItem | undefined;
-   const [activeTab, setActiveTab] = useState<'images' | 'videos'>('images');
-   const [isSticky, setIsSticky] = useState(false);
-   const mediaSectionRef = useRef<HTMLElement>(null);
+    const { id } = useParams<{ id: string }>();
+    const location = useLocation();
+    const preloadedData = location.state?.projectData as Project | undefined;
+    const [activeTab, setActiveTab] = useState<'images' | 'videos'>('images');
+    const [isSticky, setIsSticky] = useState(false);
+    const [item, setItem] = useState<Project | null>(preloadedData || null);
+    const [loading, setLoading] = useState(!preloadedData);
+    const [error, setError] = useState<string | null>(null);
+    const mediaSectionRef = useRef<HTMLElement>(null);
+
 
    // Handle sticky tabs when scrolling
    useEffect(() => {
@@ -302,13 +307,87 @@ const ProjectDetail = () => {
       return () => window.removeEventListener('scroll', handleScroll);
    }, []);
 
-  // Find project by ID
-  const item = preloadedData || allProjects.find(p => p.id === Number(id));
+   // Fetch project from database if not preloaded
+   useEffect(() => {
+      if (preloadedData) {
+         setItem(preloadedData);
+         setLoading(false);
+         return;
+      }
 
-  if (!item) {
+      if (!id) {
+         setError('Project ID is missing');
+         setLoading(false);
+         return;
+      }
+
+      const fetchProject = async () => {
+         try {
+            setLoading(true);
+            const { data, error: fetchError } = await supabase
+               .from('projects')
+               .select('*')
+               .eq('id', id)
+               .single();
+
+            if (fetchError) throw fetchError;
+
+            if (!data) {
+               setError('Project not found');
+               setLoading(false);
+               return;
+            }
+
+            // Transform database data to match Project type
+            const transformedProject: Project = {
+              id: data.id,
+              title: data.title,
+              description: data.description,
+              status: data.status as 'completed' | 'ongoing',
+              image: data.image,
+              location: data.location,
+              category: data.category || undefined,
+              details: data.details || {
+                specifications: {},
+                timeline: undefined,
+                materials: undefined,
+                features: undefined,
+                imageGallery: undefined,
+                blueprints: undefined,
+                videos: undefined,
+                virtualTour: undefined,
+              },
+              created_at: data.created_at,
+              updated_at: data.updated_at,
+              created_by: data.created_by,
+            };
+
+            setItem(transformedProject);
+            setError(null);
+         } catch (err: unknown) {
+            console.error('Error fetching project:', err);
+            setError(err instanceof Error ? err.message : 'Failed to load project');
+         } finally {
+            setLoading(false);
+         }
+      };
+
+      fetchProject();
+   }, [id, preloadedData]);
+
+  if (loading) {
     return (
       <div className="error-state">
-        <h2>Project Not Found</h2>
+        <div className="loading-spinner"></div>
+        <p>Loading project...</p>
+      </div>
+    );
+  }
+
+  if (error || !item) {
+    return (
+      <div className="error-state">
+        <h2>{error || 'Project Not Found'}</h2>
         <Link to="/projects" className="back-button">
           <FaArrowLeft /> Return to Projects
         </Link>
@@ -356,29 +435,38 @@ const ProjectDetail = () => {
             <p>{item.description}</p>
           </div>
 
-          <div className="specs-grid">
-            <div className="spec-item">
-              <span className="label">Location</span>
-              <span className="value">{item.location}</span>
-            </div>
-            {item.details.features && (
+          {/* Specifications Section */}
+          <div className="specs-section">
+            <h3 className="section-subtitle">Project Specifications</h3>
+            <div className="specs-grid">
               <div className="spec-item">
-                <span className="label">Features</span>
-                <span className="value">
-                  {item.details.features.map((feature, i) => (
-                    <span key={i} className="feature-tag">{feature}</span>
-                  ))}
-                </span>
+                <span className="label">Location</span>
+                <span className="value">{item.location}</span>
               </div>
-            )}
 
-            {item.details.specifications && Object.entries(item.details.specifications).map(([key, value]) => (
-              <div className="spec-item" key={key}>
-                <span className="label">{key.replace(/([A-Z])/g, ' $1')}</span>
-                <span className="value">{String(value)}</span>
-              </div>
-            ))}
+              {item.details.specifications && Object.entries(item.details.specifications).map(([key, value]) => (
+                <div className="spec-item" key={key}>
+                  <span className="label">{key.replace(/([A-Z])/g, ' $1')}</span>
+                  <span className="value">{String(value)}</span>
+                </div>
+              ))}
+            </div>
           </div>
+
+          {/* Features Section */}
+          {item.details.features && item.details.features.length > 0 && (
+            <div className="features-section">
+              <h3 className="section-subtitle">Project Features</h3>
+              <div className="features-grid">
+                {item.details.features.map((feature, i) => (
+                  <div key={i} className="feature-item">
+                    <span className="feature-icon">✓</span>
+                    <span className="feature-text">{feature}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </section>
 
        

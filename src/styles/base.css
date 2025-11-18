@@ -171,8 +171,8 @@
   --color-primary: #FF8C00;
   --color-primary-dark: #E67E00;
   --color-primary-light: #FFA726;
-  --color-secondary: #1A1A2E;
-  --color-secondary-dark: #0F0F1A;
+  --color-secondary: #112e42;
+  --color-secondary-dark: #081b29;
   --color-secondary-light: #2D2D4A;
   --color-white: #FFFFFF;
   --color-black: #000000;
@@ -1071,4 +1071,10 @@ button:focus-visible {
 
 .dark ::-webkit-scrollbar-thumb:hover {
   background: var(--color-gray-500);
+}
+
+/* Lazy Image Loading Animation */
+@keyframes loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }

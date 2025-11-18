@@ -159,3 +159,31 @@ export interface NewsletterSend {
   sent_at?: string;
   recipient_count: number;
 }
+
+// Project type for admin management
+export interface Project {
+  id: string;
+  title: string;
+  description: string;
+  status: 'completed' | 'ongoing';
+  image: string;
+  location: string;
+  category?: string;
+  details: {
+    specifications?: Record<string, string>;
+    timeline?: string;
+    materials?: string[];
+    features?: string[];
+    imageGallery?: string[];
+    blueprints?: string[];
+    videos?: Array<{
+      url: string;
+      type: 'local' | 'external';
+      thumbnail: string;
+    }>;
+    virtualTour?: string;
+  };
+  created_at: string;
+  updated_at: string;
+  created_by?: string;
+}

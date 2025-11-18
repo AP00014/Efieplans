@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 // Import components for each section
 import HeroSection from '../components/home/HeroSection';
 import AboutSection from '../components/home/AboutSection';
-import ServicesSection from '../components/home/ServicesSection';
 import PortfolioSection from '../components/home/PortfolioSection';
 import TestimonialsSection from '../components/home/TestimonialsSection';
 import ContactSection from '../components/home/ContactSection';
@@ -26,8 +25,8 @@ const Home = () => {
 
       </motion.div>
 
-      {/* Services Section */}
-      <ServicesSection />
+      {/* Services Section 
+      <ServicesSection />*/}
 
       {/* Portfolio Section */}
       <PortfolioSection />

@@ -88,7 +88,7 @@
 }
 
 .dark-mode .navbar-scrolled {
-  background-color: rgba(18, 18, 18, 0.95);
+  background-color: rgba(17, 46, 66, 0.95);
 }
 
 .navbar-transparent {
@@ -697,73 +697,47 @@
 /* Desktop Theme Toggle */
 .desktop-theme-toggle {
   display: flex;
+  background: transparent;
   align-items: center;
   justify-content: center;
   width: 44px;
   height: 44px;
-  border-radius: 12px;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  color: #ffffff;
+  color: #c2410c;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
   margin-right: var(--spacing-4);
+  border: none;
+  border-radius: 50%;
 }
 
-.desktop-theme-toggle::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(255, 140, 0, 0.2) 0%, rgba(59, 130, 246, 0.2) 100%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  z-index: -1;
-}
 
-.desktop-theme-toggle:hover {
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-  border-color: rgba(255, 140, 0, 0.4);
-}
 
 .desktop-theme-toggle:hover::before {
   opacity: 1;
+  border: none;
+  box-shadow: 0 6px 16px rgba(255, 140, 0, 0.3);
 }
 
 .desktop-theme-toggle:active {
   transform: translateY(0) scale(0.95);
+  border: none;
+  box-shadow: 0 2px 8px rgba(255, 140, 0, 0.2);
 }
 
-.dark .desktop-theme-toggle {
-  background: rgba(30, 41, 59, 0.8);
-  border-color: rgba(255, 255, 255, 0.3);
-  color: #e2e8f0;
-}
+
 
 .dark .desktop-theme-toggle:hover {
   background: rgba(30, 41, 59, 0.9);
-  border-color: rgba(255, 140, 0, 0.5);
 }
 
-/* Enhanced Light Mode Visibility for Theme Toggle */
-.navbar-scrolled .desktop-theme-toggle,
-.navbar-transparent .desktop-theme-toggle {
-  background: rgba(255, 255, 255, 0.95);
-  border: 2px solid rgba(255, 140, 0, 0.5);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(20px);
-}
+
 
 .navbar-scrolled .desktop-theme-toggle:hover,
 .navbar-transparent .desktop-theme-toggle:hover {
   background: rgba(255, 140, 0, 0.15);
-  border-color: rgba(255, 140, 0, 0.8);
+ border: none;
   box-shadow: 0 6px 16px rgba(255, 140, 0, 0.3);
   transform: translateY(-1px);
 }
@@ -810,7 +784,7 @@
 
 /* Dark Mode Styles for Navbar */
 .dark .navbar-scrolled {
-  background-color: rgba(18, 18, 18, 0.95);
+  background-color: rgba(17, 46, 66, 0.95);
   backdrop-filter: blur(16px) saturate(180%);
   box-shadow: var(--shadow-md);
 }
@@ -1420,6 +1394,7 @@
   }
 }
 
+
 /* Remove complex animations and effects for better performance */
 .fast-menu-nav::-webkit-scrollbar {
   width: 3px;
@@ -1437,3 +1412,4 @@
 .fast-menu-nav::-webkit-scrollbar-thumb:hover {
   background: var(--primary-color-dark);
 }
+

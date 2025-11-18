@@ -5,10 +5,36 @@ import UserAvatar from './UserAvatar';
 import { supabase } from '../lib/supabase';
 import { useTheme } from '../hooks/useTheme';
 import type { User } from '@supabase/supabase-js';
-import { UserPlus, Sun, Moon } from 'lucide-react';
+import { UserPlus, Sun, Moon, Search, X } from 'lucide-react';
 import './Header.css';
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  showSearch?: boolean;
+  searchQuery?: string;
+  onSearchChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onSearchKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  onSearchBlur?: () => void;
+  showSuggestions?: boolean;
+  onSuggestionClick?: (suggestion: string) => void;
+  filteredSuggestions?: string[];
+  selectedSuggestionIndex?: number;
+  onSuggestionMouseEnter?: (index: number) => void;
+  onClearSearch?: () => void;
+}
+
+const Header: React.FC<HeaderProps> = ({
+  showSearch = false,
+  searchQuery = '',
+  onSearchChange,
+  onSearchKeyDown,
+  onSearchBlur,
+  showSuggestions = false,
+  onSuggestionClick,
+  filteredSuggestions = [],
+  selectedSuggestionIndex = -1,
+  onSuggestionMouseEnter,
+  onClearSearch
+}) => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const { isDarkMode, toggleTheme } = useTheme();
@@ -43,7 +69,50 @@ const Header: React.FC = () => {
                className="navbar-logo-image"
              />
            </Link>
-  
+
+           {showSearch && (
+             <div className="header-search-container">
+               <div className="header-search">
+                 <Search size={20} className="search-icon" />
+                 <input
+                   type="text"
+                   placeholder="Search posts..."
+                   value={searchQuery}
+                   onChange={onSearchChange}
+                   onKeyDown={onSearchKeyDown}
+                   onBlur={onSearchBlur}
+                   className="header-search-input"
+                   autoComplete="off"
+                 />
+                 {searchQuery && (
+                   <button
+                     className="clear-search-btn"
+                     onClick={onClearSearch}
+                     aria-label="Clear search"
+                   >
+                     <X size={16} />
+                   </button>
+                 )}
+
+                 {showSuggestions && filteredSuggestions.length > 0 && (
+                   <div className="header-suggestions-dropdown">
+                     {filteredSuggestions.map((suggestion, index) => (
+                       <button
+                         key={suggestion}
+                         className={`suggestion-item ${index === selectedSuggestionIndex ? 'selected' : ''}`}
+                         onClick={() => onSuggestionClick?.(suggestion)}
+                         onMouseEnter={() => onSuggestionMouseEnter?.(index)}
+                       >
+                         <Search size={14} />
+                         <span>{suggestion}</span>
+                       </button>
+                     ))}
+                   </div>
+                 )}
+               </div>
+             </div>
+           )}
+
            <div className="header-actions">
              {user ? (
                <div className="user-section">

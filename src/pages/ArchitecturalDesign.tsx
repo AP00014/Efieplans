@@ -28,7 +28,7 @@ const ArchitecturePage = () => {
 
   // Transform projects to match the MediaItem interface
   const mediaItems: MediaItem[] = architecturalProjects.map(project => ({
-    id: project.id,
+    id: project.id as number,
     type: project.details?.videos && project.details.videos.length > 0 ? 'video' : 'image',
     url: project.details?.videos && project.details.videos.length > 0 ? project.details.videos[0].url : project.image,
     title: project.title,

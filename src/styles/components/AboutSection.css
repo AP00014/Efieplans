@@ -43,7 +43,7 @@
   border-radius: 2px;
 }
 
-.dark-theme .section-heading {
+.dark .section-heading {
   color: var(--text-color2);
 }
 

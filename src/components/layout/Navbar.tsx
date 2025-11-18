@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { FaSun, FaMoon } from "react-icons/fa";
+import { FaSun, FaMoon, FaShieldAlt } from "react-icons/fa";
 import { useTheme } from "../../hooks/useTheme";
+import { useAuth } from "../../hooks/useAuth";
 import "../../styles/components/Navbar.css";
 
 // Simple, Fast Hamburger Menu Component
@@ -23,10 +24,10 @@ const FastHamburger = ({ isOpen, onClick }: { isOpen: boolean; onClick: () => vo
 };
 
 const Navbar = () => {
-  console.log('Navbar component rendering');
-  const { isDarkMode, toggleTheme } = useTheme();
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const { isDarkMode, toggleTheme } = useTheme();
+    const { isAdmin } = useAuth();
+    const [isScrolled, setIsScrolled] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Handle scroll effect
   useEffect(() => {
@@ -71,27 +72,34 @@ const Navbar = () => {
 
         {/* Desktop Navigation - Center */}
         <div className="navbar-desktop">
-          <Link to="/#home" className="navbar-link">
-            Home
-          </Link>
-          <Link to="/#about" className="navbar-link">
-            About
-          </Link>
+           <Link to="/#home" className="navbar-link">
+             Home
+           </Link>
+           <Link to="/#about" className="navbar-link">
+             About
+           </Link>
 
-          <Link to="/projects" className="navbar-link">
-            Projects
-          </Link>
-          <Link to="/blog" className="navbar-link">
-            Blog
-          </Link>
+           <Link to="/projects" className="navbar-link">
+             Projects
+           </Link>
+           <Link to="/blog" className="navbar-link">
+             Blog
+           </Link>
 
-          <Link to="/#services" className="navbar-link">
-            Services
-          </Link>
-          <Link to="/#contact" className="navbar-link">
-            Contact
-          </Link>
-        </div>
+           <Link to="/#services" className="navbar-link">
+             Services
+           </Link>
+           <Link to="/#contact" className="navbar-link">
+             Contact
+           </Link>
+
+           {isAdmin && (
+             <Link to="/admin" className="navbar-link">
+               <FaShieldAlt className="admin-icon" />
+               Admin Dashboard
+             </Link>
+           )}
+         </div>
 
         {/* Controls - Far Right */}
         <div className="navbar-right">
@@ -174,6 +182,19 @@ const Navbar = () => {
               >
                 Contact
               </Link>
+
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  className="fast-menu-link admin-link"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <div className="fast-theme-content">
+                    <FaShieldAlt className="fast-theme-icon" />
+                    Admin Dashboard
+                  </div>
+                </Link>
+              )}
 
               {/* Mobile Theme Toggle */}
               <button

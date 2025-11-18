@@ -62,7 +62,7 @@ const BlogPage: React.FC = () => {
             *,
             profiles: user_id (id, username, full_name, avatar_url)
           `)
-          .order('created_at', { ascending: false })
+          .order('created_at', { ascending: true })
           .limit(20); // Limit initial load to 20 posts
 
         if (postsError) throw postsError;
@@ -151,6 +151,7 @@ const BlogPage: React.FC = () => {
       post.content?.toLowerCase().includes(searchLower) ||
       post.author?.username?.toLowerCase().includes(searchLower) ||
       post.author?.full_name?.toLowerCase().includes(searchLower) ||
+      post.category?.toLowerCase().includes(searchLower) ||
       post.tags?.some(tag => tag.toLowerCase().includes(searchLower));
 
     return searchMatch;
@@ -336,7 +337,23 @@ const handleLike = async (postId: string) => {
 
   return (
     <div className="blog-page">
-      <Header />
+      <Header
+        showSearch={true}
+        searchQuery={searchQuery}
+        onSearchChange={handleSearchInputChange}
+        onSearchKeyDown={handleKeyDown}
+        onSearchBlur={handleSearchBlur}
+        showSuggestions={showSuggestions}
+        onSuggestionClick={handleSuggestionClick}
+        filteredSuggestions={filteredSuggestions}
+        selectedSuggestionIndex={selectedSuggestionIndex}
+        onSuggestionMouseEnter={setSelectedSuggestionIndex}
+        onClearSearch={() => {
+          setSearchQuery('');
+          setShowSuggestions(false);
+          setSelectedSuggestionIndex(-1);
+        }}
+      />
 
       <main className="post-content">
         <div className="container">

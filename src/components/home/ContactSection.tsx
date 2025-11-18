@@ -668,23 +668,35 @@ const ContactSection = () => {
                 aria-label="Interactive map showing Stone Edge Construction location"
               >
                 <div className="map-container">
-                  <iframe
-                    src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'DEMO_KEY'}&q=123+Construction+Avenue,Accra,Ghana&zoom=15&maptype=roadmap`}
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0, borderRadius: 'inherit' }}
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    title="Stone Edge Construction Location Map"
-                    aria-label="Google Maps showing 123 Construction Avenue, Accra, Ghana"
-                  />
+                  {import.meta.env.VITE_GOOGLE_MAPS_API_KEY && import.meta.env.VITE_GOOGLE_MAPS_API_KEY !== 'DEMO_KEY' ? (
+                    <iframe
+                      src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}&q=123+Construction+Avenue,Accra,Ghana&zoom=15&maptype=roadmap`}
+                      width="100%"
+                      height="100%"
+                      style={{ border: 0, borderRadius: 'inherit' }}
+                      allowFullScreen
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      title="Stone Edge Construction Location Map"
+                      aria-label="Google Maps showing 123 Construction Avenue, Accra, Ghana"
+                    />
+                  ) : (
+                    <div className="map-placeholder">
+                      <div className="map-placeholder-content">
+                        <h4>📍 Our Location</h4>
+                        <p>123 Construction Avenue<br />Accra, Ghana</p>
+                        <p className="map-placeholder-note">
+                          Interactive map requires Google Maps API key
+                        </p>
+                      </div>
+                    </div>
+                  )}
                   {(!import.meta.env.VITE_GOOGLE_MAPS_API_KEY || import.meta.env.VITE_GOOGLE_MAPS_API_KEY === 'DEMO_KEY') && (
                     <div className="map-overlay-notice">
                       <div className="map-notice-content">
                         <h4>Map Preview</h4>
                         <p>To enable real Google Maps, add your API key to environment variables.</p>
-                        <code>Efieplans</code>
+                        <code>VITE_GOOGLE_MAPS_API_KEY=your_api_key_here</code>
                         <p className="map-notice-small">
                           Get your API key from{' '}
                           <a
