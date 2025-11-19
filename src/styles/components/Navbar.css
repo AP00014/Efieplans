@@ -466,15 +466,6 @@
 }
 
 
-
-
-
-
-
-
-
-
-
 /* Responsive Adjustments */
 @media (min-width: 1280px) {
   .navbar-desktop {
@@ -780,6 +771,164 @@
 
 .dark .mobile-theme-icon.fa-moon {
   color: #cbd5e1; /* Slightly warmer silver for dark mode mobile */
+}
+
+/* Get Started Button */
+.navbar-get-started-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-dark) 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(255, 140, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.navbar-get-started-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.navbar-get-started-btn:hover::before {
+  left: 100%;
+}
+
+.navbar-get-started-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 140, 0, 0.4);
+  background: linear-gradient(135deg, var(--primary-color-dark) 0%, var(--primary-color) 100%);
+}
+
+.navbar-get-started-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(255, 140, 0, 0.3);
+}
+
+.navbar-get-started-btn span {
+  white-space: nowrap;
+}
+
+/* Mobile Get Started Button */
+.fast-get-started {
+  margin-top: auto;
+  margin-bottom: 0.5rem;
+  margin-left: 0.75rem;
+  margin-right: 0.75rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg,
+    rgba(255, 140, 0, 0.08) 0%,
+    rgba(250, 204, 21, 0.06) 100%) !important;
+  backdrop-filter: blur(15px);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 140, 0, 0.15);
+  box-shadow:
+    0 3px 12px rgba(255, 140, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  position: relative;
+  overflow: hidden;
+}
+
+.fast-get-started::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(255, 140, 0, 0.2),
+    transparent);
+  transition: left 0.4s ease;
+  z-index: -1;
+}
+
+.fast-get-started:hover::before {
+  left: 100%;
+}
+
+.fast-get-started:hover {
+  transform: translateX(4px) scale(1.02);
+  box-shadow:
+    0 6px 20px rgba(255, 140, 0, 0.2),
+    0 3px 8px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border-color: rgba(255, 140, 0, 0.25);
+}
+
+.dark .fast-get-started,
+.dark-mode .fast-get-started {
+  border-top-color: rgba(255, 255, 255, 0.1);
+  background: linear-gradient(135deg,
+    rgba(255, 140, 0, 0.12) 0%,
+    rgba(250, 204, 21, 0.08) 100%) !important;
+  border-color: rgba(255, 140, 0, 0.2);
+  box-shadow:
+    0 3px 12px rgba(255, 140, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.dark .fast-get-started:hover,
+.dark-mode .fast-get-started:hover {
+  box-shadow:
+    0 6px 20px rgba(255, 140, 0, 0.3),
+    0 3px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 140, 0, 0.35);
+}
+
+/* Mobile User Section */
+.fast-menu-user-section {
+  margin: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg,
+    rgba(255, 140, 0, 0.08) 0%,
+    rgba(250, 204, 21, 0.06) 100%);
+  border: 1px solid rgba(255, 140, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dark .fast-menu-user-section,
+.dark-mode .fast-menu-user-section {
+  background: linear-gradient(135deg,
+    rgba(255, 140, 0, 0.12) 0%,
+    rgba(250, 204, 21, 0.08) 100%);
+  border-color: rgba(255, 140, 0, 0.2);
+}
+
+/* Responsive Get Started Button */
+@media (max-width: 1024px) {
+  .navbar-get-started-btn {
+    padding: 0.625rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .navbar-get-started-btn span {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-get-started-btn {
+    display: none;
+  }
 }
 
 /* Dark Mode Styles for Navbar */

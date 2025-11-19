@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { FaSun, FaMoon, FaShieldAlt } from "react-icons/fa";
+import { FaSun, FaMoon, FaUserPlus } from "react-icons/fa";
 import { useTheme } from "../../hooks/useTheme";
 import { useAuth } from "../../hooks/useAuth";
+import AuthModal from "../AuthModal";
+import UserAvatar from "../UserAvatar";
 import "../../styles/components/Navbar.css";
 
 // Simple, Fast Hamburger Menu Component
@@ -25,9 +27,10 @@ const FastHamburger = ({ isOpen, onClick }: { isOpen: boolean; onClick: () => vo
 
 const Navbar = () => {
     const { isDarkMode, toggleTheme } = useTheme();
-    const { isAdmin } = useAuth();
+    const { user } = useAuth();
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   // Handle scroll effect
   useEffect(() => {
@@ -92,19 +95,12 @@ const Navbar = () => {
            <Link to="/#contact" className="navbar-link">
              Contact
            </Link>
-
-           {isAdmin && (
-             <Link to="/admin" className="navbar-link">
-               <FaShieldAlt className="admin-icon" />
-               Admin Dashboard
-             </Link>
-           )}
          </div>
 
         {/* Controls - Far Right */}
         <div className="navbar-right">
-          {/* Desktop Theme Toggle */}
-          <div className="hidden md:flex items-center">
+          {/* Desktop Controls */}
+          <div className="hidden md:flex items-center space-x-4">
             <button
               onClick={toggleTheme}
               className="desktop-theme-toggle"
@@ -112,6 +108,21 @@ const Navbar = () => {
             >
               {isDarkMode ? <FaSun size={20} /> : <FaMoon size={20} />}
             </button>
+
+            {user ? (
+              /* User Avatar when authenticated */
+              <UserAvatar />
+            ) : (
+              /* Get Started Button when not authenticated */
+              <button
+                onClick={() => setIsAuthModalOpen(true)}
+                className="navbar-get-started-btn"
+                aria-label="Get Started"
+              >
+                <FaUserPlus size={16} />
+                <span>Get Started</span>
+              </button>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -183,17 +194,27 @@ const Navbar = () => {
                 Contact
               </Link>
 
-              {isAdmin && (
-                <Link
-                  to="/admin"
-                  className="fast-menu-link admin-link"
-                  onClick={() => setIsMobileMenuOpen(false)}
+              {/* Authentication UI for Mobile */}
+              {user ? (
+                /* User Avatar for Mobile when authenticated */
+                <div className="fast-menu-user-section">
+                  <UserAvatar />
+                </div>
+              ) : (
+                /* Get Started Button for Mobile when not authenticated */
+                <button
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    setIsAuthModalOpen(true);
+                  }}
+                  className="fast-menu-link fast-get-started"
+                  aria-label="Get Started"
                 >
                   <div className="fast-theme-content">
-                    <FaShieldAlt className="fast-theme-icon" />
-                    Admin Dashboard
+                    <FaUserPlus className="fast-theme-icon" />
+                    Get Started
                   </div>
-                </Link>
+                </button>
               )}
 
               {/* Mobile Theme Toggle */}
@@ -220,6 +241,12 @@ const Navbar = () => {
           </div>
         </div>
       )}
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+      />
     </nav>
   );
 };

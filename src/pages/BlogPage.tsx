@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import Header from '../components/Header';
+import Navbar from '../components/layout/Navbar';
 import { supabase } from '../lib/supabase';
 import type { SupabasePost, Profile, SupabaseComment } from '../types/index';
 import {
@@ -14,9 +14,7 @@ import {
   Pause,
   Volume2,
   VolumeX,
-  Maximize,
-  Search,
-  X
+  Maximize
 } from 'lucide-react';
 import './BlogPage.css';
 
@@ -31,10 +29,6 @@ const BlogPage: React.FC = () => {
   const [posts, setPosts] = useState<PostWithMeta[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<Profile | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -110,59 +104,12 @@ const BlogPage: React.FC = () => {
 
     fetchPosts();
   }, []);
-  // Generate suggestions based on available content
-  useEffect(() => {
-    if (posts.length > 0) {
-      const allSuggestions = new Set<string>();
 
-      posts.forEach(post => {
-        // Add titles
-        if (post.title) allSuggestions.add(post.title);
-
-        // Add author names
-        if (post.author?.username) allSuggestions.add(post.author.username);
-        if (post.author?.full_name) allSuggestions.add(post.author.full_name);
-
-        // Add tags
-        post.tags?.forEach(tag => allSuggestions.add(tag));
-
-        // Add category keywords
-        if (post.category) allSuggestions.add(post.category);
-      });
-
-      // Add common search terms
-      ['architectural design', 'construction', 'interior design'].forEach(term => allSuggestions.add(term));
-
-      setSuggestions(Array.from(allSuggestions).sort());
+  const handleLike = async (postId: string) => {
+    if (!currentUser) {
+      alert('Please log in to like posts');
+      return;
     }
-  }, [posts]);
-
-  // Filter suggestions based on current input
-  const filteredSuggestions = suggestions.filter(suggestion =>
-    suggestion.toLowerCase().includes(searchQuery.toLowerCase()) &&
-    suggestion.toLowerCase() !== searchQuery.toLowerCase()
-  ).slice(0, 8); // Limit to 8 suggestions
-
-  const filteredPosts = posts.filter(post => {
-    // Search filter (includes categories in search)
-    const searchLower = searchQuery.toLowerCase().trim();
-    const searchMatch = !searchLower ||
-      post.title?.toLowerCase().includes(searchLower) ||
-      post.content?.toLowerCase().includes(searchLower) ||
-      post.author?.username?.toLowerCase().includes(searchLower) ||
-      post.author?.full_name?.toLowerCase().includes(searchLower) ||
-      post.category?.toLowerCase().includes(searchLower) ||
-      post.tags?.some(tag => tag.toLowerCase().includes(searchLower));
-
-    return searchMatch;
-  });
-
-
-const handleLike = async (postId: string) => {
-  if (!currentUser) {
-    alert('Please log in to like posts');
-    return;
-  }
 
     try {
       const { data: existingLike } = await supabase
@@ -200,53 +147,6 @@ const handleLike = async (postId: string) => {
     } catch (error) {
       console.error('Error toggling like:', error);
     }
-  };
-
-  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchQuery(value);
-    setShowSuggestions(value.length > 0);
-    setSelectedSuggestionIndex(-1);
-  };
-
-  const handleSuggestionClick = (suggestion: string) => {
-    setSearchQuery(suggestion);
-    setShowSuggestions(false);
-    setSelectedSuggestionIndex(-1);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!showSuggestions || filteredSuggestions.length === 0) return;
-
-    switch (e.key) {
-      case 'ArrowDown':
-        e.preventDefault();
-        setSelectedSuggestionIndex(prev =>
-          prev < filteredSuggestions.length - 1 ? prev + 1 : prev
-        );
-        break;
-      case 'ArrowUp':
-        e.preventDefault();
-        setSelectedSuggestionIndex(prev => prev > 0 ? prev - 1 : -1);
-        break;
-      case 'Enter':
-        e.preventDefault();
-        if (selectedSuggestionIndex >= 0) {
-          setSearchQuery(filteredSuggestions[selectedSuggestionIndex]);
-        }
-        setShowSuggestions(false);
-        setSelectedSuggestionIndex(-1);
-        break;
-      case 'Escape':
-        setShowSuggestions(false);
-        setSelectedSuggestionIndex(-1);
-        break;
-    }
-  };
-
-  const handleSearchBlur = () => {
-    // Delay hiding suggestions to allow for clicks
-    setTimeout(() => setShowSuggestions(false), 150);
   };
 
   const handleShare = async (post: PostWithMeta) => {
@@ -337,79 +237,17 @@ const handleLike = async (postId: string) => {
 
   return (
     <div className="blog-page">
-      <Header
-        showSearch={true}
-        searchQuery={searchQuery}
-        onSearchChange={handleSearchInputChange}
-        onSearchKeyDown={handleKeyDown}
-        onSearchBlur={handleSearchBlur}
-        showSuggestions={showSuggestions}
-        onSuggestionClick={handleSuggestionClick}
-        filteredSuggestions={filteredSuggestions}
-        selectedSuggestionIndex={selectedSuggestionIndex}
-        onSuggestionMouseEnter={setSelectedSuggestionIndex}
-        onClearSearch={() => {
-          setSearchQuery('');
-          setShowSuggestions(false);
-          setSelectedSuggestionIndex(-1);
-        }}
-      />
+      <Navbar />
 
       <main className="post-content">
         <div className="container">
-          <div className="search-filter-section">
-            <div className="search-container">
-              <Search size={20} className="search-icon" />
-              <input
-                type="text"
-                placeholder="Search posts by title, content, author, tags, or categories (Architectural Design, Construction, Interior Design)..."
-                value={searchQuery}
-                onChange={handleSearchInputChange}
-                onKeyDown={handleKeyDown}
-                onBlur={handleSearchBlur}
-                className="search-input expanded"
-                autoComplete="off"
-              />
-              {searchQuery && (
-                <button
-                  className="clear-search-btn"
-                  onClick={() => {
-                    setSearchQuery('');
-                    setShowSuggestions(false);
-                    setSelectedSuggestionIndex(-1);
-                  }}
-                  aria-label="Clear search"
-                >
-                  <X size={16} />
-                </button>
-              )}
-
-              {/* Suggestions Dropdown */}
-              {showSuggestions && filteredSuggestions.length > 0 && (
-                <div className="suggestions-dropdown">
-                  {filteredSuggestions.map((suggestion, index) => (
-                    <button
-                      key={suggestion}
-                      className={`suggestion-item ${index === selectedSuggestionIndex ? 'selected' : ''}`}
-                      onClick={() => handleSuggestionClick(suggestion)}
-                      onMouseEnter={() => setSelectedSuggestionIndex(index)}
-                    >
-                      <Search size={14} />
-                      <span>{suggestion}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-
           <div className="posts-feed">
             {loading ? (
               <div className="loading-spinner"></div>
-            ) : filteredPosts.length === 0 ? (
+            ) : posts.length === 0 ? (
               <p className="no-posts">No posts available.</p>
             ) : (
-              filteredPosts.map(post => (
+              posts.map(post => (
                 <FacebookPostCard
                   key={post.id}
                   post={post}

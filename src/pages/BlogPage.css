@@ -391,7 +391,7 @@
 
 /* Post Content */
 .post-content {
-  padding: 0 16px 12px;
+  padding: 120px 16px 12px; /* Added top padding to account for fixed navbar */
 }
 
 .post-title {
@@ -1714,6 +1714,10 @@
 
   .blog-content {
     padding: 24px 16px;
+  }
+
+  .post-content {
+    padding: 100px 16px 12px; /* Adjusted for mobile navbar height */
   }
 
   .filter-section {

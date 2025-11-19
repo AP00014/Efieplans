@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
-import { useTheme } from "../hooks/useTheme";
+import { useAuth } from "../hooks/useAuth";
 import {
   LogOut,
   Settings,
@@ -9,75 +9,15 @@ import {
   Mail,
   UserCheck,
   Shield,
-  Sun,
-  Moon,
+
 } from "lucide-react";
 import "./UserAvatar.css";
 
-interface Profile {
-  id: string;
-  username: string;
-  full_name?: string;
-  email?: string;
-  avatar_url?: string;
-  role?: string;
-}
-
 const UserAvatar: React.FC = () => {
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { profile, loading } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const { isDarkMode, toggleTheme } = useTheme();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const getProfile = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (user) {
-        const { data: profileData, error } = await supabase
-          .from("profiles")
-          .select("id, username, full_name, email, avatar_url, role")
-          .eq("id", user.id)
-          .single();
-
-        if (!error && profileData) {
-          setProfile(profileData);
-        }
-      }
-
-      setLoading(false);
-    };
-
-    getProfile();
-
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (session?.user) {
-        const { data: profileData, error } = await supabase
-          .from("profiles")
-          .select("id, username, full_name, email, avatar_url, role")
-          .eq("id", session.user.id)
-          .single();
-
-        if (!error && profileData) {
-          setProfile(profileData);
-        } else {
-          setProfile(null);
-        }
-      } else {
-        setProfile(null);
-      }
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -116,19 +56,26 @@ const UserAvatar: React.FC = () => {
     setIsDropdownOpen(false);
   };
 
+  const displayName = profile.full_name || profile.username;
+
   return (
     <div className="user-avatar-container" ref={dropdownRef}>
-      <button className="avatar-button" onClick={toggleDropdown}>
-        {profile.avatar_url ? (
-          <img
-            src={profile.avatar_url}
-            alt={profile.username}
-            className="avatar-image"
-          />
-        ) : (
-          <div className="avatar-initials">{initials}</div>
-        )}
-        {profile.role === "admin" && <div className="admin-indicator">A</div>}
+      <button className="avatar-button-with-name" onClick={toggleDropdown}>
+        <div className="avatar-section">
+          {profile.avatar_url ? (
+            <img
+              src={profile.avatar_url}
+              alt={profile.username}
+              className="avatar-image"
+            />
+          ) : (
+            <div className="avatar-initials">{initials}</div>
+          )}
+          {profile.role === "admin" && <div className="admin-indicator">A</div>}
+        </div>
+        <div className="user-info-section">
+          <span className="user-display-name">{displayName}</span>
+        </div>
       </button>
       {isDropdownOpen && (
         <div className="dropdown-menu">
@@ -159,32 +106,18 @@ const UserAvatar: React.FC = () => {
                   </span>
                 </div>
               </div>
-              <div className="info-item">
-                <Shield size={14} className="info-icon" />
-                <div className="info-content">
-                  <span className="info-label">Role</span>
-                  <span className="info-value">{profile.role || "user"}</span>
-                </div>
-              </div>
+              
             </div>
           </div>
           <div className="dropdown-divider"></div>
-          <button
-            className="dropdown-item theme-toggle"
-            onClick={() => {
-              console.log("UserAvatar theme toggle clicked");
-              toggleTheme();
-            }}
-          >
-            {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
-            {isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-          </button>
-          <div className="dropdown-divider"></div>
           {profile.role === "admin" && (
-            <Link to="/admin" className="dropdown-item admin-link">
-              <Shield size={16} />
-              Admin Dashboard
-            </Link>
+            <>
+              <Link to="/admin" className="dropdown-item admin-link">
+                <Shield size={16} />
+                Admin Dashboard
+              </Link>
+              <div className="dropdown-divider"></div>
+            </>
           )}
           <button
             className="dropdown-item"
