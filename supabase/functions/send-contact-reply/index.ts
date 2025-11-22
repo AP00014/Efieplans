@@ -158,9 +158,9 @@ serve(async (req: Request) => {
 
     const body = await req.json();
 
-    if (!body.contactMessageId || !body.replyMessage) {
+    if (!body.message_id || !body.reply) {
       return new Response(JSON.stringify({
-        error: 'contactMessageId and replyMessage are required'
+        error: 'message_id and reply are required'
       }), {
         status: 400,
         headers: {
@@ -170,17 +170,17 @@ serve(async (req: Request) => {
       });
     }
 
-    logInfo('CONTACT_REPLY', 'Processing reply request', { requestId, contactMessageId: body.contactMessageId });
+    logInfo('CONTACT_REPLY', 'Processing reply request', { requestId, messageId: body.message_id });
 
     // 1. Fetch contact message with ownership check
     const { data: contactMessage, error: fetchErr } = await supabase
       .from('contact_messages')
       .select('*')
-      .eq('id', body.contactMessageId)
+      .eq('id', body.message_id)
       .maybeSingle();
 
     if (fetchErr) {
-      logError('CONTACT_REPLY', fetchErr, { requestId, contactMessageId: body.contactMessageId });
+      logError('CONTACT_REPLY', fetchErr, { requestId, messageId: body.message_id });
       return new Response(JSON.stringify({
         error: 'Failed to fetch contact message'
       }), {
@@ -209,12 +209,12 @@ serve(async (req: Request) => {
       .from('contact_messages')
       .update({
         status: 'replied',
-        reply: body.replyMessage,
-        reply_subject: body.replySubject || `Re: ${contactMessage.subject || 'Your Contact Message'}`,
+        reply: body.reply,
+        reply_subject: body.reply_subject || `Re: ${contactMessage.subject || 'Your Contact Message'}`,
         reply_sent_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       })
-      .eq('id', body.contactMessageId);
+      .eq('id', body.message_id);
 
     if (updateErr) {
       logError('CONTACT_REPLY', updateErr, { requestId, contactMessageId: body.contactMessageId });

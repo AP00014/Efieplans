@@ -66,21 +66,27 @@ const Contact = () => {
     setLoading(true);
 
     try {
-      const { error: supabaseError } = await supabase
-        .from('contact_messages')
-        .insert([
-          {
-            name: formData.name,
-            email: formData.email,
-            subject: `Service Inquiry: ${formData.service}`,
-            message: formData.message,
-            phone: formData.phone,
-          }
-        ]);
+      // Workaround for Supabase client bug that adds ?columns=... to POST requests
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/rest/v1/contact_messages`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          subject: `Service Inquiry: ${formData.service}`,
+          message: formData.message,
+          phone: formData.phone,
+        })
+      });
 
-      if (supabaseError) {
+      if (!response.ok) {
+        const errorText = await response.text();
         setError('There was an error submitting the form. Please try again.');
-        console.error('Supabase error:', supabaseError);
+        console.error('Contact form submission failed:', response.status, errorText);
       } else {
         // Send notification email after successful database insert
         try {

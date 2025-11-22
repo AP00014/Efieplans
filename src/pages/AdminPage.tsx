@@ -2319,11 +2319,27 @@ const ContactMessagesManagement: React.FC = () => {
 
     setReplying(true);
     try {
+      // Verify user is authenticated and is admin
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error("You must be logged in to send replies");
+      }
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', session.user.id)
+        .single();
+
+      if (!profile || profile.role !== 'admin') {
+        throw new Error("Admin access required");
+      }
+
       const { error } = await supabase.functions.invoke("send-contact-reply", {
         body: {
-          contactMessageId: selectedMessage.id,
-          replyMessage: replyMessage.trim(),
-          replySubject: replySubject.trim() || undefined,
+          message_id: selectedMessage.id,
+          reply: replyMessage.trim(),
+          reply_subject: replySubject.trim() || undefined,
         },
       });
 

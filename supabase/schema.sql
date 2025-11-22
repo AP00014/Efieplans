@@ -100,3 +100,85 @@ CREATE TRIGGER update_comments_updated_at BEFORE UPDATE ON comments FOR EACH ROW
 
 
 residential ,commercial , town houses,gruop dualling 
+
+
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                              CONTACT SYSTEM FLOW                                │
+│                                                                                 │
+│  ┌─────────────┐    ┌─────────────────┐    ┌─────────────────────┐             │
+│  │ contact_    │    │ contact_        │    │ send-contact-       │             │
+│  │ messages    │◄──►│ messages        │◄──►│ notification        │             │
+│  │ table       │    │ table           │    │ function            │             │
+│  └─────────────┘    └─────────────────┘    └─────────────────────┘             │
+│         ▲                     ▲                     │                          │
+│         │                     │                     │                          │
+│         │                     │                     ▼                          │
+│         │            ┌─────────────────┐    ┌─────────────────────┐             │
+│         │            │ send-contact-   │    │ Resend API          │             │
+│         │            │ reply           │───►│ (Email Service)     │             │
+│         │            │ function        │    └─────────────────────┘             │
+│         │            └─────────────────┘                                         │
+│         │                                                                       │
+│         └───────────────────────────────────────────────────────────────────────┘
+│                                                                                 │
+│  ┌─────────────┐    ┌─────────────────┐    ┌─────────────────────┐             │
+│  │ email_      │    │ profiles        │    │ send-newsletter     │             │
+│  │ subscriptions│◄──►│ table          │◄──►│ function            │             │
+│  │ table       │    │                 │    └─────────────────────┘             │
+│  └─────────────┘    └─────────────────┘           │                          │
+│                                                   ▼                          │
+│                                            ┌─────────────────────┐             │
+│                                            │ newsletter_sends    │             │
+│                                            │ table               │             │
+│                                            └─────────────────────┘             │
+└─────────────────────────────────────────────────────────────────────────────────┘
+
+
+
+1. User submits contact form
+   ↓
+2. Frontend calls supabase.contact_messages.insert()
+   ↓
+3. Database trigger fires send-contact-notification
+   ↓
+4. Admin receives notification email
+   ↓
+5. Admin replies via admin panel
+   ↓
+6. Frontend calls send-contact-reply function
+   ↓
+7. Function updates contact_messages.status to 'replied'
+   ↓
+8. User receives reply email
+   ↓
+9. Admin creates newsletter
+   ↓
+10. Frontend calls send-newsletter function
+    ↓
+11. Function queries email_subscriptions + profiles
+    ↓
+12. Sends bulk email via Resend
+    ↓
+13. Records send in newsletter_sends table
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           SUPABASE EDGE FUNCTIONS SYSTEM                     │
+│                                                                             │
+│  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐          │
+│  │ Frontend        │    │ Database        │    │ Edge Functions  │          │
+│  │ (React App)     │◄──►│ Tables          │◄──►│ (Deno Runtime)  │          │
+│  └─────────────────┘    └─────────────────┘    └─────────────────┘          │
+│           │                   │                        │                    │
+│           │                   │                        │                    │
+│           ▼                   ▼                        ▼                    │
+│  ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐               │
+│  │ Contact Form    │ │ Admin Panel     │ │ Newsletter Form │               │
+│  │ Submission      │ │ Management      │ │ Creation        │               │
+│  └─────────────────┘ └─────────────────┘ └─────────────────┘               │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+check the edge function and ensure i get nofication on email for every contact submission and replies should also be sent to the contacted user email and also newsletters should be sent authenticated user and email subscribers emails
+
